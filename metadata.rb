@@ -1,0 +1,11 @@
+maintainer        "LLC Express 42"
+maintainer_email  "info@express42.com"
+license           "MIT"
+description       "Installs and configures postgresql for clients or servers"
+version           "0.1.0"
+recipe            "postgresql::default", "Includes client recipe"
+recipe            "postgresql::client", "Installs postgresql client packages"
+recipe            "postgresql::server", "Installs postgresql server packages, configures postgresql"
+recipe            "postgresql::pgbouncer", "Installs and configures pgbouncer"
+
+supports          "debian"

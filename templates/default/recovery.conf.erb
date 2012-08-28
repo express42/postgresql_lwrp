@@ -1,0 +1,6 @@
+standby_mode = on
+primary_conninfo = <%= @connect_string %>
+trigger_file = <% @trigger_file %>
+<% if @restore_string -%>
+restore_command = <%= @restore_string %>
+<% end -%>
