@@ -25,7 +25,7 @@
 # SOFTWARE.
 #
 
-%W{postgresql-client-#{node["postgresql"]["version"]} libpq-dev}.each do |pkg|
+%W{postgresql-client-#{node["postgresql"]["defaults"]["version"]} libpq-dev}.each do |pkg|
   package pkg do
     action :install
     options  "-t squeeze-backports"
