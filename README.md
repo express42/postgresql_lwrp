@@ -1,15 +1,15 @@
 Description
 ===========
-This cookbook includes recipes and provider to install and configure postgresql database. This cookbook was tested with Postgresql 9.1 and 9.2, but should work with 9.0 too.
+This cookbook includes recipes and provider to install and configure postgresql database. This cookbook was tested with Postgresql 9.1 and 9.2, and should work with 9.0 too.
 
 Requirements
 ============
-- This cookbook version (0.1.1) tested only with Debian squeeze.
+- This cookbook version (0.1.1) tested only on Debian squeeze.
 - You must have repository with Postgres version 9.x
 
 Attributes
 ==========
-This cookbook have server and client attributes file.
+This cookbook have server and client attribute files.
 
 With client attributes(["postgresql"]["client"]) you can set only postgresql client and library version.
 
@@ -17,7 +17,6 @@ Server attributes are starting from ["postgresql"]["defaults"] and used as defau
 
 Resources/Providers
 ===================
-Cookbook have default resource postgresql
 # Actions
 - :create: creates postgresql cluster
 
@@ -95,7 +94,7 @@ Example slave database setup:
 
 Roadmap
 =======
-*	Moar examples
+*	More examples
 *	Better replication support
 *	Provider for database declaration
 
