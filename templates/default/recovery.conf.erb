@@ -1,6 +1,3 @@
-standby_mode = on
-primary_conninfo = <%= @connect_string %>
-trigger_file = <% @trigger_file %>
-<% if @restore_string -%>
-restore_command = <%= @restore_string %>
-<% end -%>
+<%= "standby_mode = '#{@replication[:standby_mode]}'" if @replication[:standby_mode] %>
+<%= "primary_conninfo = '#{@replication[:primary_conninfo]}'" if @replication[:primary_conninfo] %>
+<%= "trigger_file = '#{@replication[:trigger_file]}'" if @replication[:trigger_file] %>

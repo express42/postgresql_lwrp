@@ -50,7 +50,7 @@ action :create do
     end.run_action(:install)
   end
 
-  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.cluster_create_options)
+  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  new_resource.cluster_create_options)
 
   cluster_users.each_pair do |cluster_user, user_options|
     create_user(cluster_user, configuration, user_options["options"])
@@ -64,7 +64,7 @@ end
 
 private
 
-def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, cluster_options)
+def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, replication, cluster_options)
   
   parsed_cluster_options = []
   cluster_options.each do |option|
@@ -135,6 +135,20 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
     end
   end
 
+  replication_template = template "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf" do
+    action :nothing
+    source "recovery.conf.erb"
+    owner "postgres"
+    group "postgres"
+    mode 0644
+    variables :replication => replication
+    if new_resource.cookbook
+      cookbook new_resource.cookbook
+    else
+      cookbook "postgresql"
+    end
+  end
+
   postgresql_service = service "postgresql" do
     status_command "su -c '/usr/lib/postgresql/#{configuration[:version]}/bin/pg_ctl \
  -D /var/lib/postgresql/#{configuration[:version]}/#{cluster_name} status' postgres"
@@ -145,6 +159,14 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
   configuration_template.run_action(:create)
   hba_template.run_action(:create)
   ident_template.run_action(:create)
+
+  replication_file = "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf"
+
+  if replication.empty?
+    ::File.exist?( replication_file ) and ::File.unlink( replication_file )
+  else
+    replication_template.run_action(:create)
+  end
 
   postgresql_service.run_action(:start)
 
