@@ -29,7 +29,7 @@ Resources/Providers
 - configuration: Hash with configuration options for postgresql. Configuration divided to sections, see examples.
 - hba_configuration: Array with hba configuration, see examples.
 - ident_configuration: Array with ident configuration, see examples.
-- replication: Hash with replication configuration. Now provider support only streaming replication. See examples. Cluster must be copied before chef run.
+- replication: Hash with replication configuration. Now provider supports only streaming replication. See examples. Cluster must be copied manually before chef run.
 
 Examples
 ========
