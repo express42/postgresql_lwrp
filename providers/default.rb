@@ -28,16 +28,18 @@
 action :create do
   cluster_databag = new_resource.databag
 
-  begin
-    cluster_users = data_bag_item(cluster_databag, 'users')['users']
-  rescue
-    cluster_users = {}
-  end
+  if cluster_databag
+    begin
+      cluster_users = data_bag_item(cluster_databag, 'users')['users']
+    rescue
+      cluster_users = {}
+    end
 
-  begin
-    cluster_databases = data_bag_item(cluster_databag, 'databases')['databases']
-  rescue
-    cluster_databases = {}
+    begin
+      cluster_databases = data_bag_item(cluster_databag, 'databases')['databases']
+    rescue
+      cluster_databases = {}
+    end
   end
 
   configuration       = Chef::Mixin::DeepMerge.merge(node.postgresql.defaults.server.to_hash, new_resource.configuration)
@@ -52,12 +54,16 @@ action :create do
 
   create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  new_resource.cluster_create_options)
 
-  cluster_users.each_pair do |cluster_user, user_options|
-    create_user(cluster_user, configuration, user_options["options"])
-  end
+  if cluster_databag
 
-  cluster_databases.each_pair do |cluster_database, database_options|
-    create_database(cluster_database, configuration, database_options["options"])
+    cluster_users.each_pair do |cluster_user, user_options|
+      create_user(cluster_user, configuration, user_options["options"])
+    end
+
+    cluster_databases.each_pair do |cluster_database, database_options|
+      create_database(cluster_database, configuration, database_options["options"])
+    end
+
   end
 
 end
