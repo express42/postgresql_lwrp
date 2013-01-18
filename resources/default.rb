@@ -27,7 +27,7 @@
 
 def initialize(*args)
     super
-      @action = :create
+    @action = :create
 end
 
 actions :create
