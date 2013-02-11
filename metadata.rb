@@ -9,3 +9,4 @@ recipe            "postgresql::client", "Installs postgresql client packages"
 recipe            "postgresql::server", "Installs postgresql server packages, configures postgresql"
 
 supports          "debian"
+supports          "ubuntu"

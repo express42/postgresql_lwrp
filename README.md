@@ -4,7 +4,7 @@ This cookbook includes recipes and provider to install and configure postgresql 
 
 Requirements
 ============
-- This cookbook version (0.1.x) tested only on Debian squeeze.
+- This cookbook version (0.1.x) tested only on Debian squeeze and Ubuntu 12.04.
 - You must have repository with Postgres version 9.x
 
 Attributes
