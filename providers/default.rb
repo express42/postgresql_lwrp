@@ -42,9 +42,9 @@ action :create do
     end
   end
 
-  configuration       = Chef::Mixin::DeepMerge.merge(node.postgresql.defaults.server.to_hash, new_resource.configuration)
-  hba_configuration   = node.postgresql.defaults.hba_configuration | new_resource.hba_configuration
-  ident_configuration = node.postgresql.defaults.ident_configuration | new_resource.ident_configuration
+  configuration       = Chef::Mixin::DeepMerge.merge(node["postgresql"]["defaults"]["server"].to_hash, new_resource.configuration)
+  hba_configuration   = node["postgresql"]["defaults"]["hba_configuration"] | new_resource.hba_configuration
+  ident_configuration = node["postgresql"]["defaults"]["ident_configuration"] | new_resource.ident_configuration
 
   unless new_resource.cluster_create_options["locale"].empty?
     system_lang = ENV['LANG']
@@ -102,7 +102,7 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
       raise "pg_createcluster #{parsed_cluster_options.join(' ')} #{configuration[:version]} #{cluster_name} - returned #{$?.exitstatus}, expected 0"
     else
       Chef::Log.info( "postgresql_cluster:create - cluster #{configuration[:version]}/#{cluster_name} created" )
-      @new_resource.updated_by_last_action(true)
+      new_resource.updated_by_last_action(true)
     end
   end
 
@@ -126,7 +126,7 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
     owner "postgres"
     group "postgres"
     mode 0644
-    variables :configuration => hba_configuration, :cluster_name => cluster_name
+    variables :configuration => hba_configuration
     if new_resource.cookbook
       cookbook new_resource.cookbook
     else
@@ -140,7 +140,7 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
     owner "postgres"
     group "postgres"
     mode 0644
-    variables :configuration => ident_configuration, :cluster_name => cluster_name
+    variables :configuration => ident_configuration
     if new_resource.cookbook
       cookbook new_resource.cookbook
     else
@@ -185,7 +185,7 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
 
   if configuration_template.updated_by_last_action? or hba_template.updated_by_last_action? or ident_template.updated_by_last_action?
     postgresql_service.run_action(:reload)
-    @new_resource.updated_by_last_action(true)
+    new_resource.updated_by_last_action(true)
   end
 
 end
