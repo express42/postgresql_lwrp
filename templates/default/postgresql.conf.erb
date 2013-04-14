@@ -61,7 +61,7 @@ external_pid_file = '/var/run/postgresql/<%= @configuration[:version] %>-<%= @cl
 
 # - Connection Settings -
 
-<% @configuration[:connection].each_pair do |parameter, value| %>
+<% @configuration[:connection].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -115,7 +115,7 @@ ssl = true				# (change requires restart)
 
 # - Memory -
 
-<% @configuration[:resources].each_pair do |parameter, value| %>
+<% @configuration[:resources].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -163,7 +163,7 @@ ssl = true				# (change requires restart)
 
 # - Settings -
 
-<% @configuration[:wal].each_pair do |parameter, value| %>
+<% @configuration[:wal].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -193,7 +193,7 @@ ssl = true				# (change requires restart)
 #checkpoint_completion_target = 0.5	# checkpoint target duration, 0.0 - 1.0
 #checkpoint_warning = 30s		# 0 disables
 
-<% @configuration[:archiving].each_pair do |parameter, value| %>
+<% @configuration[:archiving].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -212,7 +212,7 @@ ssl = true				# (change requires restart)
 
 # - Master Server -
 
-<% @configuration[:replication].each_pair do |parameter, value| %>
+<% @configuration[:replication].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -232,7 +232,7 @@ ssl = true				# (change requires restart)
 
 # These settings are ignored on a master server
 
-<% @configuration[:standby].each_pair do |parameter, value| %>
+<% @configuration[:standby].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -276,7 +276,7 @@ ssl = true				# (change requires restart)
 #cpu_operator_cost = 0.0025		# same scale as above
 #effective_cache_size = 128MB
 
-<% @configuration[:queries].each_pair do |parameter, value| %>
+<% @configuration[:queries].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -306,7 +306,7 @@ ssl = true				# (change requires restart)
 
 # - Where to Log -
 
-<% @configuration[:logging].each_pair do |parameter, value| %>
+<% @configuration[:logging].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -446,7 +446,7 @@ ssl = true				# (change requires restart)
 # - Query/Index Statistics Collector -
 
 
-<% @configuration[:statistics].each_pair do |parameter, value| %>
+<% @configuration[:statistics].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -470,7 +470,7 @@ ssl = true				# (change requires restart)
 # AUTOVACUUM PARAMETERS
 #------------------------------------------------------------------------------
 
-<% @configuration[:autovacuum].each_pair do |parameter, value| %>
+<% @configuration[:autovacuum].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -503,7 +503,7 @@ ssl = true				# (change requires restart)
 # CLIENT CONNECTION DEFAULTS
 #------------------------------------------------------------------------------
 
-<% @configuration[:client_connections].each_pair do |parameter, value| %>
+<% @configuration[:client_connections].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
@@ -527,7 +527,7 @@ ssl = true				# (change requires restart)
 
 # - Locale and Formatting -
 
-<% @configuration[:locale].each_pair do |parameter, value| %>
+<% @configuration[:locale].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
 
