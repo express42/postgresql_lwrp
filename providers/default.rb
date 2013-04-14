@@ -4,7 +4,7 @@
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) LLC 2012 Express 42
+# Copyright (C) 2012-2013 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -46,10 +46,19 @@ action :create do
   hba_configuration   = node.postgresql.defaults.hba_configuration | new_resource.hba_configuration
   ident_configuration = node.postgresql.defaults.ident_configuration | new_resource.ident_configuration
 
+  unless new_resource.cluster_create_options["locale"].empty?
+    system_lang = ENV['LANG']
+    ENV['LANG'] = new_resource.cluster_create_options["locale"]
+  end
+
   %W{postgresql-#{configuration[:version]} postgresql-server-dev-all}.each do |pkg|
     package pkg do
       action :nothing
     end.run_action(:install)
+  end
+
+  unless new_resource.cluster_create_options["locale"].empty?
+    ENV['LANG'] = system_lang
   end
 
   create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  new_resource.cluster_create_options)
@@ -73,15 +82,13 @@ private
 def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, replication, cluster_options)
   
   parsed_cluster_options = []
-  cluster_options.each do |option|
-    parsed_cluster_options << "--locale #{option[:locale]}" if option[:locale]
-    parsed_cluster_options << "--lc-collate #{option[:'lc-collate']}" if option[:'lc-collate']
-    parsed_cluster_options << "--lc-ctype #{option[:'lc-ctype']}" if option[:'lc-ctype']
-    parsed_cluster_options << "--lc-messages #{option[:'lc-messages']}" if option[:'lc-messages']
-    parsed_cluster_options << "--lc-monetary #{option[:'lc-monetary']}" if option[:'lc-monetary']
-    parsed_cluster_options << "--lc-numeric #{option[:'lc-numeric']}" if option[:'lc-numeric']
-    parsed_cluster_options << "--lc-time #{option[:'lc-time']}" if option[:'lc-time']
-  end
+  parsed_cluster_options << "--locale #{cluster_options[:locale]}" if cluster_options[:locale]
+  parsed_cluster_options << "--lc-collate #{cluster_options[:'lc-collate']}" if cluster_options[:'lc-collate']
+  parsed_cluster_options << "--lc-ctype #{cluster_options[:'lc-ctype']}" if cluster_options[:'lc-ctype']
+  parsed_cluster_options << "--lc-messages #{cluster_options[:'lc-messages']}" if cluster_options[:'lc-messages']
+  parsed_cluster_options << "--lc-monetary #{cluster_options[:'lc-monetary']}" if cluster_options[:'lc-monetary']
+  parsed_cluster_options << "--lc-numeric #{cluster_options[:'lc-numeric']}" if cluster_options[:'lc-numeric']
+  parsed_cluster_options << "--lc-time #{cluster_options[:'lc-time']}" if cluster_options[:'lc-time']
 
   if ::File.exist?("/etc/postgresql/#{configuration[:version]}/#{cluster_name}/postgresql.conf")
     Chef::Log.info("postgresql_cluster:create - cluster #{configuration[:version]}/#{cluster_name} already exists, skiping")
