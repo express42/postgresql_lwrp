@@ -2,6 +2,10 @@ Description
 ===========
 This cookbook includes recipes and provider to install and configure postgresql database. This cookbook was tested with Postgresql 9.1 and 9.2, and should work with 9.0 too.
 
+Changelog
+=========
+See CHANGELOG.md
+
 Requirements
 ============
 - This cookbook version (0.1.x) tested only on Debian squeeze and Ubuntu 12.04.
@@ -64,7 +68,7 @@ Example master database setup:
 Example slave database setup:
 	
 	postgresql "main" do
-	cluster_create_options [ "locale" => "ru_RU.UTF-8" ]
+	cluster_create_options( "locale" => "ru_RU.UTF-8" )
   		configuration(
   		:version => "9.1",
   		:connection => {
@@ -92,18 +96,12 @@ Example slave database setup:
 	end
 
 
-Roadmap
-=======
-*	More examples
-*	Better replication support
-*	Provider for database declaration
-
 License and Author
 ==================
 
 Author:: Nikita Borzykh (<nikita@express42.com>)
 
-Copyright (C) LLC 2012 Express 42
+Copyright (C) 2012-2013 LLC Express 42
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
