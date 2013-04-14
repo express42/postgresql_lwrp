@@ -8,8 +8,8 @@ See CHANGELOG.md
 
 Requirements
 ============
-- This cookbook version (0.1.x) tested only on Debian squeeze and Ubuntu 12.04.
-- You must have repository with Postgres version 9.x
+- This cookbook version (0.2.x) tested only on Debian squeeze and Ubuntu 12.04.
+- You must have apt repository with Postgres version 9.x
 
 Attributes
 ==========
@@ -40,7 +40,7 @@ Examples
 Example master database setup:
 
 	postgresql "main" do
-	cluster_create_options [ "locale" => "ru_RU.UTF-8" ]
+	cluster_create_options( "locale" => "ru_RU.UTF-8" )
   		configuration(
   		:version => "9.1",
   		:connection => {
