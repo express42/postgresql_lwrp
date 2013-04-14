@@ -4,7 +4,7 @@
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) LLC 2012 Express 42
+# Copyright (C) 2012-2013 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -34,8 +34,8 @@ actions :create
 
 attribute :cluster_name, :kind_of => String, :name_attribute => true
 attribute :cookbook, :kind_of => String
-attribute :databag, :kind_of => String              #, :required => true
-attribute :cluster_create_options, :kind_of => Array
+attribute :databag, :kind_of => String
+attribute :cluster_create_options, :kind_of => Hash, :default => {}
 attribute :configuration, :kind_of => Hash, :default => {}
 attribute :hba_configuration, :kind_of => Array, :default => []
 attribute :ident_configuration, :kind_of => Array, :default => []
