@@ -1,3 +1,9 @@
+## 0.2.1 (Apr 14, 2013)
+
+### Minor fixes
+
+* Style fixes to satisfy foodcritic wishes
+
 ## 0.2.0 (Apr 14, 2013)
 
 ### Improvements
