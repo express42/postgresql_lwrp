@@ -46,7 +46,7 @@ action :create do
   hba_configuration   = node["postgresql"]["defaults"]["hba_configuration"] | new_resource.hba_configuration
   ident_configuration = node["postgresql"]["defaults"]["ident_configuration"] | new_resource.ident_configuration
 
-  unless new_resource.cluster_create_options["locale"].empty?
+  if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
     system_lang = ENV['LANG']
     ENV['LANG'] = new_resource.cluster_create_options["locale"]
   end
@@ -57,7 +57,7 @@ action :create do
     end.run_action(:install)
   end
 
-  unless new_resource.cluster_create_options["locale"].empty?
+  if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
     ENV['LANG'] = system_lang
   end
 
