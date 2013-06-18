@@ -37,3 +37,4 @@ attribute :hba_configuration, :kind_of => Array, :default => []
 attribute :ident_configuration, :kind_of => Array, :default => []
 attribute :initial_files, :kind_of => Array, :default => []
 attribute :replication, :kind_of => Hash, :default => {}
+attribute :ssl_certificate, :kind_of => [Hash,String], :default => {}

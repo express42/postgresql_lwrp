@@ -46,6 +46,12 @@ action :create do
   hba_configuration   = node["postgresql"]["defaults"]["hba_configuration"] | new_resource.hba_configuration
   ident_configuration = node["postgresql"]["defaults"]["ident_configuration"] | new_resource.ident_configuration
 
+  ssl_certificate = if not new_resource.ssl_certificate.kind_of?(String)
+    Chef::Mixin::DeepMerge.merge(node["postgresql"]["defaults"]["ssl_certificate"].to_hash, new_resource.ssl_certificate)
+  else
+    new_resource.ssl_certificate
+  end
+
   if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
     system_lang = ENV['LANG']
     ENV['LANG'] = new_resource.cluster_create_options["locale"]
@@ -61,7 +67,7 @@ action :create do
     ENV['LANG'] = system_lang
   end
 
-  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  new_resource.cluster_create_options)
+  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication, Mash.new(new_resource.cluster_create_options), ssl_certificate)
 
   if cluster_databag
 
@@ -79,16 +85,41 @@ end
 
 private
 
-def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, replication, cluster_options)
-  
+def generate_self_signed_certificate(ssl_cert_subj, key_length = 2048)
+
+  cert_subj = "/C=#{ssl_cert_subj[:C]}/ST=#{ssl_cert_subj[:ST]}/L=#{ssl_cert_subj[:L]}/O=#{ssl_cert_subj[:O]}/CN=#{ssl_cert_subj[:CN]}"
+
+  key = OpenSSL::PKey::RSA.generate(key_length)
+  pub = key.public_key
+  ca = OpenSSL::X509::Name.parse(cert_subj)
+  cert = OpenSSL::X509::Certificate.new
+  cert.version = 2
+  cert.serial = 1
+  cert.subject = ca
+  cert.issuer = ca
+  cert.public_key = pub
+  cert.not_before = Time.now
+  cert.not_after = Time.now + (10 * 360 * 24 * 3600)
+
+  return { 'certificate' => cert.to_pem, 'private_key' => key.to_pem }
+end
+
+
+def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, replication, cluster_options, ssl_certificate)
+
   parsed_cluster_options = []
-  parsed_cluster_options << "--locale #{cluster_options[:locale]}" if cluster_options[:locale]
-  parsed_cluster_options << "--lc-collate #{cluster_options[:'lc-collate']}" if cluster_options[:'lc-collate']
-  parsed_cluster_options << "--lc-ctype #{cluster_options[:'lc-ctype']}" if cluster_options[:'lc-ctype']
-  parsed_cluster_options << "--lc-messages #{cluster_options[:'lc-messages']}" if cluster_options[:'lc-messages']
-  parsed_cluster_options << "--lc-monetary #{cluster_options[:'lc-monetary']}" if cluster_options[:'lc-monetary']
-  parsed_cluster_options << "--lc-numeric #{cluster_options[:'lc-numeric']}" if cluster_options[:'lc-numeric']
-  parsed_cluster_options << "--lc-time #{cluster_options[:'lc-time']}" if cluster_options[:'lc-time']
+  parsed_cluster_options << "--locale #{cluster_options['locale']}" if cluster_options['locale']
+  parsed_cluster_options << "--lc-collate #{cluster_options['lc-collate']}" if cluster_options['lc-collate']
+  parsed_cluster_options << "--lc-ctype #{cluster_options['lc-ctype']}" if cluster_options['lc-ctype']
+  parsed_cluster_options << "--lc-messages #{cluster_options['lc-messages']}" if cluster_options['lc-messages']
+  parsed_cluster_options << "--lc-monetary #{cluster_options['lc-monetary']}" if cluster_options['lc-monetary']
+  parsed_cluster_options << "--lc-numeric #{cluster_options['lc-numeric']}" if cluster_options['lc-numeric']
+  parsed_cluster_options << "--lc-time #{cluster_options['lc-time']}" if cluster_options['lc-time']
+
+  ssl_cert_path = "/var/lib/postgresql/#{configuration['version']}/#{cluster_name}/server.crt"
+  ssl_key_path = "/var/lib/postgresql/#{configuration['version']}/#{cluster_name}/server.key"
+
+  ssl_certs = { 'certificate' => 'REPLACE ME', 'private_key' => 'REPLACE ME' }
 
   if ::File.exist?("/etc/postgresql/#{configuration[:version]}/#{cluster_name}/postgresql.conf")
     Chef::Log.info("postgresql_cluster:create - cluster #{configuration[:version]}/#{cluster_name} already exists, skiping")
@@ -104,6 +135,33 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
       Chef::Log.info( "postgresql_cluster:create - cluster #{configuration[:version]}/#{cluster_name} created" )
       new_resource.updated_by_last_action(true)
     end
+
+    Chef::Log.info("NYAA>> #{ssl_certificate.kind_of?(String)}")
+    if ssl_certificate.kind_of?(String) and not ssl_certificate.empty?
+      ssl_certs = Chef::EncryptedDataBagItem.load('site_certificates', ssl_certificate)
+    else
+      ssl_certs = generate_self_signed_certificate(ssl_certificate['subj'],ssl_certificate['keysize'])
+    end
+
+    cert_file_res = file ssl_cert_path do
+      action :nothing
+      mode '0644'
+      owner 'postgres'
+      group 'postgres'
+      content ssl_certs['certificate']
+    end
+
+    key_file_res = file ssl_key_path do
+      action :nothing
+      mode '0600'
+      owner 'postgres'
+      group 'postgres'
+      content ssl_certs['private_key']
+    end
+
+    key_file_res.run_action(:create)
+    cert_file_res.run_action(:create)
+
   end
 
   configuration_template = template "/etc/postgresql/#{configuration[:version]}/#{cluster_name}/postgresql.conf" do
@@ -220,7 +278,7 @@ def create_database(cluster_database, configuration, database_options)
 end
 
 def create_user(cluster_user, configuration, user_options)
-  
+
   parsed_user_options = []
 
   if user_options

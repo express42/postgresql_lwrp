@@ -79,3 +79,14 @@ default["postgresql"]["defaults"]["server"]["locale"] = {
 default["postgresql"]["defaults"]["ident_configuration"] = []
 
 default["postgresql"]["defaults"]["hba_configuration"] = []
+
+default["postgresql"]["defaults"]["ssl_certificate"] = {
+  :subj => {
+    :C => 'RU',
+    :ST => 'Moscow',
+    :L => 'Moscow',
+    :O => 'Example Inc.',
+    :CN => 'localhost'
+  },
+  :keysize => 2048
+}
