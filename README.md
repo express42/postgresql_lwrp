@@ -26,75 +26,159 @@ Resources/Providers
 
 # Attribute Parameters
 
-- cluster_name: name attribute. Cluster name (e.g. main).
-- cookbook: cookbook for templates. Skip this for default templates.
-- databag: data bag for users and databases, if you don't want create users or databases with chef you can skip this.
-- cluster_create_options: options for pg_createcluster (only locale related options)
-- configuration: Hash with configuration options for postgresql. Configuration divided to sections, see examples.
-- hba_configuration: Array with hba configuration, see examples.
-- ident_configuration: Array with ident configuration, see examples.
-- replication: Hash with replication configuration. Now provider supports only streaming replication. See examples. Cluster must be copied manually before chef run.
+- `cluster_name`: name attribute. Cluster name (e.g. main).
+- `cookbook`: cookbook for templates. Skip this for default templates.
+- `databag`: data bag for users and databases, if you don't want create users or databases with chef you can skip this.
+- `cluster_create_options`: options for pg_createcluster (only locale related options)
+- `configuration`: Hash with configuration options for postgresql. Configuration divided to sections, see examples.
+- `hba_configuration`: Array with hba configuration, see examples.
+- `ident_configuration`: Array with ident configuration, see examples.
+- `replication`: Hash with replication configuration. Now provider supports only streaming replication. See examples. Cluster must be copied manually before chef run.
+- `ssl_certificate`: Accepts either Hash or String. Sting is treated like data bag item's name. Hash is treated like the options set for self-signed certificate generation. See [Ssl_certificate details](#ssl_certificate-attribute) section for more details.
+
+### ssl_certificate attribute
+
+Accepted value types are:
+
+* `Hash`
+* `String`
+
+Default value is Hash:
+
+```ruby
+{
+  :subj => {
+    :C => 'RU',
+    :ST => 'Moscow',
+    :L => 'Moscow',
+    :O => 'Example Inc.',
+    :CN => 'localhost'
+  },
+  :keysize => 2048
+}
+```
+
+These are values that are used to generate self-signed ssl certificate.
+
+Your Hash will be merged with default one. So you can safely redefine any or all of these options.
+
+If you specify the `String` instead of `Hash` it will be treated as the name for encrypted data bag item which stores your certificate. Data bag item is searched inside **site_certificates** data bag.
+
+Data bag format is:
+
+```json
+{
+  "id": "exampleid",
+  "certificate": "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----\n",
+  "private_key": "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n"
+}
+```
+
+Certificate files will be created only once - after initial PG cluster creation.
 
 Examples
 ========
-Example master database setup:
 
-	postgresql "main" do
-	cluster_create_options( "locale" => "ru_RU.UTF-8" )
-  		configuration(
-  		:version => "9.1",
-  		:connection => {
-      		:listen_addresses => "'192.168.0.1'",
-      		:max_connections => 300,
-      		:ssl_renegotiation_limit => 0
-      	},
-      	:resources => {
-      		:shared_buffers => "512MB",
-      		:maintenance_work_mem => "64MB",
-      		:work_mem => "8MB",
-    	},  
-    	:queries => {
-      		:effective_cache_size => "512MB"
-    	},
-    	:wal => { :checkpoint_completion_target => "0.9" },
-    	:logging => { :log_min_duration_statement => "200" }
-    	)
-    	hba_configuration(
-    		[ { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
-      	  	  { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" } ] 
-    	)
-	end
+### Master-Slave configuration.
 
-Example slave database setup:
-	
-	postgresql "main" do
-	cluster_create_options( "locale" => "ru_RU.UTF-8" )
-  		configuration(
-  		:version => "9.1",
-  		:connection => {
-      		:listen_addresses => "'192.168.0.10'",
-      		:max_connections => 300,
-      		:ssl_renegotiation_limit => 0
-      	},
-      	:resources => {
-      		:shared_buffers => "512MB",
-      		:maintenance_work_mem => "64MB",
-      		:work_mem => "8MB",
-    	},  
-    	:queries => {
-      		:effective_cache_size => "512MB"
-    	},
-    	:wal => { :checkpoint_completion_target => "0.9" },
-    	:logging => { :log_min_duration_statement => "200" }
-    	:standby => { :hot_standby => "on" }
-    	)
-    	hba_configuration(
-    		[ { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
-      	  	  { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" } ] 
-    	)
-    	replication( :standby_mode =>"on", :primary_conninfo => "host=192.168.0.1", :trigger_file => "/tmp/pgtrigger" )
-	end
+Master:
 
+```ruby
+postgresql "main" do
+  cluster_create_options( "locale" => "ru_RU.UTF-8" )
+  configuration(
+    :version => "9.1",
+    :connection => {
+      :listen_addresses        => "'192.168.0.1'",
+      :max_connections         => 300,
+      :ssl_renegotiation_limit => 0
+    },
+    :resources => {
+      :shared_buffers       => "512MB",
+      :maintenance_work_mem => "64MB",
+      :work_mem             => "8MB"
+    },
+    :queries => { :effective_cache_size => "512MB" },
+    :wal     => { :checkpoint_completion_target => "0.9" },
+    :logging => { :log_min_duration_statement => "200" }
+  )
+  hba_configuration(
+    [
+      { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
+      { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" }
+    ]
+  )
+end
+```
+
+Slave:
+
+```ruby
+postgresql "main" do
+  cluster_create_options( "locale" => "ru_RU.UTF-8" )
+  configuration(
+    :version => "9.1",
+    :connection => {
+      :listen_addresses        => "'192.168.0.10'",
+      :max_connections         => 300,
+      :ssl_renegotiation_limit => 0
+    },
+    :resources => {
+      :shared_buffers       => "512MB",
+      :maintenance_work_mem => "64MB",
+      :work_mem             => "8MB"
+    },
+    :queries => { :effective_cache_size => "512MB" },
+    :wal     => { :checkpoint_completion_target => "0.9" },
+    :logging => { :log_min_duration_statement => "200" },
+    :standby => { :hot_standby => "on" }
+  )
+  hba_configuration(
+    [
+      { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
+      { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" }
+    ]
+  )
+  replication(
+    :standby_mode =>"on",
+    :primary_conninfo => "host=192.168.0.1",
+    :trigger_file => "/tmp/pgtrigger"
+  )
+end
+```
+
+### SSL Certificate options:
+
+```ruby
+postgresql "main" do
+  cluster_create_options( "locale" => "ru_RU.UTF-8" )
+  configuration(
+    :version => "9.1",
+    :connection => { :listen_addresses => "'192.168.0.1'", :ssl_renegotiation_limit => 0 },
+    :resources => { :shared_buffers => "512MB", :maintenance_work_mem => "64MB", :work_mem => "8MB" },
+    :queries => { :effective_cache_size => "512MB" }
+  )
+  ssl_certificate(
+    :subj => {
+      :CN => node['fqdn']
+    },
+    :keysize => 4096
+  )
+end
+```
+
+```ruby
+postgresql "main" do
+  cluster_create_options( "locale" => "ru_RU.UTF-8" )
+  configuration(
+    :version => "9.1",
+    :connection => { :listen_addresses => "'192.168.0.1'", :ssl_renegotiation_limit => 0 },
+    :resources => { :shared_buffers => "512MB", :maintenance_work_mem => "64MB", :work_mem => "8MB" },
+    :queries => { :effective_cache_size => "512MB" }
+  )
+  ssl_certificate("example-com-ssl-files")
+end
+```
 
 License and Author
 ==================
