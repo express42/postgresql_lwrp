@@ -39,61 +39,69 @@ Examples
 ========
 Example master database setup:
 
-	postgresql "main" do
-	cluster_create_options( "locale" => "ru_RU.UTF-8" )
-  		configuration(
-  		:version => "9.1",
-  		:connection => {
-      		:listen_addresses => "'192.168.0.1'",
-      		:max_connections => 300,
-      		:ssl_renegotiation_limit => 0
-      	},
-      	:resources => {
-      		:shared_buffers => "512MB",
-      		:maintenance_work_mem => "64MB",
-      		:work_mem => "8MB",
-    	},  
-    	:queries => {
-      		:effective_cache_size => "512MB"
-    	},
-    	:wal => { :checkpoint_completion_target => "0.9" },
-    	:logging => { :log_min_duration_statement => "200" }
-    	)
-    	hba_configuration(
-    		[ { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
-      	  	  { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" } ] 
-    	)
-	end
+```ruby
+postgresql "main" do
+  cluster_create_options( "locale" => "ru_RU.UTF-8" )
+  configuration(
+    :version => "9.1",
+    :connection => {
+      :listen_addresses        => "'192.168.0.1'",
+      :max_connections         => 300,
+      :ssl_renegotiation_limit => 0
+    },
+    :resources => {
+      :shared_buffers       => "512MB",
+      :maintenance_work_mem => "64MB",
+      :work_mem             => "8MB"
+    },
+    :queries => { :effective_cache_size => "512MB" },
+    :wal     => { :checkpoint_completion_target => "0.9" },
+    :logging => { :log_min_duration_statement => "200" }
+  )
+  hba_configuration(
+    [
+      { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
+      { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" }
+    ]
+  )
+end
+```
 
 Example slave database setup:
-	
-	postgresql "main" do
-	cluster_create_options( "locale" => "ru_RU.UTF-8" )
-  		configuration(
-  		:version => "9.1",
-  		:connection => {
-      		:listen_addresses => "'192.168.0.10'",
-      		:max_connections => 300,
-      		:ssl_renegotiation_limit => 0
-      	},
-      	:resources => {
-      		:shared_buffers => "512MB",
-      		:maintenance_work_mem => "64MB",
-      		:work_mem => "8MB",
-    	},  
-    	:queries => {
-      		:effective_cache_size => "512MB"
-    	},
-    	:wal => { :checkpoint_completion_target => "0.9" },
-    	:logging => { :log_min_duration_statement => "200" }
-    	:standby => { :hot_standby => "on" }
-    	)
-    	hba_configuration(
-    		[ { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
-      	  	  { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" } ] 
-    	)
-    	replication( :standby_mode =>"on", :primary_conninfo => "host=192.168.0.1", :trigger_file => "/tmp/pgtrigger" )
-	end
+
+```ruby
+postgresql "main" do
+  cluster_create_options( "locale" => "ru_RU.UTF-8" )
+  configuration(
+    :version => "9.1",
+    :connection => {
+      :listen_addresses        => "'192.168.0.10'",
+      :max_connections         => 300,
+      :ssl_renegotiation_limit => 0
+    },
+    :resources => {
+      :shared_buffers       => "512MB",
+      :maintenance_work_mem => "64MB",
+      :work_mem             => "8MB"
+    },
+    :queries => { :effective_cache_size => "512MB" },
+    :wal     => { :checkpoint_completion_target => "0.9" },
+    :logging => { :log_min_duration_statement => "200" },
+    :standby => { :hot_standby => "on" }
+  )
+  hba_configuration(
+    [
+      { :type => "host", :database => "all", :user => "all", :address => "192.168.0.0/24", :method => "md5" },
+      { :type => "host", :database => "replication", :user => "postgres", :address => "192.168.0.10/32", :method => "trust" }
+    ]
+  )
+  replication(
+    :standby_mode =>"on",
+    :primary_conninfo => "host=192.168.0.1",
+    :trigger_file => "/tmp/pgtrigger"
+  )
+end
+```
 
 
 License and Author

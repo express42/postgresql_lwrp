@@ -4,7 +4,9 @@ default["postgresql"]["defaults"]["server"]["connection"] = {
   :listen_addresses => "localhost",
   :port => 5432,
   :max_connections => "100",
-  :unix_socket_directory => "'/var/run/postgresql'"
+  :unix_socket_directory => "'/var/run/postgresql'",
+  :ssl => true,
+  :ssl_renegotiation_limit => 0
 }
 
 default["postgresql"]["defaults"]["server"]["resources"] = {
