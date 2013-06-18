@@ -61,7 +61,7 @@ action :create do
     ENV['LANG'] = system_lang
   end
 
-  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  new_resource.cluster_create_options)
+  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  Mash.new(new_resource.cluster_create_options))
 
   if cluster_databag
 
@@ -80,7 +80,7 @@ end
 private
 
 def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, replication, cluster_options)
-  
+
   parsed_cluster_options = []
   parsed_cluster_options << "--locale #{cluster_options[:locale]}" if cluster_options[:locale]
   parsed_cluster_options << "--lc-collate #{cluster_options[:'lc-collate']}" if cluster_options[:'lc-collate']
@@ -220,7 +220,7 @@ def create_database(cluster_database, configuration, database_options)
 end
 
 def create_user(cluster_user, configuration, user_options)
-  
+
   parsed_user_options = []
 
   if user_options
