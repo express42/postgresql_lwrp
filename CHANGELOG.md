@@ -1,3 +1,12 @@
+## 0.2.3 (Jun 18, 2013)
+
+### Minor fixes
+
+* Cluster create options were defined as Hash and accessed as Mash.
+* pg_hba.conf became faulty on long db/user names or other line fields.
+* Examples in readme was badly formatted and contained small syntax issues.
+* ssl was hardcoded to postgresql.conf.
+
 ## 0.2.2 (May 8, 2013)
 
 ### Minor fixes
