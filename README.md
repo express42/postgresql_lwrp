@@ -28,7 +28,7 @@ Resources/Providers
 
 - cluster_name: name attribute. Cluster name (e.g. main).
 - cookbook: cookbook for templates. Skip this for default templates.
-- databag: data bag for users and databases, if you don't want create users or databases with chef you can skip this.
+- databag: data bag for users and databases, if you don't want create users or databases with chef you can skip this. See examples below.
 - cluster_create_options: options for pg_createcluster (only locale related options)
 - configuration: Hash with configuration options for postgresql. Configuration divided to sections, see examples.
 - hba_configuration: Array with hba configuration, see examples.
@@ -103,6 +103,53 @@ postgresql "main" do
 end
 ```
 
+Example users and databases setup
+
+```ruby
+postgresql "main" do
+  databag "my_db"
+end
+```
+
+You should have "my_db" databag with 'users' and/or 'databases' keys. For example:
+
+```javascript
+/* data_bags/my_db/users.json */
+{
+  "id": "users",
+  "users": {
+    "repmgr": {
+      "options": {
+        "replication": "yes"
+      }
+    },
+    "my_db_user": {
+      "options": {
+        "password": "this_is_password"
+      }
+    }
+  }
+}
+```
+
+```javascript
+/* data_bags/my_db/databases.json */
+{
+  "id": "databases",
+  "databases": {
+    "my_first_db": {
+      "options": {
+        "owner": "my_db_user"
+      }
+    },
+    "my_second_db": {
+      "options": {
+        "owner": "my_db_user"
+      }
+    }
+  }
+}
+```
 
 License and Author
 ==================
