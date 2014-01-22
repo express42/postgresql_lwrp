@@ -177,11 +177,10 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
 
   if replication.empty?
     ::File.exist?( replication_file ) and ::File.unlink( replication_file )
+    postgresql_service.run_action(:start)
   else
     replication_template.run_action(:create)
   end
-
-  postgresql_service.run_action(:start)
 
   if configuration_template.updated_by_last_action? or hba_template.updated_by_last_action? or ident_template.updated_by_last_action?
     postgresql_service.run_action(:reload)
