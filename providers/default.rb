@@ -106,6 +106,12 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
     end
   end
 
+
+  if configuration[:version] == '9.3'
+    configuration[:connection][:unix_socket_directories] ||= configuration[:connection][:unix_socket_directory]
+    configuration[:connection].delete :unix_socket_directory
+  end
+
   configuration_template = template "/etc/postgresql/#{configuration[:version]}/#{cluster_name}/postgresql.conf" do
     action :nothing
     source "postgresql.conf.erb"
