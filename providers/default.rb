@@ -234,7 +234,7 @@ def create_user(cluster_user, configuration, user_options)
     parsed_user_options << "UNENCRYPTED PASSWORD '#{user_options["password"]}'" if user_options["password"]
   end
 
-  io_output = IO.popen("echo 'SELECT usename FROM pg_user;' | su -c 'psql -t -A' postgres")
+  io_output = IO.popen("echo 'SELECT usename FROM pg_user;' | su -c 'psql -t -A -p #{configuration["connection"]["port"]}' postgres")
   current_users_list = io_output.readlines.map { |line| line.chop }
   io_output.close
   raise "postgresql_user:create - can't get users list" if $?.exitstatus !=0
@@ -242,7 +242,7 @@ def create_user(cluster_user, configuration, user_options)
   if current_users_list.include? cluster_user
     Chef::Log.info("postgresql_user:create - user '#{cluster_user}' already exists, skiping")
   else
-    io_output =IO.popen("echo \"CREATE USER #{cluster_user} #{parsed_user_options.join(' ')};\" | su -c 'psql -t -A' postgres")
+    io_output =IO.popen("echo \"CREATE USER #{cluster_user} #{parsed_user_options.join(' ')};\" | su -c 'psql -t -A -p #{configuration["connection"]["port"]}' postgres")
     create_response = io_output.readlines
     io_output.close
     if not create_response.include?("CREATE ROLE\n")
