@@ -29,6 +29,8 @@ def whyrun_supported?
   true
 end
 
+use_inline_resources true
+
 action :create do
 
   configuration          = Chef::Mixin::DeepMerge.merge(node["postgresql"]["defaults"]["server"].to_hash, new_resource.configuration)
@@ -93,6 +95,7 @@ action :create do
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
       end
+      new_resource.updated_by_last_action(true)
     end
   end
 
