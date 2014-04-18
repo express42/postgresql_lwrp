@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: postgresql
-# Recipe:: client
+# Recipe:: official_repository
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2014 LLC Express 42
+# Copyright (C) 2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -25,8 +25,9 @@
 # SOFTWARE.
 #
 
-%W(postgresql-client-#{node["postgresql"]["client"]["version"]} libpq-dev).each do |pkg|
-  package pkg do
-    action :install
-  end
+apt_repository 'pg-repo' do
+  uri          'http://apt.postgresql.org/pub/repos/apt/'
+  distribution node['lsb']['codename'] + "-pgdg"
+  components   ['main']
+  key          'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
 end
