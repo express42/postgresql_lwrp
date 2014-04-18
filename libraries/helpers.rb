@@ -26,5 +26,5 @@
 #
 
 def need_to_restart(advanced_options, node)
-  return false
+  false
 end

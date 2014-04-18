@@ -28,12 +28,12 @@
 actions :create
 default_action :create
 
-attribute :cluster_name, :kind_of => String, :name_attribute => true
-attribute :cookbook, :kind_of => String
-attribute :cluster_create_options, :kind_of => Hash, :default => {}
-attribute :configuration, :kind_of => Hash, :default => {}
-attribute :hba_configuration, :kind_of => Array, :default => []
-attribute :ident_configuration, :kind_of => Array, :default => []
-attribute :initial_files, :kind_of => Array, :default => []
-attribute :replication, :kind_of => Hash, :default => {}
-attribute :advanced_options, :kind_of => Hash, :default => { :restart_if_listen_change => true, :restart_if_need => false }
+attribute :cluster_name, kind_of: String, name_attribute: true
+attribute :cookbook, kind_of: String
+attribute :cluster_create_options, kind_of: Hash, default: {}
+attribute :configuration, kind_of: Hash, default: {}
+attribute :hba_configuration, kind_of: Array, default: []
+attribute :ident_configuration, kind_of: Array, default: []
+attribute :initial_files, kind_of: Array, default: []
+attribute :replication, kind_of: Hash, default: {}
+attribute :advanced_options, kind_of: Hash, default: { restart_if_listen_change: true, restart_if_need: false }

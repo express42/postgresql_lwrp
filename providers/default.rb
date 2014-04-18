@@ -33,12 +33,12 @@ use_inline_resources true
 
 action :create do
 
-  configuration          = Chef::Mixin::DeepMerge.merge(node["postgresql"]["defaults"]["server"].to_hash, new_resource.configuration)
-  hba_configuration      = node["postgresql"]["defaults"]["hba_configuration"] | new_resource.hba_configuration
-  ident_configuration    = node["postgresql"]["defaults"]["ident_configuration"] | new_resource.ident_configuration
+  configuration          = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server'].to_hash, new_resource.configuration)
+  hba_configuration      = node['postgresql']['defaults']['hba_configuration'] | new_resource.hba_configuration
+  ident_configuration    = node['postgresql']['defaults']['ident_configuration'] | new_resource.ident_configuration
 
   cluster_name           = new_resource.name
-  cluster_version        = configuration["version"]
+  cluster_version        = configuration['version']
   service_name           = "postgresql_#{cluster_version}_#{cluster_name}"
 
   replication_file       = "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf"
@@ -56,22 +56,22 @@ action :create do
   parsed_cluster_options << "--lc-numeric #{cluster_options[:'lc-numeric']}" if cluster_options[:'lc-numeric']
   parsed_cluster_options << "--lc-time #{cluster_options[:'lc-time']}" if cluster_options[:'lc-time']
 
-  if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
+  if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     system_lang = ENV['LANG']
-    ENV['LANG'] = new_resource.cluster_create_options["locale"]
+    ENV['LANG'] = new_resource.cluster_create_options['locale']
   end
 
-  %W{postgresql-#{configuration["version"]} postgresql-server-dev-all}.each do |pkg|
+  %W(postgresql-#{configuration["version"]} postgresql-server-dev-all).each do |pkg|
     package pkg do
       action :install
     end.run_action(:install)
   end
 
-  if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
+  if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     ENV['LANG'] = system_lang
   end
 
-  execute "Exec pg_createcluster" do
+  execute 'Exec pg_createcluster' do
     command "pg_createcluster #{parsed_cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
     not_if { ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") }
   end
@@ -83,11 +83,11 @@ action :create do
     restart_command "pg_ctlcluster #{cluster_version} #{cluster_name} restart"
     status_command "su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
  -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres"
-    supports :status => true, :restart => true, :reload => true
+    supports status: true, restart: true, reload: true
     action :nothing
   end
 
-  ruby_block "restart_service" do
+  ruby_block 'restart_service' do
     action :nothing
     block do
       if need_to_restart(advanced_options, node)
@@ -100,68 +100,68 @@ action :create do
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf" do
-    source "postgresql.conf.erb"
-    owner "postgres"
-    group "postgres"
+    source 'postgresql.conf.erb'
+    owner 'postgres'
+    group 'postgres'
     mode 0644
-    variables :configuration => configuration, :cluster_name => cluster_name
+    variables configuration: configuration, cluster_name: cluster_name
     if new_resource.cookbook
       cookbook new_resource.cookbook
     else
-      cookbook "postgresql"
+      cookbook 'postgresql'
     end
-    notifies :create, "ruby_block[restart_service]", :delayed
+    notifies :create, 'ruby_block[restart_service]', :delayed
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_hba.conf" do
-    source "pg_hba.conf.erb"
-    owner "postgres"
-    group "postgres"
+    source 'pg_hba.conf.erb'
+    owner 'postgres'
+    group 'postgres'
     mode 0644
-    variables :configuration => hba_configuration
+    variables configuration: hba_configuration
     if new_resource.cookbook
       cookbook new_resource.cookbook
     else
-      cookbook "postgresql"
+      cookbook 'postgresql'
     end
-    notifies :create, "ruby_block[restart_service]", :delayed
+    notifies :create, 'ruby_block[restart_service]', :delayed
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_ident.conf" do
-    source "pg_hba.conf.erb"
-    owner "postgres"
-    group "postgres"
+    source 'pg_hba.conf.erb'
+    owner 'postgres'
+    group 'postgres'
     mode 0644
-    variables :configuration => ident_configuration
+    variables configuration: ident_configuration
     if new_resource.cookbook
       cookbook new_resource.cookbook
     else
-      cookbook "postgresql"
+      cookbook 'postgresql'
     end
-    notifies :create, "ruby_block[restart_service]", :delayed
+    notifies :create, 'ruby_block[restart_service]', :delayed
   end
 
   if replication.empty?
 
     file replication_file do
       action :delete
-      notifies :create, "ruby_block[restart_service]", :delayed
+      notifies :create, 'ruby_block[restart_service]', :delayed
     end
 
   else
 
     template "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf" do
-      source "recovery.conf.erb"
-      owner "postgres"
-      group "postgres"
+      source 'recovery.conf.erb'
+      owner 'postgres'
+      group 'postgres'
       mode 0644
-      variables :replication => replication
+      variables replication: replication
       if new_resource.cookbook
         cookbook new_resource.cookbook
       else
-        cookbook "postgresql"
+        cookbook 'postgresql'
       end
-    notifies :create, "ruby_block[restart_service]", :delayed
+      notifies :create, 'ruby_block[restart_service]', :delayed
     end
 
   end

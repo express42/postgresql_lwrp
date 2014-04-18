@@ -1,1 +1,1 @@
-default["postgresql"]["client"]["version"] = "9.1"
+default['postgresql']['client']['version'] = '9.1'
