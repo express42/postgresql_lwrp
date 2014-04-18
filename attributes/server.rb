@@ -1,4 +1,4 @@
-default['postgresql']['defaults']['server']['version'] = '9.1'
+default['postgresql']['defaults']['server']['version'] = '9.2'
 
 default['postgresql']['defaults']['server']['connection'] = {
   listen_addresses: 'localhost',
