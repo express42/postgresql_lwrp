@@ -4,7 +4,7 @@
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2013 LLC Express 42
+# Copyright (C) 2012-2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -29,7 +29,7 @@ actions :create
 default_action :create
 
 attribute :cluster_name, kind_of: String, name_attribute: true
-attribute :cookbook, kind_of: String
+attribute :cookbook, kind_of: String, default: "postgresql"
 attribute :cluster_create_options, kind_of: Hash, default: {}
 attribute :configuration, kind_of: Hash, default: {}
 attribute :hba_configuration, kind_of: Array, default: []

@@ -4,7 +4,7 @@
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2013 LLC Express 42
+# Copyright (C) 2012-2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -105,11 +105,7 @@ action :create do
     group 'postgres'
     mode 0644
     variables configuration: configuration, cluster_name: cluster_name
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook 'postgresql'
-    end
+    cookbook new_resource.cookbook
     notifies :create, 'ruby_block[restart_service]', :delayed
   end
 
@@ -119,11 +115,7 @@ action :create do
     group 'postgres'
     mode 0644
     variables configuration: hba_configuration
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook 'postgresql'
-    end
+    cookbook new_resource.cookbook
     notifies :create, 'ruby_block[restart_service]', :delayed
   end
 
