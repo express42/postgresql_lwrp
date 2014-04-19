@@ -27,7 +27,7 @@
 
 apt_repository 'pg-repo' do
   uri          'http://apt.postgresql.org/pub/repos/apt/'
-  distribution node['lsb']['codename'] + "-pgdg"
+  distribution node['lsb']['codename'] + '-pgdg'
   components   ['main']
   key          'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
 end
