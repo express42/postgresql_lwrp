@@ -72,12 +72,17 @@ default['postgresql']['defaults']['server']['client_connections'] = {
 }
 default['postgresql']['defaults']['server']['locale'] = {
   lc_messages: "'en_US.UTF-8'",
-  lc_monetary: "'ru_RU.UTF-8'",
-  lc_numeric: "'ru_RU.UTF-8'",
-  lc_time: "'ru_RU.UTF-8'",
+  lc_monetary: "'en_US.UTF-8'",
+  lc_numeric: "'en_US.UTF-8'",
+  lc_time: "'en_US.UTF-8'",
   default_text_search_config: "'pg_catalog.russian'"
 }
 
 default['postgresql']['defaults']['ident_configuration'] = []
 
-default['postgresql']['defaults']['hba_configuration'] = []
+default['postgresql']['defaults']['hba_configuration'] = [
+  { type: 'local', database: 'all', user: 'postgres', address: '',        method: 'peer' },
+  { type: 'local', database: 'all', user: 'all', address: '',             method: 'peer' },
+  { type: 'host',  database: 'all', user: 'all', address: '127.0.0.1/32', method: 'md5'  },
+  { type: 'host',  database: 'all', user: 'all', address: '::1/128',      method: 'md5'  }
+]
