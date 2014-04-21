@@ -10,6 +10,7 @@ postgresql 'main' do
   cluster_create_options('locale' => 'ru_RU.UTF-8')
   configuration(
     connection: {
+      listen_addresses: "'*'",
       max_connections: 300,
       ssl_renegotiation_limit: 0
     },
