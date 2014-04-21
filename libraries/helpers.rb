@@ -4,7 +4,7 @@
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2013 LLC Express 42
+# Copyright (C) 2012-2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
