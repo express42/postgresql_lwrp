@@ -53,6 +53,10 @@ test/*
 features/*
 Guardfile
 Procfile
+.kitchen.yml
+.kitchen/*
+.rubocop.yml
+Thorfile
 
 # SCM #
 #######
@@ -69,6 +73,8 @@ Procfile
 
 # Berkshelf #
 #############
+Berksfile
+Berksfile.lock
 cookbooks/*
 tmp
 
