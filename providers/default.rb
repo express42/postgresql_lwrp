@@ -25,7 +25,6 @@
 # SOFTWARE.
 #
 
-
 use_inline_resources
 
 include Postgresql::Helpers
@@ -166,7 +165,7 @@ action :create do
 
   ruby_block 'start_service' do
     block do
-        run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :start, self))
+      run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :start, self))
     end
     not_if { pg_running?(cluster_version, cluster_name) }
   end
