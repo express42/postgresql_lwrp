@@ -27,10 +27,36 @@
 
 # Postgreql modules
 module Postgresql
-  # Helper module
+  # Helpers module
   module Helpers
-    def need_to_restart(advanced_options, node)
-      false
+    def exec_in_pg_cluster(cluster_version, cluster_name, sql)
+      return false unless pg_running?(cluster_version, cluster_name)
+      postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
+      pg_port = postmaster_content[3].to_i
+      psql_status = Mixlib::ShellOut.new("su -c 'psql -p #{pg_port} -q -t -c \"#{sql};\"' postgres")
+      psql_status.run_command
+      psql_status.stdout
+    end
+
+    def need_to_restart(cluster_version, cluster_name, advanced_options, node)
+      if advanced_options[:restart_if_first_run]
+        if defined?(node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
+          false
+        else
+          true
+        end
+      end
+    end
+
+    def pg_running?(cluster_version, cluster_name)
+      pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
+        -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres")
+      pg_status.run_command
+      if pg_status.stdout =~ /server\ is\ running/
+        return true
+      else
+        return false
+      end
     end
   end
 end

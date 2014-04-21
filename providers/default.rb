@@ -29,17 +29,6 @@ use_inline_resources
 
 include Postgresql::Helpers
 
-def pg_running?(cluster_version, cluster_name)
-  pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
- -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres")
-  pg_status.run_command
-  if pg_status.stdout =~ /server\ is\ running/
-    return true
-  else
-    return false
-  end
-end
-
 action :create do
 
   configuration          = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server'].to_hash, new_resource.configuration)
@@ -85,6 +74,7 @@ action :create do
   end
 
   postgresql_service = service service_name do
+    action :nothing
     start_command "pg_ctlcluster #{cluster_version} #{cluster_name} start"
     stop_command "pg_ctlcluster #{cluster_version} #{cluster_name} stop"
     reload_command "pg_ctlcluster #{cluster_version} #{cluster_name} reload"
@@ -92,13 +82,20 @@ action :create do
     status_command "su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
  -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres"
     supports status: true, restart: true, reload: true
+    notifies :create, 'ruby_block[set_success_mark]', :delayed
+  end
+
+  ruby_block 'set_success_mark' do
     action :nothing
+    block do
+      node.normal['postgresql'][cluster_version][cluster_name]['success_at_least_once'] = true
+    end
   end
 
   ruby_block 'restart_service' do
     action :nothing
     block do
-      if need_to_restart(advanced_options, node)
+      if need_to_restart(cluster_version, cluster_name, advanced_options, node)
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :restart, self))
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
@@ -163,4 +160,5 @@ action :create do
     end
     not_if { pg_running?(cluster_version, cluster_name) }
   end
+
 end
