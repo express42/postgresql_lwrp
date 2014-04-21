@@ -1,5 +1,10 @@
 include_recipe 'postgresql::official_repository'
 include_recipe 'postgresql::default'
+include_recipe 'sysctl::default'
+
+sysctl_param 'kernel.shmmax' do
+  value 68_719_476_736
+end
 
 postgresql 'main' do
   cluster_create_options('locale' => 'ru_RU.UTF-8')

@@ -7,5 +7,6 @@ version          '1.0.0'
 
 depends          'postgresql'
 depends          'apt'
+depends          'sysctl'
 supports         'debian'
 supports         'ubuntu'
