@@ -25,6 +25,8 @@
 # SOFTWARE.
 #
 
+include Postgresql::Helpers
+
 use_inline_resources
 
 def pg_running?(cluster_version, cluster_name)
