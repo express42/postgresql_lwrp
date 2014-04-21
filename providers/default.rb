@@ -25,9 +25,10 @@
 # SOFTWARE.
 #
 
-include Postgresql::Helpers
 
 use_inline_resources
+
+include Postgresql::Helpers
 
 def pg_running?(cluster_version, cluster_name)
   pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
