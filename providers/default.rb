@@ -27,6 +27,17 @@
 
 use_inline_resources
 
+def pg_running?(cluster_version, cluster_name)
+  pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
+ -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres")
+  pg_status.run_command
+  if pg_status.stdout =~ /server\ is\ running/
+    return true
+  else
+    return false
+  end
+end
+
 action :create do
 
   configuration          = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server'].to_hash, new_resource.configuration)
@@ -52,21 +63,25 @@ action :create do
   parsed_cluster_options << "--lc-numeric #{cluster_options[:'lc-numeric']}" if cluster_options[:'lc-numeric']
   parsed_cluster_options << "--lc-time #{cluster_options[:'lc-time']}" if cluster_options[:'lc-time']
 
+  # Locale hack
   if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     system_lang = ENV['LANG']
     ENV['LANG'] = new_resource.cluster_create_options['locale']
   end
 
+  # Install packages
   %W(postgresql-#{configuration["version"]} postgresql-server-dev-all).each do |pkg|
     package pkg do
       action :install
     end.run_action(:install)
   end
 
+  # Return locale
   if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     ENV['LANG'] = system_lang
   end
 
+  # Create postgresql cluster
   execute 'Exec pg_createcluster' do
     command "pg_createcluster #{parsed_cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
     not_if { ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") }
@@ -121,11 +136,7 @@ action :create do
     group 'postgres'
     mode 0644
     variables configuration: ident_configuration
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook 'postgresql'
-    end
+    cookbook new_resource.cookbook
     notifies :create, 'ruby_block[restart_service]', :delayed
   end
 
@@ -144,13 +155,16 @@ action :create do
       group 'postgres'
       mode 0644
       variables replication: replication
-      if new_resource.cookbook
-        cookbook new_resource.cookbook
-      else
-        cookbook 'postgresql'
-      end
+      cookbook new_resource.cookbook
       notifies :create, 'ruby_block[restart_service]', :delayed
     end
 
+  end
+
+  ruby_block 'start_service' do
+    block do
+        run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :start, self))
+    end
+    not_if { pg_running?(cluster_version, cluster_name) }
   end
 end
