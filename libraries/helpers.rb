@@ -25,7 +25,9 @@
 # SOFTWARE.
 #
 
+# Postgreql modules
 module Postgresql
+  # Helper module
   module Helpers
     def need_to_restart(advanced_options, node)
       false
