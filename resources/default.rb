@@ -36,4 +36,4 @@ attribute :hba_configuration, kind_of: Array, default: []
 attribute :ident_configuration, kind_of: Array, default: []
 attribute :initial_files, kind_of: Array, default: []
 attribute :replication, kind_of: Hash, default: {}
-attribute :advanced_options, kind_of: Hash, default: { restart_if_listen_change: true, restart_if_need: false }
+attribute :advanced_options, kind_of: Hash, default: { restart_if_first_run: true }
