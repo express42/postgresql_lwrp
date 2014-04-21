@@ -57,13 +57,10 @@ action :create do
   cluster_options        = Mash.new(new_resource.cluster_create_options)
 
   parsed_cluster_options = []
-  parsed_cluster_options << "--locale #{cluster_options[:locale]}" if cluster_options[:locale]
-  parsed_cluster_options << "--lc-collate #{cluster_options[:'lc-collate']}" if cluster_options[:'lc-collate']
-  parsed_cluster_options << "--lc-ctype #{cluster_options[:'lc-ctype']}" if cluster_options[:'lc-ctype']
-  parsed_cluster_options << "--lc-messages #{cluster_options[:'lc-messages']}" if cluster_options[:'lc-messages']
-  parsed_cluster_options << "--lc-monetary #{cluster_options[:'lc-monetary']}" if cluster_options[:'lc-monetary']
-  parsed_cluster_options << "--lc-numeric #{cluster_options[:'lc-numeric']}" if cluster_options[:'lc-numeric']
-  parsed_cluster_options << "--lc-time #{cluster_options[:'lc-time']}" if cluster_options[:'lc-time']
+
+  %w(locale lc-collate lc-ctype lc-messages lc-monetary lc-numeric lc-time).each do |option|
+    parsed_cluster_options << "--#{option} #{cluster_options[:locale]}" if cluster_options[option]
+  end
 
   # Locale hack
   if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
@@ -73,9 +70,7 @@ action :create do
 
   # Install packages
   %W(postgresql-#{configuration["version"]} postgresql-server-dev-all).each do |pkg|
-    package pkg do
-      action :install
-    end.run_action(:install)
+    package pkg
   end
 
   # Return locale
@@ -108,7 +103,6 @@ action :create do
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
       end
-      new_resource.updated_by_last_action(true)
     end
   end
 
