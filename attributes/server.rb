@@ -5,7 +5,7 @@ default['postgresql']['defaults']['server']['connection'] = {
   port: 5432,
   max_connections: '100',
   unix_socket_directory: "'/var/run/postgresql'",
-  ssl: true,
+  ssl: false,
   ssl_renegotiation_limit: 0
 }
 
