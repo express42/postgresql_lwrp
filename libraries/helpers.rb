@@ -38,7 +38,7 @@ class Chef
         psql_status.run_command
         Chef::Log.info(psql_status.stdout)
         Chef::Log.info(psql_status.stderr)
-        return psql_status.stdout, psql_status.stderr
+        [psql_status.stdout, psql_status.stderr]
       end
 
       def need_to_restart(cluster_version, cluster_name, advanced_options, node)
@@ -64,22 +64,21 @@ class Chef
 
       def create_user(cluster_version, cluster_name, cluster_user, options)
         parsed_options = options
-        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "SELECT usename FROM pg_user;")
-        raise "postgresql create_user: can't get users list" unless stderr.empty?
+        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT usename FROM pg_user;')
+        fail "postgresql create_user: can't get users list" unless stderr.empty?
 
         if stdout.include? cluster_user
           log("postgresql create_user: user '#{cluster_user}' already exists, skiping")
 
         else
-          stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name,"CREATE USER #{cluster_user} #{parsed_options.join(' ')};")
+          stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE USER #{cluster_user} #{parsed_options.join(' ')};")
 
           unless stdout.include?("CREATE ROLE\n")
-            raise "postgresql create_user: can't create user #{cluster_user}"
+            fail "postgresql create_user: can't create user #{cluster_user}"
           end
 
           log("postgresql create_user: user '#{cluster_user}' created")
         end
-
       end
     end
   end
