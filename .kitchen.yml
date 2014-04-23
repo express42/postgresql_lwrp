@@ -12,4 +12,6 @@ suites:
   - name: default
     run_list:
       - recipe[pgtest::master]
+      - recipe[pgtest::create_user]
+      - recipe[pgtest::create_database]
     attributes:
