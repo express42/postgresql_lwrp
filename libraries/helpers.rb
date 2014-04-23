@@ -34,7 +34,7 @@ class Chef
         return false unless pg_running?(cluster_version, cluster_name)
         postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
         pg_port = postmaster_content[3].to_i
-        psql_status = Mixlib::ShellOut.new("su -c 'psql -p #{pg_port} -t -c \"#{sql};\"' postgres")
+        psql_status = Mixlib::ShellOut.new("echo -n \"#{sql};\" | su -c 'psql -t -p #{pg_port}' postgres")
         psql_status.run_command
         Chef::Log.info(psql_status.stdout)
         Chef::Log.info(psql_status.stderr)
@@ -63,21 +63,32 @@ class Chef
       end
 
       def create_user(cluster_version, cluster_name, cluster_user, options)
-        parsed_options = options
-        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT usename FROM pg_user;')
+        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT usename FROM pg_user')
         fail "postgresql create_user: can't get users list" unless stderr.empty?
 
         if stdout.include? cluster_user
           log("postgresql create_user: user '#{cluster_user}' already exists, skiping")
+          return nil
 
         else
-          stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE USER #{cluster_user} #{parsed_options.join(' ')};")
-
-          unless stdout.include?("CREATE ROLE\n")
-            fail "postgresql create_user: can't create user #{cluster_user}"
-          end
-
+          stdout, _ = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE USER #{cluster_user} #{options.map { |t| t.join(" ") }.join(" ")}")
+          fail "postgresql create_user: can't create user #{cluster_user}" unless stdout.include?("CREATE ROLE\n")
           log("postgresql create_user: user '#{cluster_user}' created")
+        end
+      end
+
+      def create_database(cluster_version, cluster_name, cluster_database, options)
+        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT datname FROM pg_database')
+        fail "postgresql create_database: can't get database list" unless stderr.empty?
+
+        if stdout.include? cluster_database
+          log("postgresql create_database: database '#{cluster_database}' already exists, skiping")
+          return nil
+
+        else
+          stdout, _ = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE DATABASE #{cluster_database} #{options.map { |t| t.join(" ") }.join(" ")}")
+          fail "postgresql create_database: can't create database #{cluster_database}" unless stdout.include?("CREATE DATABASE\n")
+          log("postgresql create_database: database '#{cluster_database}' created")
         end
       end
     end
