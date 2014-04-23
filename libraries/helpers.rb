@@ -25,37 +25,61 @@
 # SOFTWARE.
 #
 
-# Postgreql modules
-module Postgresql
-  # Helpers module
-  module Helpers
-    def exec_in_pg_cluster(cluster_version, cluster_name, sql)
-      return false unless pg_running?(cluster_version, cluster_name)
-      postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
-      pg_port = postmaster_content[3].to_i
-      psql_status = Mixlib::ShellOut.new("su -c 'psql -p #{pg_port} -q -t -c \"#{sql};\"' postgres")
-      psql_status.run_command
-      psql_status.stdout
-    end
+class Chef
+  # Postgreql modules
+  module Postgresql
+    # Helpers module
+    module Helpers
+      def exec_in_pg_cluster(cluster_version, cluster_name, sql)
+        return false unless pg_running?(cluster_version, cluster_name)
+        postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
+        pg_port = postmaster_content[3].to_i
+        psql_status = Mixlib::ShellOut.new("su -c 'psql -p #{pg_port} -t -c \"#{sql};\"' postgres")
+        psql_status.run_command
+        Chef::Log.info(psql_status.stdout)
+        Chef::Log.info(psql_status.stderr)
+        return psql_status.stdout, psql_status.stderr
+      end
 
-    def need_to_restart(cluster_version, cluster_name, advanced_options, node)
-      if advanced_options[:restart_if_first_run]
-        if defined?(node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
-          false
-        else
-          true
+      def need_to_restart(cluster_version, cluster_name, advanced_options, node)
+        if advanced_options[:restart_if_first_run]
+          if defined?(node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
+            false
+          else
+            true
+          end
         end
       end
-    end
 
-    def pg_running?(cluster_version, cluster_name)
-      pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
-        -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres")
-      pg_status.run_command
-      if pg_status.stdout =~ /server\ is\ running/
-        return true
-      else
-        return false
+      def pg_running?(cluster_version, cluster_name)
+        pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
+          -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres")
+        pg_status.run_command
+        if pg_status.stdout =~ /server\ is\ running/
+          return true
+        else
+          return false
+        end
+      end
+
+      def create_user(cluster_version, cluster_name, cluster_user, options)
+        parsed_options = options
+        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "SELECT usename FROM pg_user;")
+        raise "postgresql create_user: can't get users list" unless stderr.empty?
+
+        if stdout.include? cluster_user
+          log("postgresql create_user: user '#{cluster_user}' already exists, skiping")
+
+        else
+          stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name,"CREATE USER #{cluster_user} #{parsed_options.join(' ')};")
+
+          unless stdout.include?("CREATE ROLE\n")
+            raise "postgresql create_user: can't create user #{cluster_user}"
+          end
+
+          log("postgresql create_user: user '#{cluster_user}' created")
+        end
+
       end
     end
   end
