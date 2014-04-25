@@ -14,6 +14,10 @@ postgresql 'main' do
       max_connections: 300,
       ssl_renegotiation_limit: 0
     },
+    :archiving => {
+      :archive_mode => "on",
+      :archive_command => "'exit 0'"
+    },
     resources: {
       shared_buffers: '64MB',
       maintenance_work_mem: '8MB',
@@ -26,7 +30,7 @@ postgresql 'main' do
   hba_configuration(
     [
       { type: 'host', database: 'all', user: 'all', address: '0.0.0.0/0', method: 'md5' },
-      { type: 'host', database: 'replication', user: 'postgres', address: '0.0.0.0/0', method: 'md5' }
+      { type: 'host', database: 'replication', user: 'postgres', address: '127.0.0.1/32', method: 'trust' }
     ]
   )
 end
