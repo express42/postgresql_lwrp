@@ -2,6 +2,10 @@ source 'https://rubygems.org'
 
 gem 'berkshelf'
 
-gem 'test-kitchen'
-gem 'kitchen-vagrant'
-gem 'thor'
+group :development do
+  gem 'test-kitchen'
+  gem 'kitchen-vagrant'
+  gem 'rubocop'
+  gem 'foodcritic'
+  gem 'thor'
+end
