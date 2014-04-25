@@ -71,7 +71,7 @@ class Chef
           return nil
 
         else
-          stdout, _ = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE USER #{cluster_user} #{options.map { |t| t.join(" ") }.join(" ")}")
+          stdout, _ = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE USER #{cluster_user} #{options.map { |t| t.join(' ') }.join(' ')}")
           fail "postgresql create_user: can't create user #{cluster_user}" unless stdout.include?("CREATE ROLE\n")
           log("postgresql create_user: user '#{cluster_user}' created")
         end
@@ -86,7 +86,7 @@ class Chef
           return nil
 
         else
-          stdout, _ = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE DATABASE #{cluster_database} #{options.map { |t| t.join(" ") }.join(" ")}")
+          stdout, _ = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE DATABASE #{cluster_database} #{options.map { |t| t.join(' ') }.join(' ')}")
           fail "postgresql create_database: can't create database #{cluster_database}" unless stdout.include?("CREATE DATABASE\n")
           log("postgresql create_database: database '#{cluster_database}' created")
         end

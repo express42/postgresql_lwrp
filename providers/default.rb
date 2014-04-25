@@ -58,7 +58,7 @@ action :create do
   end
 
   # Install packages
-  %W(postgresql-#{configuration["version"]} postgresql-server-dev-all).each do |pkg|
+  %W(postgresql-#{configuration['version']} postgresql-server-dev-all).each do |pkg|
     package pkg
   end
 
