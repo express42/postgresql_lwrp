@@ -14,9 +14,9 @@ postgresql 'main' do
       max_connections: 300,
       ssl_renegotiation_limit: 0
     },
-    :archiving => {
-      :archive_mode => "on",
-      :archive_command => "'exit 0'"
+    archiving: {
+      archive_mode: 'on',
+      archive_command: "'exit 0'"
     },
     resources: {
       shared_buffers: '64MB',
