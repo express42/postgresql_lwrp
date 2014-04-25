@@ -33,6 +33,6 @@ attribute :in_version, kind_of: String, required: true
 attribute :in_cluster, kind_of: String, required: true
 attribute :unencrypted_password, kind_of: String
 attribute :encrypted_password, kind_of: String
-attribute :replication, kind_of: [ TrueClass, FalseClass ]
-attribute :superuser, kind_of: [ TrueClass, FalseClass ]
+attribute :replication, kind_of: [TrueClass, FalseClass]
+attribute :superuser, kind_of: [TrueClass, FalseClass]
 attribute :advanced_options, kind_of: Hash, default: {}

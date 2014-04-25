@@ -9,12 +9,12 @@ RSpec.configure do |c|
   end
 end
 
-describe "Postgresql service" do
-  it "has a running service of postgresql" do
-    expect(service("postgresql")).to be_running
+describe 'Postgresql service' do
+  it 'has a running service of postgresql' do
+    expect(service('postgresql')).to be_running
   end
 
-  it "is listening on port 5432" do
+  it 'is listening on port 5432' do
     expect(port(5432)).to be_listening
   end
 end
