@@ -14,4 +14,4 @@ suites:
       - recipe[pgtest::master]
       - recipe[pgtest::create_user]
       - recipe[pgtest::create_database]
-    attributes:
+      - recipe[pgtest::slave]
