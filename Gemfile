@@ -7,5 +7,6 @@ group :development do
   gem 'kitchen-vagrant'
   gem 'rubocop'
   gem 'foodcritic'
+  gem 'pry'
   gem 'thor'
 end
