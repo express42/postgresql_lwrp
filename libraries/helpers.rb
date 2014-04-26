@@ -42,13 +42,12 @@ class Chef
       end
 
       def need_to_restart(cluster_version, cluster_name, advanced_options, node)
-        if advanced_options[:restart_if_first_run]
-          if defined?(node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
-            false
-          else
-            true
-          end
+        if advanced_options[:restart] == :first
+          return (!defined? node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
+        elsif advanced_options[:restart] == :always
+          return true
         end
+        false
       end
 
       def pg_running?(cluster_version, cluster_name)

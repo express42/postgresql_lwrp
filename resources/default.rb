@@ -36,4 +36,12 @@ attribute :hba_configuration, kind_of: Array, default: []
 attribute :ident_configuration, kind_of: Array, default: []
 attribute :initial_files, kind_of: Array, default: []
 attribute :replication, kind_of: Hash, default: {}
-attribute :advanced_options, kind_of: Hash, default: { restart_if_first_run: true }
+attribute :advanced_options, kind_of: Hash, default: { restart: :first }, callbacks: {
+  'Allowed params for restart: first|always|none' => proc do |value|
+    if value[:restart].match(/^(first|always|none)$/) == 0
+      true
+    else
+      false
+    end
+  end
+}
