@@ -9,9 +9,36 @@ platforms:
   - name: ubuntu-12.04
 
 suites:
-  - name: default
+  - name: pg-9.1
     run_list:
       - recipe[pgtest::master]
       - recipe[pgtest::create_user]
       - recipe[pgtest::create_database]
       - recipe[pgtest::slave]
+    attributes:
+      postgresql:
+        defaults:
+          server:
+            version: "9.1"
+  - name: pg-9.2
+    run_list:
+      - recipe[pgtest::master]
+      - recipe[pgtest::create_user]
+      - recipe[pgtest::create_database]
+      - recipe[pgtest::slave]
+    attributes:
+      postgresql:
+        defaults:
+          server:
+            version: "9.2"
+  - name: pg-9.3
+    run_list:
+      - recipe[pgtest::master]
+      - recipe[pgtest::create_user]
+      - recipe[pgtest::create_database]
+      - recipe[pgtest::slave]
+    attributes:
+      postgresql:
+        defaults:
+          server:
+            version: "9.3"
