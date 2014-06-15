@@ -26,7 +26,7 @@
 #
 
 class Chef
-  # Postgreql modules
+  # Postgresql modules
   module Postgresql
     # Helpers module
     module Helpers
@@ -41,7 +41,7 @@ class Chef
         [psql_status.stdout, psql_status.stderr]
       end
 
-      def need_to_restart(cluster_version, cluster_name, advanced_options, node)
+      def need_to_restart?(cluster_version, cluster_name, advanced_options, node)
         if advanced_options[:restart] == :first
           return (!defined? node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
         elsif advanced_options[:restart] == :always

@@ -95,7 +95,7 @@ action :create do
   ruby_block 'restart_service' do
     action :nothing
     block do
-      if need_to_restart(cluster_version, cluster_name, advanced_options, node)
+      if need_to_restart?(cluster_version, cluster_name, advanced_options, node)
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :restart, self))
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
