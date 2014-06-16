@@ -69,6 +69,9 @@ default['postgresql']['defaults']['server']['client_connections'] = {
   extra_float_digits: '0',
   client_encoding: 'UTF8'
 }
+default['postgresql']['defaults']['server']['security'] = {
+  ssl: true
+}
 default['postgresql']['defaults']['server']['locale'] = {
   lc_messages: "'en_US.UTF-8'",
   lc_monetary: "'en_US.UTF-8'",

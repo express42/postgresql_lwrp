@@ -84,6 +84,10 @@ external_pid_file = '/var/run/postgresql/<%= @configuration[:version] %>-<%= @cl
 					# (change requires restart)
 
 # - Security and Authentication -
+#
+<% @configuration[:security].sort.each do |parameter, value| %>
+<%= parameter %> = <%= value %>
+<% end %>
 
 #authentication_timeout = 1min		# 1s-600s
 #ssl = true				# (change requires restart)
