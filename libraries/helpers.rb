@@ -30,20 +30,28 @@ class Chef
   module Postgresql
     # Helpers module
     module Helpers
+      def pg_installed?(pkg_name)
+        dpkg_status = Mixlib::ShellOut.new("dpkg-query -W -f='${Status}\n' #{pkg_name} 2>/dev/null | grep -c -q 'ok installed'")
+        dpkg_status.run_command
+        if dpkg_status.exitstatus == 0
+          false
+        else
+          true
+        end
+      end
+
       def exec_in_pg_cluster(cluster_version, cluster_name, sql)
         return false unless pg_running?(cluster_version, cluster_name)
         postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
         pg_port = postmaster_content[3].to_i
         psql_status = Mixlib::ShellOut.new("echo -n \"#{sql};\" | su -c 'psql -t -p #{pg_port}' postgres")
         psql_status.run_command
-        Chef::Log.info(psql_status.stdout)
-        Chef::Log.info(psql_status.stderr)
         [psql_status.stdout, psql_status.stderr]
       end
 
-      def need_to_restart?(cluster_version, cluster_name, advanced_options, node)
+      def need_to_restart?(advanced_options, first_time)
         if advanced_options[:restart] == :first
-          return (!defined? node['postgresql'][cluster_version][cluster_name]['success_at_least_once'])
+          return first_time
         elsif advanced_options[:restart] == :always
           return true
         end

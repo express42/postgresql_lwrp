@@ -57,6 +57,8 @@ action :create do
     ENV['LANG'] = new_resource.cluster_create_options['locale']
   end
 
+  first_time = pg_installed?("postgresql-#{configuration['version']}")
+
   # Install packages
   %W(postgresql-#{configuration['version']} postgresql-server-dev-all).each do |pkg|
     package pkg
@@ -82,20 +84,12 @@ action :create do
     status_command "su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
  -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres"
     supports status: true, restart: true, reload: true
-    notifies :create, 'ruby_block[set_success_mark]', :delayed
-  end
-
-  ruby_block 'set_success_mark' do
-    action :nothing
-    block do
-      node.normal['postgresql'][cluster_version][cluster_name]['success_at_least_once'] = true
-    end
   end
 
   ruby_block 'restart_service' do
     action :nothing
     block do
-      if need_to_restart?(cluster_version, cluster_name, advanced_options, node)
+      if need_to_restart?(advanced_options, first_time)
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :restart, self))
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
