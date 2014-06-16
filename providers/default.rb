@@ -86,7 +86,7 @@ action :create do
     supports status: true, restart: true, reload: true
   end
 
-  ruby_block 'restart_service' do
+  ruby_block "restart_service_#{service_name}" do
     action :nothing
     block do
       if need_to_restart?(advanced_options, first_time)
@@ -104,7 +104,7 @@ action :create do
     mode 0644
     variables configuration: configuration, cluster_name: cluster_name
     cookbook new_resource.cookbook
-    notifies :create, 'ruby_block[restart_service]', :delayed
+    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_hba.conf" do
@@ -114,7 +114,7 @@ action :create do
     mode 0644
     variables configuration: hba_configuration
     cookbook new_resource.cookbook
-    notifies :create, 'ruby_block[restart_service]', :delayed
+    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_ident.conf" do
@@ -124,14 +124,14 @@ action :create do
     mode 0644
     variables configuration: ident_configuration
     cookbook new_resource.cookbook
-    notifies :create, 'ruby_block[restart_service]', :delayed
+    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
   if replication.empty?
 
     file replication_file do
       action :delete
-      notifies :create, 'ruby_block[restart_service]', :delayed
+      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
     end
 
   else
@@ -143,12 +143,12 @@ action :create do
       mode 0644
       variables replication: replication
       cookbook new_resource.cookbook
-      notifies :create, 'ruby_block[restart_service]', :delayed
+      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
     end
 
   end
 
-  ruby_block 'start_service' do
+  ruby_block "start_service_#{service_name}]" do
     block do
       run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :start, self))
     end
