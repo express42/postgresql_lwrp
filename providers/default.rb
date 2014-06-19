@@ -142,7 +142,7 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
 
   ident_template = template "/etc/postgresql/#{configuration[:version]}/#{cluster_name}/pg_ident.conf" do
     action :nothing
-    source "pg_hba.conf.erb"
+    source "pg_ident.conf.erb"
     owner "postgres"
     group "postgres"
     mode 0644
