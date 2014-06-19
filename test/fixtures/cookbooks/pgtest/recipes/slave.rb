@@ -33,4 +33,6 @@ postgresql 'slave' do
     standby_mode: 'on',
     primary_conninfo: 'host=127.0.0.1 port=5432'
   )
+  replication_initial_copy true
+  replication_start_slave true
 end

@@ -31,21 +31,25 @@ include Chef::Postgresql::Helpers
 
 action :create do
 
-  configuration          = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server'].to_hash, new_resource.configuration)
-  hba_configuration      = node['postgresql']['defaults']['hba_configuration'] | new_resource.hba_configuration
-  ident_configuration    = node['postgresql']['defaults']['ident_configuration'] | new_resource.ident_configuration
+  configuration           = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server'].to_hash, new_resource.configuration)
+  hba_configuration       = node['postgresql']['defaults']['hba_configuration'] | new_resource.hba_configuration
+  ident_configuration     = node['postgresql']['defaults']['ident_configuration'] | new_resource.ident_configuration
 
-  cluster_name           = new_resource.name
-  cluster_version        = configuration['version']
-  service_name           = "postgresql_#{cluster_version}_#{cluster_name}"
+  cluster_name            = new_resource.name
+  cluster_version         = configuration['version']
+  service_name            = "postgresql_#{cluster_version}_#{cluster_name}"
 
-  replication_file       = "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf"
-  replication            = new_resource.replication
-  advanced_options       = new_resource.advanced_options
+  allow_restart_cluster   = new_resource.allow_restart_cluster
 
-  cluster_options        = Mash.new(new_resource.cluster_create_options)
+  replication             = new_resource.replication
+  replication_file        = "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf"
+  replication_start_slave = new_resource.replication_start_slave
+  replication_initial_copy = new_resource.replication_initial_copy
 
-  parsed_cluster_options = []
+  cluster_options         = Mash.new(new_resource.cluster_create_options)
+  parsed_cluster_options  = []
+
+  first_time              = pg_installed?("postgresql-#{configuration['version']}")
 
   %w(locale lc-collate lc-ctype lc-messages lc-monetary lc-numeric lc-time).each do |option|
     parsed_cluster_options << "--#{option} #{cluster_options[:locale]}" if cluster_options[option]
@@ -57,9 +61,15 @@ action :create do
     ENV['LANG'] = new_resource.cluster_create_options['locale']
   end
 
-  first_time = pg_installed?("postgresql-#{configuration['version']}")
+  # Install postgresql-common package
+  package 'postgresql-common'
 
-  # Install packages
+  file '/etc/postgresql-common/createcluster.conf' do
+    content "create_main_cluster = false\n"
+    only_if { cluster_version.to_f >= 9.2 }
+  end
+
+  # Install postgresql server packages
   %W(postgresql-#{configuration['version']} postgresql-server-dev-all).each do |pkg|
     package pkg
   end
@@ -69,12 +79,35 @@ action :create do
     ENV['LANG'] = system_lang
   end
 
-  # Create postgresql cluster
-  execute 'Exec pg_createcluster' do
-    command "pg_createcluster #{parsed_cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
-    not_if { ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") }
+  # Create postgresql cluster directories
+
+  %W(/etc/postgresql /etc/postgresql/#{cluster_version} /etc/postgresql/#{cluster_version}/#{cluster_name}).each do |dir|
+    directory dir do
+      owner 'postgres'
+      group 'postgres'
+    end
   end
 
+  %W(/var/lib/postgresql /var/lib/postgresql/#{cluster_version}).each do |dir|
+    directory dir do
+      owner 'postgres'
+      group 'postgres'
+    end
+  end
+
+  directory "/var/lib/postgresql/#{cluster_version}/#{cluster_name}" do
+    mode '0700'
+    owner 'postgres'
+    group 'postgres'
+  end
+
+  # Exec pg_cluster create
+  execute 'Exec pg_createcluster' do
+    command "pg_createcluster #{parsed_cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
+    not_if { ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") || !replication.empty? }
+  end
+
+  # Define postgresql service
   postgresql_service = service service_name do
     action :nothing
     start_command "pg_ctlcluster #{cluster_version} #{cluster_name} start"
@@ -86,10 +119,13 @@ action :create do
     supports status: true, restart: true, reload: true
   end
 
+  # Ruby block for postgresql smart restart
   ruby_block "restart_service_#{service_name}" do
     action :nothing
     block do
-      if need_to_restart?(advanced_options, first_time)
+      if !replication.empty? && !replication_start_slave
+        run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
+      elsif need_to_restart?(allow_restart_cluster, first_time)
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :restart, self))
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
@@ -97,6 +133,7 @@ action :create do
     end
   end
 
+  # Configuration templates
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf" do
     source 'postgresql.conf.erb'
     owner 'postgres'
@@ -127,14 +164,36 @@ action :create do
     notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
-  if replication.empty?
+  file "/etc/postgresql/#{cluster_version}/#{cluster_name}/start.conf" do
+    content "auto\n"
+  end
 
-    file replication_file do
-      action :delete
-      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+  # Replication
+  if !replication.empty?
+
+    if replication_initial_copy
+      pg_basebackup_path = "/usr/lib/postgresql/#{cluster_version}/bin/pg_basebackup"
+      pg_data_directory = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}"
+
+      BASEBACKUP_PARAMS = {
+        'host'     => '-h',
+        'port'     => '-p',
+        'user'     => '-U',
+        'password' => '-W'
+      }
+
+      conninfo_hash = Hash[*replication[:primary_conninfo].scan(/\w+=[^\s]+/).map { |x| x.split('=', 2) }.flatten]
+
+      basebackup_conninfo_hash = conninfo_hash.map do |key, val|
+        "#{BASEBACKUP_PARAMS[key.to_s]} #{val}" if BASEBACKUP_PARAMS[key.to_s]
+      end.compact
+
+      execute 'Make basebackup' do
+        command "#{pg_basebackup_path} -D #{pg_data_directory} -F p -x -c fast #{basebackup_conninfo_hash.join(' ')}"
+        user 'postgres'
+        not_if { ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/base") }
+      end
     end
-
-  else
 
     template "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf" do
       source 'recovery.conf.erb'
@@ -146,13 +205,20 @@ action :create do
       notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
     end
 
+  else
+
+    file replication_file do
+      action :delete
+      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+    end
   end
 
+  # Start postgresql
   ruby_block "start_service_#{service_name}]" do
     block do
       run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :start, self))
     end
-    not_if { pg_running?(cluster_version, cluster_name) }
+    not_if { pg_running?(cluster_version, cluster_name) || (!replication.empty? && !replication_start_slave) }
   end
 
 end

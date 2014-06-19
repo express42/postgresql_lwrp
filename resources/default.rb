@@ -34,11 +34,13 @@ attribute :cluster_create_options, kind_of: Hash, default: {}
 attribute :configuration, kind_of: Hash, default: {}
 attribute :hba_configuration, kind_of: Array, default: []
 attribute :ident_configuration, kind_of: Array, default: []
-attribute :initial_files, kind_of: Array, default: []
 attribute :replication, kind_of: Hash, default: {}
-attribute :advanced_options, kind_of: Hash, default: { restart: :first }, callbacks: {
-  'Allowed params for restart: first|always|none' => proc do |value|
-    if value[:restart].match(/^(first|always|none)$/) == 0
+attribute :replication_initial_copy, kind_of: [TrueClass, FalseClass], default: false
+attribute :replication_start_slave, kind_of: [TrueClass, FalseClass], default: false
+attribute :allow_restart_cluster, default: :first, callbacks:
+{
+  'Allowed params for allow_restart_cluster: first, always or none' => proc do |value|
+    if value.match(/^(first|always|none)$/) == 0
       true
     else
       false
