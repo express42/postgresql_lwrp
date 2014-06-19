@@ -118,7 +118,7 @@ action :create do
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_ident.conf" do
-    source 'pg_hba.conf.erb'
+    source 'pg_ident.conf.erb'
     owner 'postgres'
     group 'postgres'
     mode 0644
