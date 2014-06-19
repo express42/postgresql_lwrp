@@ -3,9 +3,7 @@ default['postgresql']['defaults']['server']['version'] = '9.2'
 default['postgresql']['defaults']['server']['connection'] = {
   listen_addresses: 'localhost',
   port: 5432,
-  max_connections: '100',
-  ssl: false,
-  ssl_renegotiation_limit: 0
+  max_connections: '100'
 }
 
 default['postgresql']['defaults']['server']['resources'] = {
@@ -70,7 +68,8 @@ default['postgresql']['defaults']['server']['client_connections'] = {
   client_encoding: 'UTF8'
 }
 default['postgresql']['defaults']['server']['security'] = {
-  ssl: true
+  ssl: false,
+  ssl_renegotiation_limit: 0
 }
 default['postgresql']['defaults']['server']['locale'] = {
   lc_messages: "'en_US.UTF-8'",
