@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: postgresql
-# Recipe:: official_repository
+# Recipe:: official_apt_repository
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
