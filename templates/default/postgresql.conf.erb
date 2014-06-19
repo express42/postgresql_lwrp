@@ -193,11 +193,11 @@ external_pid_file = '/var/run/postgresql/<%= @configuration[:version] %>-<%= @cl
 #checkpoint_completion_target = 0.5	# checkpoint target duration, 0.0 - 1.0
 #checkpoint_warning = 30s		# 0 disables
 
+# - Archiving -
+
 <% @configuration[:archiving].sort.each do |parameter, value| %>
 <%= parameter %> = <%= value %>
 <% end %>
-
-# - Archiving -
 
 #archive_mode = off		# allows archiving to be done
 				# (change requires restart)
