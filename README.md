@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/express42-cookbooks/postgresql.svg?branch=new_era)](https://travis-ci.org/express42-cookbooks/postgresql)
+
 Description
 ===========
 This cookbook includes recipes and provider to install and configure postgresql database. This cookbook was tested with Postgresql 9.1 and 9.2, and should work with 9.0 too.
