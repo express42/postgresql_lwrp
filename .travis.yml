@@ -6,7 +6,7 @@ before_script:
   - bundle exec berks install
 script:
   - bundle exec foodcritic -f any .
-  - bundle exec rspec --color --format progress
+  - bundle exec rspec
   - bundle exec rubocop
 branches:
   only:
