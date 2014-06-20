@@ -4,6 +4,7 @@ gem 'berkshelf'
 gem 'chefspec'
 gem 'foodcritic'
 gem 'rubocop'
+gem 'travis'
 
 group :development do
   gem 'test-kitchen'
