@@ -9,20 +9,14 @@ end
 postgresql 'slave2' do
   cluster_create_options('locale' => 'ru_RU.UTF-8')
   configuration(
-    connection: {
-      port: '5434',
-      listen_addresses: "'*'",
-      max_connections: 300,
-      ssl_renegotiation_limit: 0
-    },
-    resources: {
-      shared_buffers: '64MB',
-      maintenance_work_mem: '8MB',
-      work_mem: '2MB'
-    },
-    queries: { effective_cache_size: '200MB' },
-    wal: { checkpoint_completion_target: '0.9' },
-    logging: { log_min_duration_statement: '200' }
+    port: '5434',
+    listen_addresses: '*',
+    max_connections: 300,
+    ssl_renegotiation_limit: 0,
+    shared_buffers: '64MB',
+    maintenance_work_mem: '8MB',
+    work_mem: '2MB',
+    effective_cache_size: '200MB'
   )
   hba_configuration(
     [

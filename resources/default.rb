@@ -29,6 +29,7 @@ actions :create
 default_action :create
 
 attribute :cluster_name, kind_of: String, name_attribute: true
+attribute :cluster_version, kind_of: String, regex: [/\A(|\d.\d)\Z\z/], default: ''
 attribute :cookbook, kind_of: String, default: 'postgresql'
 attribute :cluster_create_options, kind_of: Hash, default: {}
 attribute :configuration, kind_of: Hash, default: {}
