@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 
-group :unit do
+group :berks do
   gem 'berkshelf'
+end
+
+group :unit do
   gem 'chefspec'
 end
 
