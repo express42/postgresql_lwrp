@@ -9,7 +9,7 @@ ident_file = '/etc/postgresql/<%= @cluster_version %>/<%= @cluster_name %>/pg_id
 external_pid_file = '/var/run/postgresql/<%= @cluster_version %>-<%= @cluster_name %>.pid'
 
 <% @configuration.sort.each do |parameter, value| %>
-  <% if value !~ /^[a-zA-Z0-9]+$/ -%>
+  <% if value.to_s !~ /^[a-zA-Z0-9]+$/ -%>
 <%= parameter %> = '<%= value %>'
   <% else -%>
 <%= parameter %> = <%= value %>
