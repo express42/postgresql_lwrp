@@ -39,7 +39,9 @@ default['postgresql']['defaults']['server']['configuration']['wal_receiver_statu
 default['postgresql']['defaults']['server']['configuration']['hot_standby_feedback'] = 'off'
 default['postgresql']['defaults']['server']['configuration']['extra_float_digits'] = 0
 default['postgresql']['defaults']['server']['configuration']['client_encoding'] = 'UTF8'
-default['postgresql']['defaults']['server']['configuration']['ssl'] = false
+default['postgresql']['defaults']['server']['configuration']['ssl'] = true
+default['postgresql']['defaults']['server']['configuration']['ssl_cert_file'] = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+default['postgresql']['defaults']['server']['configuration']['ssl_key_file'] = '/etc/ssl/private/ssl-cert-snakeoil.key'
 default['postgresql']['defaults']['server']['configuration']['ssl_renegotiation_limit'] = 0
 default['postgresql']['defaults']['server']['configuration']['lc_messages'] = 'en_US.UTF-8'
 default['postgresql']['defaults']['server']['configuration']['lc_monetary'] = 'en_US.UTF-8'
