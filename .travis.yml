@@ -1,6 +1,6 @@
 language: ruby
 cache: bundler
-bundler_args: --without kitchen_vagrant development
+bundler_args: --without kitchen_vagrant development berks
 rvm:
   - 2.0.0
 script:
