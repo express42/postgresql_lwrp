@@ -10,6 +10,9 @@ platforms:
   - name: ubuntu-14.04
 
 suites:
+  - name: pg-90
+    run_list:
+      - recipe[pgtest::test_9_0]
   - name: pg-91
     run_list:
       - recipe[pgtest::test_9_1]
