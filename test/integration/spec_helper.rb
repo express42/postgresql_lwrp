@@ -52,6 +52,9 @@ def master_tests(pg_version)
     it { should be_listening }
   end
 
+end
+
+def create_users_tests(pg_version)
   describe 'user test01' do
     it 'should be able to login with password' do
       postgresql_check_login(pg_version, 'main', 'test01', 'test01').should eq true
