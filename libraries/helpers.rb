@@ -98,6 +98,13 @@ class Chef
           log("postgresql create_database: database '#{cluster_database}' created")
         end
       end
+
+      def configuration_hacks(configuration, cluster_version)
+        if cluster_version.to_f < 9.2
+          configuration.delete('ssl_cert_file')
+          configuration.delete('ssl_key_file')
+        end
+      end
     end
   end
 end

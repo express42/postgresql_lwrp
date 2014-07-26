@@ -61,6 +61,9 @@ action :create do
     ENV['LANG'] = new_resource.cluster_create_options['locale']
   end
 
+  # Configuration hacks
+  configuration_hacks(configuration, cluster_version)
+
   # Install postgresql-common package
   package 'postgresql-common'
 
