@@ -102,6 +102,8 @@ class Chef
       def configuration_hacks(configuration, cluster_version)
         configuration.delete('ssl_cert_file') if cluster_version.to_f < 9.2
         configuration.delete('ssl_key_file') if cluster_version.to_f < 9.2
+        configuration.delete('wal_receiver_status_interval') if cluster_version.to_f < 9.1
+        configuration.delete('hot_standby_feedback') if cluster_version.to_f < 9.1
       end
     end
   end
