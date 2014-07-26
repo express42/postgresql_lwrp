@@ -8,6 +8,9 @@ provisioner:
 platforms:
   - name: ubuntu-12.04
   - name: ubuntu-14.04
+  - name: ubuntu-14.04
+  - name: debian-6.0.9
+  - name: debian-7.6
 
 suites:
   - name: pg-90
