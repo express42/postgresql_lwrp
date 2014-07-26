@@ -1,4 +1,4 @@
-include_recipe 'postgresql::official_apt_repository'
+include_recipe 'postgresql::apt_official_repository'
 include_recipe 'postgresql::default'
 include_recipe 'sysctl::default'
 

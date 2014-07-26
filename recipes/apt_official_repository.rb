@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: postgresql
-# Recipe:: official_apt_repository
+# Recipe:: apt_official_repository
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
@@ -26,8 +26,8 @@
 #
 
 apt_repository 'pg-repo' do
-  uri          'http://apt.postgresql.org/pub/repos/apt/'
+  uri 'http://apt.postgresql.org/pub/repos/apt/'
   distribution node['lsb']['codename'] + '-pgdg'
-  components   ['main']
-  key          'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+  components ['main']
+  key 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
 end
