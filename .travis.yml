@@ -4,9 +4,9 @@ bundler_args: --without kitchen_vagrant development
 rvm:
   - 2.0.0
 script:
+  - bundle exec rubocop
   - bundle exec foodcritic -f any .
   - bundle exec rspec
-  - bundle exec rubocop
 branches:
   only:
     - new_era
