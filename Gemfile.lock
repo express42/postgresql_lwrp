@@ -175,9 +175,9 @@ GEM
       slop (~> 3.4, >= 3.4.5)
     polyglot (0.3.5)
     powerpack (0.0.9)
-    pry (0.10.0)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
+    pry (0.9.12.6)
+      coderay (~> 1.0)
+      method_source (~> 0.8)
       slop (~> 3.4)
     pusher-client (0.6.0)
       json
@@ -247,15 +247,15 @@ GEM
     thor (0.19.1)
     timers (3.0.1)
       hitimes
-    travis (1.6.11)
+    travis (1.6.17)
       addressable (~> 2.3)
       backports
       faraday (~> 0.9)
-      faraday_middleware (~> 0.9)
+      faraday_middleware (~> 0.9, >= 0.9.1)
       gh (~> 0.13)
       highline (~> 1.6)
       launchy (~> 2.1)
-      pry (~> 0.9)
+      pry (~> 0.9, < 0.10)
       pusher-client (~> 0.4)
       typhoeus (~> 0.6, >= 0.6.8)
     treetop (1.5.3)
@@ -274,6 +274,7 @@ PLATFORMS
 DEPENDENCIES
   berkshelf
   chefspec
+  fog
   foodcritic
   kitchen-digitalocean
   kitchen-vagrant
@@ -281,4 +282,4 @@ DEPENDENCIES
   rubocop
   test-kitchen
   thor
-  travis
+  travis (~> 1.6.17)

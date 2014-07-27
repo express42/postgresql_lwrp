@@ -1,6 +1,9 @@
 language: ruby
 cache: bundler
-bundler_args: --without kitchen_vagrant development
+install: touch ~/do_not_run_bundle
+before_script:
+  - "./script/travis/bundle_install.sh"
+  - "bundle exec ruby script/travis/bundle_cache.rb &"
 rvm:
   - 2.0.0
 script:
@@ -10,3 +13,9 @@ script:
 branches:
   only:
     - new_era
+
+env:
+  global:
+  - secure: "M07xt37qzz3VXBaPsGEIQdCyVlL/V0adn1k70qKqICS47bg/XOK7o+xBP6OSLZlCAqLKmxkgWyOsPHIEufvwwBb1omH1WcqwM622Q0FR8LVbtYJ03rQifDYw4MudRfYd7xwXDJlpeyAzUqej9AKCiAKn1Mq+7ciV2L8ao1eYRIM="
+  - secure: "OfczxEckhwUi5VMFtZXMhzG1MsoLpQHWpNfBi0SjpLjsNA0QdUAIisyW6ZpkQLfUqLds3Wt7cTTUiLgY0jBMsNaWocQKFVmmxal7NAzW81FaLKxIpp1wh21/XFsIvXXlLJQ7cKYihVxhZL0i2fEnlCmGe2UrH56OWVSWlrb+Yio="
+  - AWS_BUCKET="express42-travis"

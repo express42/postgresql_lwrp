@@ -25,8 +25,12 @@ group :kitchen_cloud do
   gem 'kitchen-digitalocean'
 end
 
+group :travis do
+  gem 'travis', '~> 1.6.17'
+  gem 'fog'
+end
+
 group :development do
   gem 'pry'
   gem 'thor'
-  gem 'travis'
 end

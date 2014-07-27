@@ -5,6 +5,7 @@
 .*.sw[a-z]
 *.un~
 pkg/
+bundle.tgz
 
 # Berkshelf
 .vagrant
