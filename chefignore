@@ -98,4 +98,3 @@ Vagrantfile
 # Travis #
 ##########
 .travis.yml
-script
