@@ -4,11 +4,11 @@ file_name = 'bundle.tgz'
 s3_file_path = "postgresql-cookbook/#{file_name}"
 local_file_path = file_name
 
-storage = Fog::Storage.new({
-  provider: 'AWS',
-  aws_access_key_id: ENV['AWS_KEY'],
-  aws_secret_access_key: ENV['AWS_SECRET_KEY']
-})
+storage = Fog::Storage.new(
+                             provider: 'AWS',
+                             aws_access_key_id: ENV['AWS_KEY'],
+                             aws_secret_access_key: ENV['AWS_SECRET_KEY']
+)
 
 `rm -rf #{local_file_path}`
 `tar -cjf bundle.tgz .bundle`
