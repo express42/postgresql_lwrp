@@ -21,8 +21,9 @@ def postgresql_cluster(version, name)
   command("su postgres -c \"/usr/lib/postgresql/#{version}/bin/pg_ctl -D /var/lib/postgresql/#{version}/#{name} status\"").exit_status
 end
 
-def postgresql_check_owner(_version, _name, database, user)
-  psql_out = command("su postgres -c \"psql -tql 2>/dev/null\"").stdout.strip.split("\n")
+def postgresql_check_owner(version, name, database, user)
+  pg_port = get_port(version, name)
+  psql_out = command("su postgres -c \"psql -p #{pg_port} -tql 2>/dev/null\"").stdout.strip.split("\n")
   psql_out.each do |t|
     return true if t.split('|')[0].strip == database && t.split('|')[1].strip == user
   end
