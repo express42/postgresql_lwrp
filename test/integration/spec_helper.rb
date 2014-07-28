@@ -21,6 +21,14 @@ def postgresql_cluster(version, name)
   command("su postgres -c \"/usr/lib/postgresql/#{version}/bin/pg_ctl -D /var/lib/postgresql/#{version}/#{name} status\"").exit_status
 end
 
+def postgresql_check_owner(_version, _name, database, user)
+  psql_out = command("su postgres -c \"psql -tql 2>/dev/null\"").stdout.strip.split("\n")
+  psql_out.each do |t|
+    return true if t.split('|')[0].strip == database && t.split('|')[1].strip == user
+  end
+  false
+end
+
 def postgresql_check_priv(version, name, user, priv)
   pg_port = get_port(version, name)
   psql_out = command("su postgres -c \"psql -qt -p #{pg_port} -c \\\"SELECT #{priv} FROM pg_roles where rolname='#{user}'\\\" 2>/dev/null\"").stdout.strip
@@ -50,6 +58,20 @@ def master_tests(pg_version)
 
   describe port(5432) do
     it { should be_listening }
+  end
+end
+
+def create_database_tests(pg_version)
+  describe 'database test01' do
+    it 'should be created and have owner test01' do
+      postgresql_check_owner(pg_version, 'main', 'test01', 'test01').should eq true
+    end
+  end
+
+  describe 'database test02' do
+    it 'should be created and have owner test02' do
+      postgresql_check_owner(pg_version, 'main', 'test02', 'test02').should eq true
+    end
   end
 end
 
