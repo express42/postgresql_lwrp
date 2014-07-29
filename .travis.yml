@@ -1,7 +1,7 @@
 language: ruby
 bundler_args: --without kitchen_vagrant development --path=~/.bundle
 before_install:
-- "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
+- 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
 - gem install bundler bundle_cache
 - bundle_cache_install
 after_script:
@@ -19,5 +19,5 @@ env:
   global:
   - BUNDLE_ARCHIVE='postgresql-cookbook-bundle.tgz'
   - secure: YnhI9/KHIdZ1H8AXi4PjKyC6bV9tKEEPskC+XCqFisiIYmlcZvEtKoreQYfuabCUQ3/v86vZH2MYrEX6JXX2uFyB5FxUDV2BY3Qreh3VToQR2igjB52aL8Iw5Jgt70BiZ09zUx7W88i0A4+ZZwc7dx4/727ePbPSJ+TbwPeUWWE=
-  - secure: A50pWSI/IwpPeAnhDcKCvA5jsZvaIyb7rlhHwgDCg8QMtFTOQpj/oPBKuHuklLmBMftnifeuRPQEqoBoXC4lCofc6+7NHNSTdELkWIUCwjnK9qugz2rln7oYSH2D7aZmMMfiUrNimmtMKV/xCLsdbYDFC0VcgxcGkUNyL20eP3g=
+  - secure: JCW7x8n8jlJg3jlYOW/MGPJEoIC1ApoCZ6bWiTHmmr2tcq3dcSJEc5KgemXID9LAz6wdwXu16I6IzSDY+4qt6cbmCn+iwZfoHNUjkCZSiPChJPLXk4yWrcYqvUEf/IASBaV8f2jtyHth6Q+eM+3K4ryNqLT4mRq13pwyBw3mwwQ=
   - secure: LGHSdoFAhVsUKDtjMAVk1hJ0HB2mhmDrL6ncDjOISGenGCkV4IP74DMlrpxEuGH7IiWk3mKC01TVo9lUgVMVpUYRwETRrjl803Q9+SCACRaDkyx8CYv6Okv8yEFalN0f4oCPWrYzphZWZlJ53YUZGrhcf7+FFtn1GdeUUCX0SL8=
