@@ -2,6 +2,7 @@ language: ruby
 bundler_args: --without kitchen_vagrant development --path=~/.bundle
 before_install:
 - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
+- gem install nokogiri -- --use-system-libraries
 - gem install bundler bundle_cache
 - bundle_cache_install
 after_script:
