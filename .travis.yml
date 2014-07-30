@@ -14,7 +14,7 @@ script:
 - bundle exec rubocop
 - bundle exec foodcritic -f any .
 - bundle exec rspec
-- bundle exec kitchen test -d always pg-92-ubuntu-1404
+- bundle exec kitchen test -d always
 after_script:
 - bundle_cache
 branches:
