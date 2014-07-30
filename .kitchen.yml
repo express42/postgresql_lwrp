@@ -1,6 +1,5 @@
 ---
-driver:
-  name: vagrant
+driver_plugin: vagrant
 
 provisioner:
   name: chef_zero
