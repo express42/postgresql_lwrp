@@ -14,7 +14,7 @@ script:
 - bundle exec rubocop
 - bundle exec foodcritic -f any .
 - bundle exec rspec
-- bundle exec kitchen test -d always
+- bundle exec kitchen test -c 10 -d always
 after_script:
 - bundle_cache
 branches:
