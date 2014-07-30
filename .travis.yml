@@ -10,7 +10,6 @@ before_install:
 - echo -n $DO_TRAVIS_KEY_{0..68} > ~/.ssh/id_travis.base64
 - cat ~/.ssh/id_travis.base64 | tr -d ' ' | base64 --decode > ~/.ssh/id_travis
 - chmod 600 ~/.ssh/id_travis
-- ssh-add ~/.ssh/id_travis
 script:
 - bundle exec rubocop
 - bundle exec foodcritic -f any .
