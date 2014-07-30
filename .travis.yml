@@ -20,6 +20,8 @@ after_script:
 branches:
   only:
   - new_era
+notifications:
+  flowdock: d4fbb65de6c9c868a2dfc4b38fbd34c1
 env:
   global:
   - BUNDLE_ARCHIVE='postgresql-cookbook-bundle.tgz'
