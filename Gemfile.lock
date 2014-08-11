@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/test-kitchen/kitchen-digitalocean.git
-  revision: f77cfaf964277699c532f237244e6f0d06fbc2e6
+  remote: git://github.com/sample/kitchen-digitalocean.git
+  revision: 0c0531ab61d2aca2415326c9d1859ec0a414b7f0
   branch: master
   specs:
     kitchen-digitalocean (0.7.2)
