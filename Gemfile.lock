@@ -255,7 +255,7 @@ GEM
     thor (0.19.1)
     timers (4.0.0)
       hitimes
-    travis (1.6.17)
+    travis (1.7.1)
       addressable (~> 2.3)
       backports
       faraday (~> 0.9)
@@ -291,4 +291,4 @@ DEPENDENCIES
   rubocop
   test-kitchen
   thor
-  travis (~> 1.6.17)
+  travis (~> 1.7.1)
