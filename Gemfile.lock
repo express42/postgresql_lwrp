@@ -1,3 +1,12 @@
+GIT
+  remote: git://github.com/test-kitchen/kitchen-digitalocean.git
+  revision: f77cfaf964277699c532f237244e6f0d06fbc2e6
+  branch: master
+  specs:
+    kitchen-digitalocean (0.7.2)
+      fog
+      test-kitchen (~> 1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -129,9 +138,6 @@ GEM
     inflecto (0.0.2)
     ipaddress (0.8.0)
     json (1.8.1)
-    kitchen-digitalocean (0.7.2)
-      fog
-      test-kitchen (~> 1.0)
     kitchen-vagrant (0.15.0)
       test-kitchen (~> 1.0)
     launchy (2.4.2)
@@ -279,7 +285,7 @@ DEPENDENCIES
   chefspec
   fog
   foodcritic
-  kitchen-digitalocean
+  kitchen-digitalocean!
   kitchen-vagrant
   pry
   rubocop
