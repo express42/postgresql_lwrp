@@ -22,7 +22,7 @@ group :kitchen_vagrant do
 end
 
 group :kitchen_cloud do
-  gem 'kitchen-digitalocean', github: 'test-kitchen/kitchen-digitalocean', branch: 'master'
+  gem 'kitchen-digitalocean', github: 'sample/kitchen-digitalocean', branch: 'master'
 end
 
 group :travis do
