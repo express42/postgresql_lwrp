@@ -6,3 +6,5 @@ SingleSpaceBeforeFirstArg:
 MethodLength:
   Exclude:
     - 'test/**/spec_helper.rb'
+Documentation:
+  Enabled: false
