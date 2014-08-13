@@ -32,7 +32,7 @@ action :create do
 
   options = {}
 
-  options.merge!('OWNER' => new_resource.owner) if new_resource.owner
+  options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner
   options.merge!('TABLESPACE' => "'#{new_resource.tablespace}'") if new_resource.tablespace
   options.merge!('TEMPLATE' => "'#{new_resource.template}'") if new_resource.template
   options.merge!('ENCODING' => "'#{new_resource.encoding}'") if new_resource.encoding
