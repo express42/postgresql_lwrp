@@ -69,9 +69,9 @@ def create_database_tests(pg_version)
     end
   end
 
-  describe 'database test02' do
-    it 'should be created and have owner test02' do
-      postgresql_check_owner(pg_version, 'main', 'test02', 'test02').should eq true
+  describe 'database test-02' do
+    it 'should be created and have owner test-02' do
+      postgresql_check_owner(pg_version, 'main', 'test-02', 'test-02').should eq true
     end
   end
 end
@@ -89,12 +89,12 @@ def create_users_tests(pg_version)
     end
   end
 
-  describe 'user test02' do
+  describe 'user test-02' do
     it 'should be able to login with password' do
-      postgresql_check_login(pg_version, 'main', 'test02', 'test02').should eq true
+      postgresql_check_login(pg_version, 'main', 'test-02', 'test-02').should eq true
     end
     it 'should have replication privileges' do
-      postgresql_check_priv(pg_version, 'main', 'test02', 'rolsuper').should eq true
+      postgresql_check_priv(pg_version, 'main', 'test-02', 'rolsuper').should eq true
     end
   end
 end
