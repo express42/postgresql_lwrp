@@ -5,7 +5,7 @@ license          'MIT'
 description      'Tests for postgresql cookbook'
 version          '1.0.0'
 
-depends          'postgresql'
+depends          'postgresql_lwrp'
 depends          'apt'
 depends          'sysctl'
 supports         'debian'
