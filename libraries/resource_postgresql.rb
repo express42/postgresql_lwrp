@@ -21,7 +21,7 @@ class Chef
       end
 
       def cookbook(arg = nil)
-        set_or_return(:cookbook, arg, kind_of: String, default: 'postgresql')
+        set_or_return(:cookbook, arg, kind_of: String, default: 'postgresql_lwrp')
       end
 
       def cluster_create_options(arg = nil)
