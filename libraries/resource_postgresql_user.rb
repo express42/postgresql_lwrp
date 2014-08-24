@@ -6,7 +6,7 @@ class Chef
       def initialize(name, run_context = nil)
         super
         @resource_name = :postgresql_user
-        @provider = Chef::Provider::PostgresqlUser
+        @provider = Chef::Provider::PostgresqlLwrpUser
         @action = :create
         @allowed_actions = [:create]
         @name = name
