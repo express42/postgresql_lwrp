@@ -1,5 +1,5 @@
-include_recipe 'postgresql::apt_official_repository'
-include_recipe 'postgresql::default'
+include_recipe 'postgresql_lwrp::apt_official_repository'
+include_recipe 'postgresql_lwrp::default'
 include_recipe 'sysctl::default'
 
 sysctl_param 'kernel.shmmax' do
