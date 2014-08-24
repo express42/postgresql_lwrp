@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: postgresql
+# Cookbook Name:: postgresql_lwrp
 # Provider:: default
 #
 # Author:: LLC Express 42 (info@express42.com)
