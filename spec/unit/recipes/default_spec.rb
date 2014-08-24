@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'postgresql::default' do
+describe 'postgresql_lwrp::default' do
   let(:chef_run) do
     ChefSpec::Runner.new do |node|
       node.automatic['memory']['total'] = '1GB'
