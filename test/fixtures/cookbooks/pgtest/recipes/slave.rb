@@ -7,7 +7,7 @@ sysctl_param 'kernel.shmmax' do
 end
 
 postgresql 'slave' do
-  cluster_create_options('locale' => 'ru_RU.UTF-8')
+  cluster_create_options('locale' => 'en_US.UTF-8')
   configuration(
     port: '5433',
     listen_addresses: '*',
