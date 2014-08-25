@@ -17,9 +17,6 @@ script:
 - bundle exec kitchen test -c 10 -d always
 after_script:
 - bundle_cache
-branches:
-  only:
-  - new_era
 notifications:
   flowdock: d4fbb65de6c9c868a2dfc4b38fbd34c1
 env:
