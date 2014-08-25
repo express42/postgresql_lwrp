@@ -1,0 +1,10 @@
+LineLength:
+  Enabled: false
+SingleSpaceBeforeFirstArg:
+  Exclude:
+    - '**/metadata.rb'
+MethodLength:
+  Exclude:
+    - 'test/**/spec_helper.rb'
+Documentation:
+  Enabled: false

@@ -1,10 +1,10 @@
 #
-# Cookbook Name:: postgresql
+# Cookbook Name:: postgresql_lwrp
 # Provider:: default
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2013 LLC Express 42
+# Copyright (C) 2012-2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -25,229 +25,203 @@
 # SOFTWARE.
 #
 
+use_inline_resources
+
+include Chef::Postgresql::Helpers
+
 action :create do
-  cluster_databag = new_resource.databag
 
-  if cluster_databag
-    begin
-      cluster_users = data_bag_item(cluster_databag, 'users')['users']
-    rescue
-      cluster_users = {}
-    end
+  configuration           = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server']['configuration'].to_hash, new_resource.configuration)
+  hba_configuration       = node['postgresql']['defaults']['server']['hba_configuration'] | new_resource.hba_configuration
+  ident_configuration     = node['postgresql']['defaults']['server']['ident_configuration'] | new_resource.ident_configuration
 
-    begin
-      cluster_databases = data_bag_item(cluster_databag, 'databases')['databases']
-    rescue
-      cluster_databases = {}
-    end
+  cluster_name            = new_resource.name
+  cluster_version         = (!new_resource.cluster_version.empty? && new_resource.cluster_version) ||  node['postgresql']['defaults']['server']['version']
+  service_name            = "postgresql_#{cluster_version}_#{cluster_name}"
+
+  allow_restart_cluster   = new_resource.allow_restart_cluster
+
+  replication             = new_resource.replication
+  replication_file        = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf"
+  replication_start_slave = new_resource.replication_start_slave
+  replication_initial_copy = new_resource.replication_initial_copy
+
+  cluster_options         = Mash.new(new_resource.cluster_create_options)
+  parsed_cluster_options  = []
+
+  first_time              = pg_installed?("postgresql-#{cluster_version}")
+
+  %w(locale lc-collate lc-ctype lc-messages lc-monetary lc-numeric lc-time).each do |option|
+    parsed_cluster_options << "--#{option} #{cluster_options[:locale]}" if cluster_options[option]
   end
 
-  configuration       = Chef::Mixin::DeepMerge.merge(node["postgresql"]["defaults"]["server"].to_hash, new_resource.configuration)
-  hba_configuration   = node["postgresql"]["defaults"]["hba_configuration"] | new_resource.hba_configuration
-  ident_configuration = node["postgresql"]["defaults"]["ident_configuration"] | new_resource.ident_configuration
-
-  if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
+  # Locale hack
+  if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     system_lang = ENV['LANG']
-    ENV['LANG'] = new_resource.cluster_create_options["locale"]
+    ENV['LANG'] = new_resource.cluster_create_options['locale']
   end
 
-  %W{postgresql-#{configuration[:version]} postgresql-server-dev-all}.each do |pkg|
-    package pkg do
-      action :nothing
-    end.run_action(:install)
+  # Configuration hacks
+  configuration_hacks(configuration, cluster_version)
+
+  # Install postgresql-common package
+  package 'postgresql-common'
+
+  file '/etc/postgresql-common/createcluster.conf' do
+    content "create_main_cluster = false\n"
+    only_if { cluster_version.to_f >= 9.2 }
   end
 
-  if new_resource.cluster_create_options.has_key?("locale") and not new_resource.cluster_create_options["locale"].empty?
+  # Install postgresql server packages
+  %W(postgresql-#{cluster_version} postgresql-server-dev-all).each do |pkg|
+    package pkg
+  end
+
+  # Return locale
+  if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     ENV['LANG'] = system_lang
   end
 
-  create_cluster(new_resource.name, configuration, hba_configuration, ident_configuration, new_resource.replication,  Mash.new(new_resource.cluster_create_options))
+  # Create postgresql cluster directories
 
-  if cluster_databag
-
-    cluster_users.each_pair do |cluster_user, user_options|
-      create_user(cluster_user, configuration, user_options["options"])
+  %W(/etc/postgresql /etc/postgresql/#{cluster_version} /etc/postgresql/#{cluster_version}/#{cluster_name}).each do |dir|
+    directory dir do
+      owner 'postgres'
+      group 'postgres'
     end
-
-    cluster_databases.each_pair do |cluster_database, database_options|
-      create_database(cluster_database, configuration, database_options["options"])
-    end
-
   end
 
-end
+  %W(/var/lib/postgresql /var/lib/postgresql/#{cluster_version}).each do |dir|
+    directory dir do
+      owner 'postgres'
+      group 'postgres'
+    end
+  end
 
-private
+  directory "/var/lib/postgresql/#{cluster_version}/#{cluster_name}" do
+    mode '0700'
+    owner 'postgres'
+    group 'postgres'
+  end
 
-def create_cluster(cluster_name, configuration, hba_configuration, ident_configuration, replication, cluster_options)
+  # Exec pg_cluster create
+  execute 'Exec pg_createcluster' do
+    command "pg_createcluster #{parsed_cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
+    not_if { ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") || !replication.empty? }
+  end
 
-  parsed_cluster_options = []
-  parsed_cluster_options << "--locale #{cluster_options[:locale]}" if cluster_options[:locale]
-  parsed_cluster_options << "--lc-collate #{cluster_options[:'lc-collate']}" if cluster_options[:'lc-collate']
-  parsed_cluster_options << "--lc-ctype #{cluster_options[:'lc-ctype']}" if cluster_options[:'lc-ctype']
-  parsed_cluster_options << "--lc-messages #{cluster_options[:'lc-messages']}" if cluster_options[:'lc-messages']
-  parsed_cluster_options << "--lc-monetary #{cluster_options[:'lc-monetary']}" if cluster_options[:'lc-monetary']
-  parsed_cluster_options << "--lc-numeric #{cluster_options[:'lc-numeric']}" if cluster_options[:'lc-numeric']
-  parsed_cluster_options << "--lc-time #{cluster_options[:'lc-time']}" if cluster_options[:'lc-time']
+  # Define postgresql service
+  postgresql_service = service service_name do
+    action :nothing
+    start_command "pg_ctlcluster #{cluster_version} #{cluster_name} start"
+    stop_command "pg_ctlcluster #{cluster_version} #{cluster_name} stop"
+    reload_command "pg_ctlcluster #{cluster_version} #{cluster_name} reload"
+    restart_command "pg_ctlcluster #{cluster_version} #{cluster_name} restart"
+    status_command "su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
+ -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres"
+    supports status: true, restart: true, reload: true
+  end
 
-  if ::File.exist?("/etc/postgresql/#{configuration[:version]}/#{cluster_name}/postgresql.conf")
-    Chef::Log.info("postgresql_cluster:create - cluster #{configuration[:version]}/#{cluster_name} already exists, skiping")
+  # Ruby block for postgresql smart restart
+  ruby_block "restart_service_#{service_name}" do
+    action :nothing
+    block do
+      if !replication.empty? && !replication_start_slave
+        run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
+      elsif need_to_restart?(allow_restart_cluster, first_time)
+        run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :restart, self))
+      else
+        run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
+      end
+    end
+  end
+
+  # Configuration templates
+  template "/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf" do
+    source 'postgresql.conf.erb'
+    owner 'postgres'
+    group 'postgres'
+    mode 0644
+    variables configuration: configuration, cluster_name: cluster_name, cluster_version: cluster_version
+    cookbook new_resource.cookbook
+    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+  end
+
+  template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_hba.conf" do
+    source 'pg_hba.conf.erb'
+    owner 'postgres'
+    group 'postgres'
+    mode 0644
+    variables configuration: hba_configuration
+    cookbook new_resource.cookbook
+    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+  end
+
+  template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_ident.conf" do
+    source 'pg_ident.conf.erb'
+    owner 'postgres'
+    group 'postgres'
+    mode 0644
+    variables configuration: ident_configuration
+    cookbook new_resource.cookbook
+    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+  end
+
+  file "/etc/postgresql/#{cluster_version}/#{cluster_name}/start.conf" do
+    content "auto\n"
+  end
+
+  # Replication
+  if !replication.empty?
+
+    if replication_initial_copy
+      pg_basebackup_path = "/usr/lib/postgresql/#{cluster_version}/bin/pg_basebackup"
+      pg_data_directory = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}"
+
+      BASEBACKUP_PARAMS = {
+        'host'     => '-h',
+        'port'     => '-p',
+        'user'     => '-U',
+        'password' => '-W'
+      }
+
+      conninfo_hash = Hash[*replication[:primary_conninfo].scan(/\w+=[^\s]+/).map { |x| x.split('=', 2) }.flatten]
+
+      basebackup_conninfo_hash = conninfo_hash.map do |key, val|
+        "#{BASEBACKUP_PARAMS[key.to_s]} #{val}" if BASEBACKUP_PARAMS[key.to_s]
+      end.compact
+
+      execute 'Make basebackup' do
+        command "#{pg_basebackup_path} -D #{pg_data_directory} -F p -x -c fast #{basebackup_conninfo_hash.join(' ')}"
+        user 'postgres'
+        not_if { ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/base") }
+      end
+    end
+
+    template "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf" do
+      source 'recovery.conf.erb'
+      owner 'postgres'
+      group 'postgres'
+      mode 0644
+      variables replication: replication
+      cookbook new_resource.cookbook
+      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+    end
+
   else
 
-    io_output = IO.popen( "pg_createcluster #{parsed_cluster_options.join(' ')} #{configuration[:version]} #{cluster_name}" )
-    string_output=io_output.readlines.join
-    io_output.close
-
-    if $?.exitstatus != 0
-      raise "pg_createcluster #{parsed_cluster_options.join(' ')} #{configuration[:version]} #{cluster_name} - returned #{$?.exitstatus}, expected 0"
-    else
-      Chef::Log.info( "postgresql_cluster:create - cluster #{configuration[:version]}/#{cluster_name} created" )
-      new_resource.updated_by_last_action(true)
+    file replication_file do
+      action :delete
+      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
     end
   end
 
-
-  if configuration[:version] == '9.3'
-    configuration[:connection][:unix_socket_directories] ||= configuration[:connection][:unix_socket_directory]
-    configuration[:connection].delete :unix_socket_directory
-  end
-
-  configuration_template = template "/etc/postgresql/#{configuration[:version]}/#{cluster_name}/postgresql.conf" do
-    action :nothing
-    source "postgresql.conf.erb"
-    owner "postgres"
-    group "postgres"
-    mode 0644
-    variables :configuration => configuration, :cluster_name => cluster_name
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook "postgresql"
+  # Start postgresql
+  ruby_block "start_service_#{service_name}]" do
+    block do
+      run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :start, self))
     end
+    not_if { pg_running?(cluster_version, cluster_name) || (!replication.empty? && !replication_start_slave) }
   end
 
-  hba_template = template "/etc/postgresql/#{configuration[:version]}/#{cluster_name}/pg_hba.conf" do
-    action :nothing
-    source "pg_hba.conf.erb"
-    owner "postgres"
-    group "postgres"
-    mode 0644
-    variables :configuration => hba_configuration
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook "postgresql"
-    end
-  end
-
-  ident_template = template "/etc/postgresql/#{configuration[:version]}/#{cluster_name}/pg_ident.conf" do
-    action :nothing
-    source "pg_ident.conf.erb"
-    owner "postgres"
-    group "postgres"
-    mode 0644
-    variables :configuration => ident_configuration
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook "postgresql"
-    end
-  end
-
-  replication_template = template "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf" do
-    action :nothing
-    source "recovery.conf.erb"
-    owner "postgres"
-    group "postgres"
-    mode 0644
-    variables :replication => replication
-    if new_resource.cookbook
-      cookbook new_resource.cookbook
-    else
-      cookbook "postgresql"
-    end
-  end
-
-  postgresql_service = service "postgresql" do
-    status_command "su -c '/usr/lib/postgresql/#{configuration[:version]}/bin/pg_ctl \
- -D /var/lib/postgresql/#{configuration[:version]}/#{cluster_name} status' postgres"
-    supports :status => true, :restart => true, :reload => true
-    action :enable
-  end
-
-  configuration_template.run_action(:create)
-  hba_template.run_action(:create)
-  ident_template.run_action(:create)
-
-  replication_file = "/var/lib/postgresql/#{configuration[:version]}/#{cluster_name}/recovery.conf"
-
-  if replication.empty?
-    ::File.exist?( replication_file ) and ::File.unlink( replication_file )
-    postgresql_service.run_action(:start)
-  else
-    replication_template.run_action(:create)
-  end
-
-  if configuration_template.updated_by_last_action? or hba_template.updated_by_last_action? or ident_template.updated_by_last_action?
-    postgresql_service.run_action(:reload)
-    new_resource.updated_by_last_action(true)
-  end
-
-end
-
-def create_database(cluster_database, configuration, database_options)
-
-  parsed_database_options = []
-
-  if cluster_database
-    parsed_database_options << "--locale=#{database_options['locale']}" if database_options['locale']
-    parsed_database_options << "--lc-collate=#{database_options['lc-collate']}" if database_options['lc-collate']
-    parsed_database_options << "--lc-ctype=#{database_options['lc-ctype']}" if database_options['lc-ctype']
-    parsed_database_options << "--owner=#{database_options['owner']}" if database_options['owner']
-    parsed_database_options << "--template=#{database_options['template']}" if database_options['template']
-    parsed_database_options << "--tablespace=#{database_options['tablespace']}" if database_options['tablespace']
-  end
-
-  io_output = IO.popen("echo 'SELECT datname FROM pg_database;' | su -c 'psql -t -A -p #{configuration["connection"]["port"]}' postgres")
-  current_databases_list = io_output.readlines.map { |line| line.chop }
-  io_output.close
-
-  raise "postgresql_database:create - can't get database list" if $?.exitstatus !=0
-
-  if current_databases_list.include? cluster_database
-    Chef::Log.info("postgresql_database:create - database '#{cluster_database}' already exists, skiping")
-  else
-    io_output =IO.popen("su -c 'createdb #{parsed_database_options.join(' ')} #{cluster_database} -p #{configuration["connection"]["port"]}' postgres")
-    io_output.close
-    raise "postgresql_database:create - can't create database #{cluster_database}" if $?.exitstatus !=0
-    Chef::Log.info("postgresql_database:create - database '#{cluster_database}' created")
-  end
-end
-
-def create_user(cluster_user, configuration, user_options)
-
-  parsed_user_options = []
-
-  if user_options
-    parsed_user_options << "REPLICATION" if user_options["replication"]  =~ /\A(true|yes)\Z/i
-    parsed_user_options << "SUPERUSER" if user_options["superuser"] =~ /\A(true|yes)\Z/i
-    parsed_user_options << "UNENCRYPTED PASSWORD '#{user_options["password"]}'" if user_options["password"]
-  end
-
-  io_output = IO.popen("echo 'SELECT usename FROM pg_user;' | su -c 'psql -t -A -p #{configuration["connection"]["port"]}' postgres")
-  current_users_list = io_output.readlines.map { |line| line.chop }
-  io_output.close
-  raise "postgresql_user:create - can't get users list" if $?.exitstatus !=0
-
-  if current_users_list.include? cluster_user
-    Chef::Log.info("postgresql_user:create - user '#{cluster_user}' already exists, skiping")
-  else
-    io_output =IO.popen("echo \"CREATE USER #{cluster_user} #{parsed_user_options.join(' ')};\" | su -c 'psql -t -A -p #{configuration["connection"]["port"]}' postgres")
-    create_response = io_output.readlines
-    io_output.close
-    if not create_response.include?("CREATE ROLE\n")
-      raise "postgresql_user:create - can't create user #{cluster_user}"
-    end
-    Chef::Log.info("postgresql_user:create - user '#{cluster_user}' created")
-  end
 end

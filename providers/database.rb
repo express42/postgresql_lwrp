@@ -1,10 +1,10 @@
 #
-# Cookbook Name:: postgresql
-# Recipe:: client
+# Cookbook Name:: postgresql_lwrp
+# Provider:: database
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2014 LLC Express 42
+# Copyright (C) 2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -24,7 +24,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+#
 
-%W(postgresql-client-#{node['postgresql']['client']['version']} libpq-dev).each do |pkg|
-  package pkg
+include Chef::Postgresql::Helpers
+
+action :create do
+
+  options = {}
+
+  options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner
+  options.merge!('TABLESPACE' => "'#{new_resource.tablespace}'") if new_resource.tablespace
+  options.merge!('TEMPLATE' => "'#{new_resource.template}'") if new_resource.template
+  options.merge!('ENCODING' => "'#{new_resource.encoding}'") if new_resource.encoding
+  options.merge!('CONNECTION LIMIT' => new_resource.connectionn_limit) if new_resource.connectionn_limit
+
+  if create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
+    new_resource.updated_by_last_action(true)
+  end
 end

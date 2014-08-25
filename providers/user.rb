@@ -1,10 +1,10 @@
 #
-# Cookbook Name:: postgresql
-# Resource:: default
+# Cookbook Name:: postgresql_lwrp
+# Provider:: user
 #
 # Author:: LLC Express 42 (info@express42.com)
 #
-# Copyright (C) 2012-2013 LLC Express 42
+# Copyright (C) 2014 LLC Express 42
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -24,16 +24,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+#
 
-actions :create
-default_action :create
+include Chef::Postgresql::Helpers
 
-attribute :cluster_name, :kind_of => String, :name_attribute => true
-attribute :cookbook, :kind_of => String
-attribute :databag, :kind_of => String
-attribute :cluster_create_options, :kind_of => Hash, :default => {}
-attribute :configuration, :kind_of => Hash, :default => {}
-attribute :hba_configuration, :kind_of => Array, :default => []
-attribute :ident_configuration, :kind_of => Array, :default => []
-attribute :initial_files, :kind_of => Array, :default => []
-attribute :replication, :kind_of => Hash, :default => {}
+action :create do
+
+  options = new_resource.advanced_options.clone
+
+  if new_resource.replication == true
+    options.merge!('REPLICATION' => nil)
+  elsif new_resource.replication == false
+    options.merge!('NOREPLICATION' => nil)
+  end
+
+  if new_resource.superuser == true
+    options.merge!('SUPERUSER' => nil)
+  elsif new_resource.superuser == false
+    options.merge!('NOSUPERUSER' => nil)
+  end
+
+  options.merge!('ENCRYPTED PASSWORD' => "'#{new_resource.encrypted_password}'") if new_resource.encrypted_password
+
+  options.merge!('UNENCRYPTED PASSWORD' => "'#{new_resource.unencrypted_password}'") if new_resource.unencrypted_password
+
+  if create_user(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
+    new_resource.updated_by_last_action(true)
+  end
+end

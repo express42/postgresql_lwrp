@@ -1,0 +1,130 @@
+require 'serverspec'
+
+include Serverspec::Helper::Exec
+include Serverspec::Helper::DetectOS
+
+RSpec.configure do |c|
+  c.before :all do
+    c.path = '/sbin:/usr/sbin'
+  end
+end
+
+RUNNING = 0
+STOPPED = 3
+
+def get_port(version, name)
+  postmaster_content = command("cat /var/lib/postgresql/#{version}/#{name}/postmaster.pid").stdout.split
+  postmaster_content[3].to_i
+end
+
+def postgresql_cluster(version, name)
+  command("su postgres -c \"/usr/lib/postgresql/#{version}/bin/pg_ctl -D /var/lib/postgresql/#{version}/#{name} status\"").exit_status
+end
+
+def postgresql_check_owner(version, name, database, user)
+  pg_port = get_port(version, name)
+  psql_out = command("su postgres -c \"psql -p #{pg_port} -tql 2>/dev/null\"").stdout.strip.split("\n")
+  psql_out.each do |t|
+    return true if t.split('|')[0].strip == database && t.split('|')[1].strip == user
+  end
+  false
+end
+
+def postgresql_check_priv(version, name, user, priv)
+  pg_port = get_port(version, name)
+  psql_out = command("su postgres -c \"psql -qt -p #{pg_port} -c \\\"SELECT #{priv} FROM pg_roles where rolname='#{user}'\\\" 2>/dev/null\"").stdout.strip
+  psql_out == 't'
+end
+
+def postgresql_check_login(version, name, user, password)
+  pg_port = get_port(version, name)
+  psql_out = command("PGPASSWORD='#{password}' su postgres -c \"psql -h 127.0.0.1 -p #{pg_port} -U #{user} -d postgres -c \\\"SELECT 1\\\" 2>/dev/null\"").exit_status
+  psql_out == 0
+end
+
+def master_tests(pg_version)
+  describe package("postgresql-#{pg_version}") do
+    it { should be_installed }
+  end
+
+  describe service('postgresql') do
+    it { should be_enabled }
+  end
+
+  describe 'master service postgresql' do
+    it 'should be running' do
+      postgresql_cluster(pg_version, 'main').should eq RUNNING
+    end
+  end
+
+  describe port(5432) do
+    it { should be_listening }
+  end
+end
+
+def create_database_tests(pg_version)
+  describe 'database test01' do
+    it 'should be created and have owner test01' do
+      postgresql_check_owner(pg_version, 'main', 'test01', 'test01').should eq true
+    end
+  end
+
+  describe 'database test-02' do
+    it 'should be created and have owner test-02' do
+      postgresql_check_owner(pg_version, 'main', 'test-02', 'test-02').should eq true
+    end
+  end
+end
+
+def create_users_tests(pg_version)
+  describe 'user test01' do
+    it 'should be able to login with password' do
+      postgresql_check_login(pg_version, 'main', 'test01', 'test01').should eq true
+    end
+    it 'should have replication privileges' do
+      postgresql_check_priv(pg_version, 'main', 'test01', 'rolreplication').should eq true
+    end
+    it 'should not have replication privileges' do
+      postgresql_check_priv(pg_version, 'main', 'test01', 'rolsuper').should eq false
+    end
+  end
+
+  describe 'user test-02' do
+    it 'should be able to login with password' do
+      postgresql_check_login(pg_version, 'main', 'test-02', 'test-02').should eq true
+    end
+    it 'should have replication privileges' do
+      postgresql_check_priv(pg_version, 'main', 'test-02', 'rolsuper').should eq true
+    end
+  end
+end
+
+def slave_tests(pg_version)
+  describe package("postgresql-#{pg_version}") do
+    it { should be_installed }
+  end
+
+  describe service('postgresql') do
+    it { should be_enabled }
+  end
+
+  describe 'slave service postgresql' do
+    it 'should be running' do
+      postgresql_cluster(pg_version, 'slave').should eq RUNNING
+    end
+  end
+
+  describe 'another slave service postgresql' do
+    it 'should be not running' do
+      postgresql_cluster(pg_version, 'slave2').should eq STOPPED
+    end
+  end
+
+  describe port(5433) do
+    it { should be_listening }
+  end
+
+  describe port(5434) do
+    it { should_not be_listening }
+  end
+end
