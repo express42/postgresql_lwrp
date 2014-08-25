@@ -1,5 +1,13 @@
 ## 1.0.0 (Aug 25, 2014)
-TODO
+
+* (New) Flat configuration file
+* (New) Initial replicaton can be started automatically
+* (New) Option allow_restart_cluster allows do restart instead reload (Only first time or always)
+* (New) Resources/providers for database and user creation
+* (New) Recipe apt_official_repository with official postgresql repository
+* (New) Severspec tests added
+* (Removed) Removed databags for users and databases. You should use appropriate providers
+* (Fix) pg_ident template fixed
 
 ## 0.2.3 (Jun 18, 2013)
 
