@@ -14,7 +14,6 @@ provisioner:
 platforms:
   - name: ubuntu-12.04
   - name: ubuntu-14.04
-  - name: debian-7.0
 
 suites:
   - name: pg-93
