@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/express42-cookbooks/postgresql.svg?branch=new_era)](https://travis-ci.org/express42-cookbooks/postgresql)
+[![Build Status](https://travis-ci.org/express42-cookbooks/postgresql.svg)](https://travis-ci.org/express42-cookbooks/postgresql)
 
 Description
 ===========
