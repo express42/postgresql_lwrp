@@ -6,7 +6,7 @@ driver_config:
   digitalocean_client_id: <%= ENV['DIGITALOCEAN_CLIENT_ID'] %>
   digitalocean_api_key: <%= ENV['DIGITALOCEAN_API_KEY'] %>
   flavor_id: 63
-  region_id: 4
+  region_id: 8
 
 provisioner:
   name: chef_zero
