@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: postgresql
+# Cookbook Name:: postgresql_lwrp
 # Recipe:: client
 #
 # Author:: LLC Express 42 (info@express42.com)
