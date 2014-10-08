@@ -7,6 +7,10 @@ default["postgresql"]["defaults"]["server"]["connection"] = {
   :unix_socket_directory => "'/var/run/postgresql'"
 }
 
+default["postgresql"]["defaults"]["server"]["security"] = {
+  :ssl => "true"
+}
+
 default["postgresql"]["defaults"]["server"]["resources"] = {
   :shared_buffers => "100MB",
   :temp_buffers => "8MB",

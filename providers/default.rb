@@ -46,7 +46,7 @@ action :create do
   hba_configuration   = node.postgresql.defaults.hba_configuration | new_resource.hba_configuration
   ident_configuration = node.postgresql.defaults.ident_configuration | new_resource.ident_configuration
 
-  %W{postgresql-#{configuration[:version]} postgresql-server-dev-all}.each do |pkg|
+  %W{postgresql-#{configuration[:version]} postgresql-contrib-#{configuration[:version]} postgresql-server-dev-#{configuration[:version]}}.each do |pkg|
     package pkg do
       action :nothing
     end.run_action(:install)
@@ -177,10 +177,18 @@ def create_cluster(cluster_name, configuration, hba_configuration, ident_configu
   postgresql_service.run_action(:start)
 
   if configuration_template.updated_by_last_action? or hba_template.updated_by_last_action? or ident_template.updated_by_last_action?
-    postgresql_service.run_action(:reload)
+    # Restart postgresql after installation
+    if ::File.exist?( "/var/lib/postgresql/#{configuration[:version]}/.configured" )
+      postgresql_service.run_action(:reload)
+    else
+      postgresql_service.run_action(:restart)
+    end
     @new_resource.updated_by_last_action(true)
   end
 
+  file "/var/lib/postgresql/#{configuration[:version]}/.configured" do
+    action :create_if_missing
+  end
 end
 
 def create_database(cluster_database, configuration, database_options)
@@ -196,7 +204,7 @@ def create_database(cluster_database, configuration, database_options)
     parsed_database_options << "--tablespace=#{database_options['tablespace']}" if database_options['tablespace']
   end
 
-  io_output = IO.popen("echo 'SELECT datname FROM pg_database;' | su -c 'psql -t -A -p #{configuration["connection"]["port"]}' postgres")
+  io_output = IO.popen("echo 'SELECT datname FROM pg_database;' | su -c 'psql -p #{configuration["connection"]["port"]} -t -A -p #{configuration["connection"]["port"]}' postgres")
   current_databases_list = io_output.readlines.map { |line| line.chop }
   io_output.close
 
@@ -220,9 +228,10 @@ def create_user(cluster_user, configuration, user_options)
     parsed_user_options << "REPLICATION" if user_options["replication"]  =~ /\A(true|yes)\Z/i
     parsed_user_options << "SUPERUSER" if user_options["superuser"] =~ /\A(true|yes)\Z/i
     parsed_user_options << "UNENCRYPTED PASSWORD '#{user_options["password"]}'" if user_options["password"]
+    parsed_user_options << user_options["priveleges"] if user_options["priveleges"]
   end
 
-  io_output = IO.popen("echo 'SELECT usename FROM pg_user;' | su -c 'psql -t -A' postgres")
+  io_output = IO.popen("echo 'SELECT usename FROM pg_user;' | su -c 'psql -p #{configuration["connection"]["port"]} -t -A' postgres")
   current_users_list = io_output.readlines.map { |line| line.chop }
   io_output.close
   raise "postgresql_user:create - can't get users list" if $?.exitstatus !=0
@@ -230,7 +239,7 @@ def create_user(cluster_user, configuration, user_options)
   if current_users_list.include? cluster_user
     Chef::Log.info("postgresql_user:create - user '#{cluster_user}' already exists, skiping")
   else
-    io_output =IO.popen("echo \"CREATE USER #{cluster_user} #{parsed_user_options.join(' ')};\" | su -c 'psql -t -A' postgres")
+    io_output =IO.popen("echo \"CREATE USER #{cluster_user} #{parsed_user_options.join(' ')};\" | su -c 'psql -p #{configuration["connection"]["port"]} -t -A' postgres")
     create_response = io_output.readlines
     io_output.close
     if not create_response.include?("CREATE ROLE\n")

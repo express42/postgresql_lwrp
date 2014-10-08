@@ -85,8 +85,12 @@ external_pid_file = '/var/run/postgresql/<%= @configuration[:version] %>-<%= @cl
 
 # - Security and Authentication -
 
+<% @configuration[:security].each_pair do |parameter, value| %>
+<%= parameter %> = <%= value %>
+<% end %>
+
 #authentication_timeout = 1min		# 1s-600s
-ssl = true				# (change requires restart)
+#ssl = true				# (change requires restart)
 #ssl_ciphers = 'ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH'	# allowed SSL ciphers
 					# (change requires restart)
 #ssl_renegotiation_limit = 512MB	# amount of data between renegotiations
