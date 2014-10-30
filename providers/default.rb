@@ -128,7 +128,7 @@ action :create do
     block do
       if !replication.empty? && !replication_start_slave
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
-      elsif need_to_restart?(allow_restart_cluster, first_time)
+      elsif need_to_restart?(allow_restart_cluster.to_sym, first_time)
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :restart, self))
       else
         run_context.notifies_delayed(Chef::Resource::Notification.new(postgresql_service, :reload, self))
