@@ -56,7 +56,7 @@ class Chef
         set_or_return(:allow_restart_cluster, arg, default: :none,
                                                    callbacks: {
                                                      'is not allowed! Allowed params for allow_restart_cluster: first, always or none' => proc do |value|
-                                                       value.to_sym.match(/^(first|always|none)$/) != nil
+                                                       !value.to_sym.match(/^(first|always|none)$/).nil?
                                                      end
                                                    }
         )
