@@ -4,8 +4,7 @@ driver:
 
 driver_config:
   private_networking: false
-  digitalocean_client_id: <%= ENV['DIGITALOCEAN_CLIENT_ID'] %>
-  digitalocean_api_key: <%= ENV['DIGITALOCEAN_API_KEY'] %>
+  digitalocean_access_token: <%= ENV['DIGITALOCEAN_SSH_KEY_IDS'] %>
   region: nyc3
 
 provisioner:
