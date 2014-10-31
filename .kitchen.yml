@@ -21,5 +21,8 @@ suites:
     run_list:
       - recipe[pgtest::test_9_2]
   - name: pg-93
+    driver:
+      box: express42/ubuntu12.04-chef11
+      provider: parallels
     run_list:
       - recipe[pgtest::test_9_3]
