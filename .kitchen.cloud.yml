@@ -1,19 +1,19 @@
 ---
-driver_plugin: digitalocean
+driver:
+  name: digitalocean
 
 driver_config:
   private_networking: false
   digitalocean_client_id: <%= ENV['DIGITALOCEAN_CLIENT_ID'] %>
   digitalocean_api_key: <%= ENV['DIGITALOCEAN_API_KEY'] %>
-  flavor_id: 63
-  region_id: 8
+  region: nyc3
 
 provisioner:
   name: chef_zero
 
 platforms:
-  - name: ubuntu-12.04
-  - name: ubuntu-14.04
+  - name: ubuntu-12.04-x64
+  - name: ubuntu-14.04-x64
 
 suites:
   - name: pg-93
