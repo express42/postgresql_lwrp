@@ -1,3 +1,6 @@
+## 1.0.1 (Oct 31, 2014)
+* (Fix) Fix broken allow_restart_cluster option
+
 ## 1.0.0 (Aug 25, 2014)
 
 * (New) Flat configuration file
