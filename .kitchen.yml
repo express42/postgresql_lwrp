@@ -13,16 +13,20 @@ platforms:
 suites:
   - name: pg-90
     run_list:
+      - recipe[apt]
       - recipe[pgtest::test_9_0]
   - name: pg-91
     run_list:
+      - recipe[apt]
       - recipe[pgtest::test_9_1]
   - name: pg-92
     run_list:
+      - recipe[apt]
       - recipe[pgtest::test_9_2]
   - name: pg-93
     driver:
       box: express42/ubuntu12.04-chef11
       provider: parallels
     run_list:
+      - recipe[apt]
       - recipe[pgtest::test_9_3]
