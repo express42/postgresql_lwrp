@@ -1,3 +1,4 @@
+[![Cookbook Version](http://img.shields.io/cookbook/v/apt.svg)]('http://img.shields.io/cookbook/v/postgresql\_lwrp.svg)
 [![Build Status](https://travis-ci.org/express42-cookbooks/postgresql.svg)](https://travis-ci.org/express42-cookbooks/postgresql)
 
 Description
