@@ -1,17 +1,20 @@
-GIT
-  remote: git://github.com/sample/kitchen-digitalocean.git
-  revision: 0c0531ab61d2aca2415326c9d1859ec0a414b7f0
-  branch: master
-  specs:
-    kitchen-digitalocean (0.7.2)
-      fog
-      test-kitchen (~> 1.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (4.1.7)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
     addressable (2.3.6)
     ast (2.0.0)
+    astrolabe (1.3.0)
+      parser (>= 2.2.0.pre.3, < 3.0)
+    axiom-types (0.1.1)
+      descendants_tracker (~> 0.0.4)
+      ice_nine (~> 0.11.0)
+      thread_safe (~> 0.3, >= 0.3.1)
     backports (3.6.0)
     berkshelf (3.1.5)
       addressable (~> 2.3.4)
@@ -71,11 +74,21 @@ GEM
       fauxhai (~> 2.0)
       rspec (~> 3.0)
     coderay (1.1.0)
+    coercible (1.0.0)
+      descendants_tracker (~> 0.0.1)
     dep-selector-libgecode (1.0.2)
     dep_selector (1.0.3)
       dep-selector-libgecode (~> 1.0)
       ffi (~> 1.9)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    droplet_kit (1.0.2)
+      activesupport (~> 4.1.6)
+      kartograph (~> 0.0.5)
+      resource_kit (~> 0.0.5)
+      virtus (~> 1.0.3)
+    equalizer (0.0.9)
     erubis (2.7.0)
     ethon (0.7.1)
       ffi (>= 1.3.0)
@@ -135,9 +148,15 @@ GEM
     hashie (2.1.2)
     highline (1.6.21)
     hitimes (1.2.2)
+    i18n (0.6.11)
+    ice_nine (0.11.0)
     inflecto (0.0.2)
     ipaddress (0.8.0)
     json (1.8.1)
+    kartograph (0.0.8)
+    kitchen-digitalocean (0.8.1)
+      droplet_kit (~> 1.0)
+      test-kitchen (~> 1.2)
     kitchen-vagrant (0.15.0)
       test-kitchen (~> 1.0)
     launchy (2.4.2)
@@ -147,12 +166,13 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.0)
     minitar (0.5.4)
+    minitest (5.4.2)
     mixlib-authentication (1.3.0)
       mixlib-log
     mixlib-cli (1.5.0)
     mixlib-config (2.1.0)
     mixlib-log (1.6.0)
-    mixlib-shellout (1.4.0)
+    mixlib-shellout (1.6.0)
     multi_json (1.10.1)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
@@ -181,7 +201,7 @@ GEM
       mixlib-shellout (~> 1.2)
       systemu (~> 2.6.4)
       wmi-lite (~> 1.0)
-    parser (2.2.0.pre.4)
+    parser (2.2.0.pre.6)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     polyglot (0.3.5)
@@ -196,6 +216,10 @@ GEM
     rack (1.5.2)
     rainbow (2.0.0)
     rake (10.3.2)
+    resource_kit (0.0.5)
+      activesupport (>= 3.0)
+      addressable (~> 2.3.6)
+      faraday
     rest-client (1.6.7)
       mime-types (>= 1.16)
     retryable (1.3.5)
@@ -228,15 +252,15 @@ GEM
     rspec-mocks (3.0.3)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.3)
-    rubocop (0.24.1)
-      json (>= 1.7.7, < 2)
-      parser (>= 2.2.0.pre.3, < 3.0)
+    rubocop (0.27.0)
+      astrolabe (~> 1.3)
+      parser (>= 2.2.0.pre.6, < 3.0)
       powerpack (~> 0.0.6)
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
-    ruby-progressbar (1.5.1)
+    ruby-progressbar (1.6.1)
     rufus-lru (1.0.5)
-    safe_yaml (1.0.3)
+    safe_yaml (1.0.4)
     sawyer (0.5.4)
       addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)
@@ -253,6 +277,7 @@ GEM
       safe_yaml (~> 1.0)
       thor (~> 0.18)
     thor (0.19.1)
+    thread_safe (0.3.4)
     timers (4.0.0)
       hitimes
     travis (1.7.1)
@@ -270,9 +295,16 @@ GEM
       polyglot (~> 0.3)
     typhoeus (0.6.9)
       ethon (>= 0.7.1)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
     varia_model (0.4.0)
       buff-extensions (~> 1.0)
       hashie (>= 2.0.2, < 3.0.0)
+    virtus (1.0.3)
+      axiom-types (~> 0.1)
+      coercible (~> 1.0)
+      descendants_tracker (~> 0.0, >= 0.0.3)
+      equalizer (~> 0.0, >= 0.0.9)
     websocket (1.2.0)
     wmi-lite (1.0.0)
     yajl-ruby (1.2.1)
@@ -285,7 +317,7 @@ DEPENDENCIES
   chefspec
   fog
   foodcritic
-  kitchen-digitalocean!
+  kitchen-digitalocean
   kitchen-vagrant
   pry
   rubocop
