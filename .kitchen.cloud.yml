@@ -4,15 +4,14 @@ driver:
 
 driver_config:
   private_networking: false
-  digitalocean_access_token: <%= ENV['DIGITALOCEAN_SSH_KEY_IDS'] %>
   region: nyc3
 
 provisioner:
   name: chef_zero
 
 platforms:
-  - name: ubuntu-12.04-x64
-  - name: ubuntu-14.04-x64
+  - name: ubuntu-12-04-x64
+  - name: ubuntu-14-04-x64
 
 suites:
   - name: pg-93
