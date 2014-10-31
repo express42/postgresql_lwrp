@@ -19,6 +19,7 @@ postgresql 'main' do
     work_mem: '2MB',
     effective_cache_size: '200MB'
   )
+  allow_restart_cluster :always
   hba_configuration(
     [
       { type: 'host', database: 'all', user: 'all', address: '0.0.0.0/0', method: 'md5' },
