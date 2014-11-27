@@ -1,7 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.1.7)
+    CFPropertyList (2.2.8)
+    activesupport (4.1.8)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -15,8 +16,8 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (3.6.3)
-    berkshelf (3.2.0)
+    backports (3.6.4)
+    berkshelf (3.2.1)
       addressable (~> 2.3.4)
       berkshelf-api-client (~> 1.2)
       buff-config (~> 1.0)
@@ -86,16 +87,16 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
-    droplet_kit (1.0.2)
+    droplet_kit (1.1.2)
       activesupport (~> 4.1.6)
-      kartograph (~> 0.0.5)
-      resource_kit (~> 0.0.5)
+      kartograph (~> 0.2.0)
+      resource_kit (~> 0.1.1)
       virtus (~> 1.0.3)
     equalizer (0.0.9)
     erubis (2.7.0)
     ethon (0.7.1)
       ffi (>= 1.3.0)
-    excon (0.40.0)
+    excon (0.41.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.9.1)
@@ -104,23 +105,31 @@ GEM
       net-ssh
       ohai
     ffi (1.9.6)
-    ffi-yajl (1.2.0)
+    ffi-yajl (1.3.1)
       ffi (~> 1.5)
-      libyajl2 (~> 1.0)
-    fog (1.24.0)
-      fog-brightbox
-      fog-core (~> 1.23)
+      libyajl2 (~> 1.2)
+    fission (0.5.0)
+      CFPropertyList (~> 2.2)
+    fog (1.25.0)
+      fog-brightbox (~> 0.4)
+      fog-core (~> 1.25)
       fog-json
+      fog-profitbricks
       fog-radosgw (>= 0.0.2)
       fog-sakuracloud (>= 0.0.4)
       fog-softlayer
+      fog-terremark
+      fog-vmfusion
+      fog-voxel
+      fog-xml (~> 0.1.1)
       ipaddress (~> 0.5)
       nokogiri (~> 1.5, >= 1.5.11)
+      opennebula
     fog-brightbox (0.6.1)
       fog-core (~> 1.22)
       fog-json
       inflecto
-    fog-core (1.24.0)
+    fog-core (1.25.0)
       builder
       excon (~> 0.38)
       formatador (~> 0.2)
@@ -129,6 +138,10 @@ GEM
       net-ssh (>= 2.1.3)
     fog-json (1.0.0)
       multi_json (~> 1.0)
+    fog-profitbricks (0.0.1)
+      fog-core
+      fog-xml
+      nokogiri
     fog-radosgw (0.0.3)
       fog-core (>= 1.21.0)
       fog-json
@@ -136,10 +149,19 @@ GEM
     fog-sakuracloud (0.1.1)
       fog-core
       fog-json
-    fog-softlayer (0.3.23)
+    fog-softlayer (0.3.24)
       fog-core
       fog-json
-    fog-xml (0.1.0)
+    fog-terremark (0.0.3)
+      fog-core
+      fog-xml
+    fog-vmfusion (0.0.1)
+      fission
+      fog-core
+    fog-voxel (0.0.1)
+      fog-core
+      fog-xml
+    fog-xml (0.1.1)
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
     foodcritic (4.0.0)
@@ -168,20 +190,20 @@ GEM
     inflecto (0.0.2)
     ipaddress (0.8.0)
     json (1.8.1)
-    kartograph (0.0.8)
-    kitchen-digitalocean (0.8.1)
+    kartograph (0.2.0)
+    kitchen-digitalocean (0.8.2)
       droplet_kit (~> 1.0)
       test-kitchen (~> 1.2)
     kitchen-vagrant (0.15.0)
       test-kitchen (~> 1.0)
-    launchy (2.4.2)
+    launchy (2.4.3)
       addressable (~> 2.3)
-    libyajl2 (1.1.0)
+    libyajl2 (1.2.0)
     method_source (0.8.2)
     mime-types (1.25.1)
-    mini_portile (0.6.0)
+    mini_portile (0.6.1)
     minitar (0.5.4)
-    minitest (5.4.2)
+    minitest (5.4.3)
     mixlib-authentication (1.3.0)
       mixlib-log
     mixlib-cli (1.5.0)
@@ -201,8 +223,8 @@ GEM
       net-ssh (>= 2.6.5)
       net-ssh-gateway (>= 1.2.0)
     nio4r (1.0.1)
-    nokogiri (1.6.3.1)
-      mini_portile (= 0.6.0)
+    nokogiri (1.6.5)
+      mini_portile (~> 0.6.0)
     octokit (3.5.2)
       sawyer (~> 0.5.3)
     ohai (7.4.0)
@@ -216,7 +238,11 @@ GEM
       mixlib-shellout (~> 1.2)
       systemu (~> 2.6.4)
       wmi-lite (~> 1.0)
-    parser (2.2.0.pre.6)
+    opennebula (4.10.1)
+      json
+      nokogiri
+      rbvmomi
+    parser (2.2.0.pre.8)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     plist (3.1.0)
@@ -231,9 +257,12 @@ GEM
       websocket (~> 1.0)
     rack (1.5.2)
     rainbow (2.0.0)
-    rake (10.3.2)
-    resource_kit (0.0.5)
-      activesupport (>= 3.0)
+    rake (10.4.0)
+    rbvmomi (1.8.2)
+      builder
+      nokogiri (>= 1.4.1)
+      trollop
+    resource_kit (0.1.1)
       addressable (~> 2.3.6)
       faraday
     rest-client (1.6.7)
@@ -268,13 +297,13 @@ GEM
     rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
-    rubocop (0.27.0)
+    rubocop (0.27.1)
       astrolabe (~> 1.3)
-      parser (>= 2.2.0.pre.6, < 3.0)
+      parser (>= 2.2.0.pre.7, < 3.0)
       powerpack (~> 0.0.6)
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
-    ruby-progressbar (1.6.1)
+    ruby-progressbar (1.7.0)
     rufus-lru (1.0.5)
     safe_yaml (1.0.4)
     sawyer (0.5.5)
@@ -296,7 +325,7 @@ GEM
     thread_safe (0.3.4)
     timers (4.0.1)
       hitimes
-    travis (1.7.2)
+    travis (1.7.4)
       addressable (~> 2.3)
       backports
       faraday (~> 0.9)
@@ -309,6 +338,7 @@ GEM
       typhoeus (~> 0.6, >= 0.6.8)
     treetop (1.5.3)
       polyglot (~> 0.3)
+    trollop (2.0)
     typhoeus (0.6.9)
       ethon (>= 0.7.1)
     tzinfo (1.2.2)
