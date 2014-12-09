@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'postgresql_lwrp::default' do
   let(:chef_run) do
-    ChefSpec::Runner.new do |node|
+    ChefSpec::SoloRunner.new do |node|
       node.automatic['memory']['total'] = '1GB'
     end.converge(described_recipe)
   end
