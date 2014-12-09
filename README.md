@@ -10,8 +10,6 @@ Changelog
 =========
 See CHANGELOG.md
 
-**If you upgrading from 0.2.x to 1.x.x, you must read CHANGELOG.md UPGRADING.md**
-
 Requirements
 ============
 Postgresql cookbook depends on apt cookbook
