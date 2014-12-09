@@ -1,0 +1,95 @@
+#
+# Cookbook Name:: postgresql_lwrp
+# Provider:: cloud_backup
+#
+# Author:: LLC Express 42 (info@express42.com)
+#
+# Copyright (C) 2014 LLC Express 42
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+# of the Software, and to permit persons to whom the Software is furnished to do
+# so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+#
+
+use_inline_resources
+
+include Chef::Postgresql::Helpers
+
+action :schedule do
+
+  postgresql_version       = new_resource.in_version
+  postgresql_instance_name = new_resource.in_cluster
+  postgresql_name_version  = "#{postgresql_instance_name}-#{postgresql_version}"
+  postgresql_path          = "/var/lib/postgresql/#{postgresql_version}/#{postgresql_instance_name}"
+  wal_e_path               = node['postgresql']['cloud_backup']['wal_e_path']
+  envdir_params            = new_resource.params
+
+  unsetted_required_params  = params_validation(new_resource.protocol, envdir_params)
+  fail "Key(s) '#{unsetted_required_params.join(', ')}' missing for protocol '#{new_resource.protocol}'" unless unsetted_required_params.empty?
+
+  # Add libpq PGPORT variable to envdir_params
+  envdir_params['PGPORT'] = get_pg_port(postgresql_version, postgresql_instance_name).to_s
+
+  # Create wal-e root directory
+  directory "/etc/wal-e.d/#{postgresql_name_version}/env" do
+    recursive true
+    mode '0750'
+    owner 'root'
+    group 'postgres'
+  end
+
+  # We may use custom temp dir
+  if envdir_params.has_key? 'tmpdir'
+    directory envdir_params['tmpdir'] do
+      recursive true
+      mode '0750'
+      owner 'postgres'
+      group 'postgres'
+    end
+  end
+
+  # Create all param files in wal-e.d/env directory
+  envdir_params.each do |key, val|
+    file "/etc/wal-e.d/#{postgresql_name_version}/env/#{key.upcase}" do
+      mode 0640
+      owner 'root'
+      group 'postgres'
+      content val
+      backup false
+    end
+  end
+
+  # Remove unused
+  ruby_block 'Remove unused variables' do
+    block do
+      unused_variables = ::Dir["/etc/wal-e.d/#{postgresql_name_version}/env/*"] - envdir_params.keys.map { |key| "/etc/wal-e.d/#{postgresql_name_version}/env/#{key.upcase}" }
+      unused_variables.each { |var| ::File.delete var }
+    end
+  end
+
+  # Create crontask via cron cookbook
+  cron_d "backup_postgresql_cluster_#{postgresql_name_version}" do
+    command "envdir /etc/wal-e.d/#{postgresql_name_version}/env #{wal_e_path} backup-push #{postgresql_path}"
+    user 'postgres'
+    minute new_resource.full_backup_time['minute']
+    hour new_resource.full_backup_time['hour']
+    day new_resource.full_backup_time['day']
+    month new_resource.full_backup_time['month']
+    weekday new_resource.full_backup_time['weekday']
+  end
+end

@@ -31,25 +31,27 @@ include Chef::Postgresql::Helpers
 
 action :create do
 
-  configuration           = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server']['configuration'].to_hash, new_resource.configuration)
-  hba_configuration       = node['postgresql']['defaults']['server']['hba_configuration'] | new_resource.hba_configuration
-  ident_configuration     = node['postgresql']['defaults']['server']['ident_configuration'] | new_resource.ident_configuration
+  configuration            = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server']['configuration'].to_hash, new_resource.configuration)
+  hba_configuration        = node['postgresql']['defaults']['server']['hba_configuration'] | new_resource.hba_configuration
+  ident_configuration      = node['postgresql']['defaults']['server']['ident_configuration'] | new_resource.ident_configuration
 
-  cluster_name            = new_resource.name
-  cluster_version         = (!new_resource.cluster_version.empty? && new_resource.cluster_version) ||  node['postgresql']['defaults']['server']['version']
-  service_name            = "postgresql_#{cluster_version}_#{cluster_name}"
+  cluster_name             = new_resource.name
+  cluster_version          = (!new_resource.cluster_version.empty? && new_resource.cluster_version) ||  node['postgresql']['defaults']['server']['version']
+  service_name             = "postgresql_#{cluster_version}_#{cluster_name}"
 
-  allow_restart_cluster   = new_resource.allow_restart_cluster
+  allow_restart_cluster    = new_resource.allow_restart_cluster
 
-  replication             = new_resource.replication
-  replication_file        = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf"
-  replication_start_slave = new_resource.replication_start_slave
+  replication              = new_resource.replication
+  replication_file         = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf"
+  replication_start_slave  = new_resource.replication_start_slave
   replication_initial_copy = new_resource.replication_initial_copy
 
-  cluster_options         = Mash.new(new_resource.cluster_create_options)
-  parsed_cluster_options  = []
+  wal_e_path               = node['postgresql']['cloud_backup']['wal_e_path']
 
-  first_time              = pg_installed?("postgresql-#{cluster_version}")
+  cluster_options          = Mash.new(new_resource.cluster_create_options)
+  parsed_cluster_options   = []
+
+  first_time               = pg_installed?("postgresql-#{cluster_version}")
 
   %w(locale lc-collate lc-ctype lc-messages lc-monetary lc-numeric lc-time).each do |option|
     parsed_cluster_options << "--#{option} #{cluster_options[:locale]}" if cluster_options[option]
@@ -63,6 +65,11 @@ action :create do
 
   # Configuration hacks
   configuration_hacks(configuration, cluster_version)
+
+  # Backups hacks
+  if configuration['archive_command'] == 'cloud_auto'.downcase.to_sym
+    cloud_backup_configuration_hacks(configuration, cluster_name, cluster_version, wal_e_path)
+  end
 
   # Install postgresql-common package
   package 'postgresql-common'
