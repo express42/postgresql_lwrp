@@ -1,3 +1,6 @@
+## 1.1.0 (Dec 10, 2014)
+* (New) Add cloud backup lwrp, using wal-e for cloud backup
+
 ## 1.0.1 (Oct 31, 2014)
 * (Fix) Fix broken allow_restart_cluster option
 
