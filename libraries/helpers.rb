@@ -42,11 +42,16 @@ class Chef
 
       def exec_in_pg_cluster(cluster_version, cluster_name, sql)
         return [nil, nil] unless pg_running?(cluster_version, cluster_name)
-        postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
-        pg_port = postmaster_content[3].to_i
+        pg_port = get_pg_port(cluster_version, cluster_name)
         psql_status = Mixlib::ShellOut.new("echo -n \"#{sql};\" | su -c 'psql -t -p #{pg_port}' postgres")
         psql_status.run_command
         [psql_status.stdout, psql_status.stderr]
+      end
+
+      def get_pg_port(cluster_version, cluster_name)
+        return [nil, nil] unless pg_running?(cluster_version, cluster_name)
+        postmaster_content = ::File.open("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/postmaster.pid").readlines
+        postmaster_content[3].to_i
       end
 
       def need_to_restart?(allow_restart_cluster, first_time)
