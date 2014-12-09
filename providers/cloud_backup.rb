@@ -54,7 +54,8 @@ action :schedule do
   end
 
   # We may use custom temp dir
-  directory envdir_params['tmpdir'] do
+  directory "WAL-E temp directory" do
+    path envdir_params['tmpdir']
     recursive true
     mode '0750'
     owner 'postgres'
