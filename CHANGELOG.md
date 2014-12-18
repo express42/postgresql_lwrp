@@ -1,6 +1,7 @@
 ## 1.1.1 (Dec 18, 2014)
 * (New) Add postgresql 9.4 components
 * (Fix) Fix Test Kitchen boxes
+* (Fix) Fix postgresql start after reboot
 
 ## 1.1.0 (Dec 10, 2014)
 * (New) Add cloud backup lwrp, using wal-e for cloud backup
