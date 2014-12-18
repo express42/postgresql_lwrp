@@ -6,7 +6,11 @@ provisioner:
 
 platforms:
   - name: ubuntu-12.04
+    driver:
+      box: express42/ubuntu12.04-chef11
   - name: ubuntu-14.04
+    driver:
+      box: express42/ubuntu-14.04
   - name: debian-6.0.9
   - name: debian-7.6
 
@@ -24,9 +28,6 @@ suites:
       - recipe[apt]
       - recipe[pgtest::test_9_2]
   - name: pg-93
-    driver:
-      box: express42/ubuntu12.04-chef11
-      provider: parallels
     run_list:
       - recipe[apt]
       - recipe[pgtest::test_9_3]
