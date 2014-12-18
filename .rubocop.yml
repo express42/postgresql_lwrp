@@ -8,6 +8,10 @@ MethodLength:
     - 'test/**/spec_helper.rb'
 AbcSize:
   Exclude:
+    - 'libraries/helpers.rb'
     - 'test/**/spec_helper.rb'
 Documentation:
   Enabled: false
+CyclomaticComplexity:
+  Exclude:
+    - 'libraries/helpers.rb'
