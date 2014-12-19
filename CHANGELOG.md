@@ -1,5 +1,4 @@
 ## 1.1.1 (Dec 18, 2014)
-* (New) Add postgresql 9.4 components
 * (Fix) Fix Test Kitchen boxes
 * (Fix) Fix postgresql start after reboot
 
