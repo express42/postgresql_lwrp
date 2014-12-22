@@ -38,6 +38,7 @@ action :schedule do
   postgresql_path          = "/var/lib/postgresql/#{postgresql_version}/#{postgresql_instance_name}"
   wal_e_path               = node['postgresql']['cloud_backup']['wal_e_path']
   envdir_params            = new_resource.params
+  full_backup_time         = new_resource.full_backup_time
 
   unsetted_required_params  = params_validation(new_resource.protocol, envdir_params)
   fail "Key(s) '#{unsetted_required_params.join(', ')}' missing for protocol '#{new_resource.protocol}'" unless unsetted_required_params.empty?
@@ -86,10 +87,10 @@ action :schedule do
   cron_d "backup_postgresql_cluster_#{postgresql_name_version}" do
     command "envdir /etc/wal-e.d/#{postgresql_name_version}/env #{wal_e_path} backup-push #{postgresql_path}"
     user 'postgres'
-    minute new_resource.full_backup_time['minute']
-    hour new_resource.full_backup_time['hour']
-    day new_resource.full_backup_time['day']
-    month new_resource.full_backup_time['month']
-    weekday new_resource.full_backup_time['weekday']
+    minute full_backup_time[:minute]
+    hour full_backup_time[:hour]
+    day full_backup_time[:day]
+    month full_backup_time[:month]
+    weekday full_backup_time[:weekday]
   end
 end

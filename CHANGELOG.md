@@ -1,3 +1,6 @@
+## 1.1.2 (Dec 22, 2014)
+* (Fix) Fix full_backup_time param
+
 ## 1.1.1 (Dec 18, 2014)
 * (Fix) Fix Test Kitchen boxes
 * (Fix) Fix postgresql start after reboot
