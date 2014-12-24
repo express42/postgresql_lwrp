@@ -208,7 +208,6 @@ action :create do
       end
     end
 
-
     link "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.key" do
       to server_key
       not_if { cluster_version.to_f < 9.2 && ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.key") }
