@@ -53,9 +53,6 @@ action :create do
 
   first_time               = pg_installed?("postgresql-#{cluster_version}")
 
-  server_cert             = node['postgresql']['defaults']['server']['configuration']['ssl_cert_file']
-  server_key              = node['postgresql']['defaults']['server']['configuration']['ssl_key_file']
-
   %w(locale lc-collate lc-ctype lc-messages lc-monetary lc-numeric lc-time).each do |option|
     parsed_cluster_options << "--#{option} #{cluster_options[:locale]}" if cluster_options[option]
   end
@@ -209,13 +206,13 @@ action :create do
     end
 
     link "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.key" do
-      to server_key
-      not_if { cluster_version.to_f < 9.2 && ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.key") }
+      to configuration['ssl_key_file']
+      not_if { cluster_version.to_f > 9.1 && ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.key") }
     end
 
     link "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.crt" do
-      to server_cert
-      not_if { cluster_version.to_f < 9.2 && ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.crt") }
+      to configuration['ssl_cert_file']
+      not_if { cluster_version.to_f > 9.1 && ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/server.crt") }
     end
 
     template "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf" do
