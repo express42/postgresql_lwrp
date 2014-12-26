@@ -1,3 +1,9 @@
+## 1.1.4 (Dec 22, 2014)
+* (Fix) Fix pg version checks
+
+## 1.1.3 (Dec 22, 2014)
+* (New) ssl key and cert linkage for pg < 9.2
+
 ## 1.1.2 (Dec 22, 2014)
 * (Fix) Fix full_backup_time param
 
