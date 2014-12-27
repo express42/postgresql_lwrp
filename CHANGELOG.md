@@ -1,3 +1,6 @@
+## 1.1.5 (Dec 28, 2014)
+* (Fix) Fix cloud_backup cron script name
+
 ## 1.1.4 (Dec 22, 2014)
 * (Fix) Fix pg version checks
 
