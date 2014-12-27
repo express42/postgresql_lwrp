@@ -84,7 +84,7 @@ action :schedule do
   end
 
   # Create crontask via cron cookbook
-  cron_d "backup_postgresql_cluster_#{postgresql_name_version}" do
+  cron_d "backup_postgresql_cluster_#{postgresql_name_version.sub('.','-')}" do
     command "envdir /etc/wal-e.d/#{postgresql_name_version}/env #{wal_e_path} backup-push #{postgresql_path}"
     user 'postgres'
     minute full_backup_time[:minute]
