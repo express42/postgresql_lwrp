@@ -1,3 +1,7 @@
+## 1.1.6 (Jan 21, 2014)
+* (New) Use virtualenv for wal-e
+* (New) Add test recipe for cloud backup
+
 ## 1.1.5 (Dec 28, 2014)
 * (Fix) Fix cloud_backup cron script name
 
