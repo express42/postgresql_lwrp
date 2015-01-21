@@ -29,7 +29,6 @@
 include Chef::Postgresql::Helpers
 
 action :create do
-
   options = {}
 
   options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner

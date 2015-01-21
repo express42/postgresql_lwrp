@@ -29,7 +29,6 @@
 include Chef::Postgresql::Helpers
 
 action :create do
-
   options = new_resource.advanced_options.clone
 
   if new_resource.replication == true

@@ -31,7 +31,6 @@ use_inline_resources
 include Chef::Postgresql::Helpers
 
 action :schedule do
-
   postgresql_version       = new_resource.in_version
   postgresql_instance_name = new_resource.in_cluster
   postgresql_name_version  = "#{postgresql_instance_name}-#{postgresql_version}"

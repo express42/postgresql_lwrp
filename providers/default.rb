@@ -30,7 +30,6 @@ use_inline_resources
 include Chef::Postgresql::Helpers
 
 action :create do
-
   configuration            = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server']['configuration'].to_hash, new_resource.configuration)
   hba_configuration        = node['postgresql']['defaults']['server']['hba_configuration'] | new_resource.hba_configuration
   ident_configuration      = node['postgresql']['defaults']['server']['ident_configuration'] | new_resource.ident_configuration
@@ -240,5 +239,4 @@ action :create do
     end
     not_if { pg_running?(cluster_version, cluster_name) || (!replication.empty? && !replication_start_slave) }
   end
-
 end
