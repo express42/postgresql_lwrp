@@ -45,7 +45,7 @@ action :create do
   replication_start_slave  = new_resource.replication_start_slave
   replication_initial_copy = new_resource.replication_initial_copy
 
-  wal_e_path               = node['postgresql']['cloud_backup']['wal_e_path']
+  wal_e_bin               = node['postgresql']['cloud_backup']['wal_e_bin']
 
   cluster_options          = Mash.new(new_resource.cluster_create_options)
   parsed_cluster_options   = []
@@ -67,7 +67,7 @@ action :create do
 
   # Backups hacks
   if configuration['archive_command'] == 'cloud_auto'.downcase.to_sym
-    cloud_backup_configuration_hacks(configuration, cluster_name, cluster_version, wal_e_path)
+    cloud_backup_configuration_hacks(configuration, cluster_name, cluster_version, wal_e_bin)
   end
 
   # Install postgresql-common package

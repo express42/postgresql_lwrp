@@ -32,11 +32,11 @@ node['postgresql']['cloud_backup']['packages'].each do |pkg|
   package pkg
 end
 
-python_virtualenv node['postgresql']['cloud_backup']['virtualenv']
+python_virtualenv node['postgresql']['cloud_backup']['wal_e_path']
 
 node['postgresql']['cloud_backup']['pips'].each do |pip|
   python_pip pip do
-    virtualenv node['postgresql']['cloud_backup']['virtualenv']
+    virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 end
 
@@ -45,11 +45,11 @@ when 'github'
   archive_url = "#{node['postgresql']['cloud_backup']['github_repo']}/archive/#{node['postgresql']['cloud_backup']['version']}.zip"
   python_pip 'wal-e' do
     package_name archive_url
-    virtualenv node['postgresql']['cloud_backup']['virtualenv']
+    virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 when 'pypi'
   python_pip 'wal-e' do
     version node['postgresql']['cloud_backup']['version']
-    virtualenv node['postgresql']['cloud_backup']['virtualenv']
+    virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 end

@@ -113,8 +113,8 @@ class Chef
         configuration.delete('hot_standby_feedback') if cluster_version.to_f < 9.1
       end
 
-      def cloud_backup_configuration_hacks(configuration, cluster_name, cluster_version, wal_e_path)
-        configuration['archive_command'] = "envdir /etc/wal-e.d/#{cluster_name}-#{cluster_version}/env/ #{wal_e_path} wal-push %p"
+      def cloud_backup_configuration_hacks(configuration, cluster_name, cluster_version, wal_e_bin)
+        configuration['archive_command'] = "envdir /etc/wal-e.d/#{cluster_name}-#{cluster_version}/env/ #{wal_e_bin} wal-push %p"
       end
 
       def params_validation(provider, credentials)
