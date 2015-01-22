@@ -122,3 +122,21 @@ def slave_tests(pg_version)
     it { should_not be_listening }
   end
 end
+
+def cloud_backup_tests
+  %w(daemontools lzop mbuffer pv python-dev).each do |pkg|
+    describe package(pkg) do
+      it { should be_installed }
+    end
+  end
+  describe package('virtualenv') do
+    it { should be_installed.by('pip') }
+  end
+  describe package('wal-e') do
+    let(:path) { '/opt/wal-e/bin:$PATH' }
+    it { should be_installed.by('pip') }
+  end
+  describe command('/opt/wal-e/bin/wal-e version') do
+    its(:exit_status) { should eq 0 }
+  end
+end
