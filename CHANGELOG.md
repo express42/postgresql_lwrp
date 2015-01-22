@@ -1,3 +1,7 @@
+## 1.1.7 (Jan 22, 2014)
+* (Fix) Remove wal-e pip attribute
+* (New) Add serverspec tests for cloud backup
+
 ## 1.1.6 (Jan 21, 2014)
 * (New) Use virtualenv for wal-e
 * (New) Add test recipe for cloud backup
