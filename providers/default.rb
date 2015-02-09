@@ -73,7 +73,7 @@ action :create do
   end
 
   # Install postgresql server packages
-  %W(postgresql-#{cluster_version} postgresql-server-dev-all).each do |pkg|
+  %W(postgresql-#{cluster_version} postgresql-server-dev-#{cluster_version}).each do |pkg|
     package pkg
   end
 
