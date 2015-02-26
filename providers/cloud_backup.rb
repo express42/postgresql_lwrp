@@ -35,7 +35,8 @@ action :schedule do
   postgresql_instance_name = new_resource.in_cluster
   postgresql_name_version  = "#{postgresql_instance_name}-#{postgresql_version}"
   postgresql_path          = "/var/lib/postgresql/#{postgresql_version}/#{postgresql_instance_name}"
-  wal_e_bin               = node['postgresql']['cloud_backup']['wal_e_bin']
+  wal_e_bin                = node['postgresql']['cloud_backup']['wal_e_bin']
+  command_prefix           = new_resource.command_prefix
   envdir_params            = new_resource.params
   full_backup_time         = new_resource.full_backup_time
 
@@ -84,7 +85,7 @@ action :schedule do
 
   # Create crontask via cron cookbook
   cron_d "backup_postgresql_cluster_#{postgresql_name_version.sub('.', '-')}" do
-    command "envdir /etc/wal-e.d/#{postgresql_name_version}/env #{wal_e_bin} backup-push #{postgresql_path}"
+    command "#{command_prefix} envdir /etc/wal-e.d/#{postgresql_name_version}/env #{wal_e_bin} backup-push #{postgresql_path}"
     user 'postgres'
     minute full_backup_time[:minute]
     hour full_backup_time[:hour]
