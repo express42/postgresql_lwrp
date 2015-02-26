@@ -38,8 +38,8 @@ class Chef
 
       # Crontab command prefix to use with wal-e
       # e.g. for speed limit by trickle like `trickle -s -u 1024 envdir /etc/wal-e.d/...`
-      def command_prefix(arg = '')
-        set_or_return(:command_prefix, arg, kind_of: String, required: false)
+      def command_prefix(arg = nil)
+        set_or_return(:command_prefix, arg, kind_of: String, required: true)
       end
 
       def full_backup_time(arg = nil)
