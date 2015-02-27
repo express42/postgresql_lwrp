@@ -103,6 +103,22 @@ postgresql 'main' do
 end
 ```
 
+Example slave configuration with replication slots (PostgreSQL >= 9.4)
+
+```ruby
+replication(
+  standby_mode: 'on',
+  primary_conninfo: 'host=192.168.0.1',
+  trigger_file: '/tmp/pgtrigger'
+  primary_slot_name: 'some_slot_on_master'
+)
+```
+Don't forget to create slot on master server before:
+
+```sql
+# SELECT pg_create_physical_replication_slot('some_slot_on_master');
+```
+
 Example users and databases setup
 
 ```ruby
