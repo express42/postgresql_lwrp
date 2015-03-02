@@ -7,20 +7,13 @@ bundler_args: "--without kitchen_vagrant development --path=~/.bundle"
 before_install:
 - openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv
   -in .travis/id_travis.enc -out ~/.ssh/id_rsa -d
-- 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
-- gem install nokogiri -- --use-system-libraries
-- gem install bundler bundle_cache
-- bundle_cache_install
 script:
 - bundle exec rubocop
 - bundle exec foodcritic -f any .
 - bundle exec rspec
 - bundle exec kitchen test -c 10 -d always
-after_script:
-- bundle_cache
 notifications:
   flowdock: d4fbb65de6c9c868a2dfc4b38fbd34c1
 env:
   global:
-  - BUNDLE_ARCHIVE='postgresql-cookbook-bundle.tgz'
   - KITCHEN_YAML=.kitchen.cloud.yml
