@@ -26,8 +26,9 @@ group :kitchen_cloud do
 end
 
 group :travis do
-  gem 'travis', '~> 1.7.2'
+  gem 'travis', '~> 1.7'
   gem 'fog'
+  gem 'chef', '~> 11.18.6'
 end
 
 group :development do
