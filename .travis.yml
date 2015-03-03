@@ -6,7 +6,7 @@ rvm:
 bundler_args: --without kitchen_vagrant development
 before_install:
 - openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
-- tar xvf .travis/secret_keys.tar -C .travis
+- tar xf .travis/secret_keys.tar -C .travis
 - mv .travis/travis ~/.ssh/id_rsa
 script:
 - bundle exec rubocop

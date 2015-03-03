@@ -1,4 +1,5 @@
 [![Cookbook Version](http://img.shields.io/cookbook/v/postgresql_lwrp.svg)]('http://img.shields.io/cookbook/v/postgresql\_lwrp.svg)
+[![Code Climate](https://codeclimate.com/github/express42-cookbooks/postgresql/badges/gpa.svg)](https://codeclimate.com/github/express42-cookbooks/postgresql)
 [![Build Status](https://travis-ci.org/express42-cookbooks/postgresql.svg)](https://travis-ci.org/express42-cookbooks/postgresql)
 
 Description
