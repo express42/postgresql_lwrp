@@ -18,6 +18,7 @@ deploy:
   provider: chef-supermarket
   user_id: express42
   client_key: ".travis/express42.pem"
+  cookbook_category: "Databases"
   on:
     tags: true
 notifications:
