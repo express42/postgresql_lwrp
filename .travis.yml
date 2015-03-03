@@ -5,21 +5,19 @@ rvm:
 - 2.1.5
 bundler_args: --without kitchen_vagrant development
 before_install:
-- openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv
-  -in .travis/id_travis.enc -out ~/.ssh/id_rsa -d
+- openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
+- tar xvf .travis/secret_keys.tar -C .travis
+- mv .travis/travis ~/.ssh/id_rsa
 script:
 - bundle exec rubocop
 - bundle exec foodcritic -f any .
 - bundle exec rspec
 - bundle exec kitchen test -c 10 -d always
-before_deploy:
-- openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv
-  -in .travis/express42.pem.enc -out .travis/express42_supermarket.pem -d
 deploy:
   edge: true
   provider: chef-supermarket
   user_id: express42
-  client_key: ".travis/express42_supermarket.pem"
+  client_key: ".travis/express42.pem"
   on:
     tags: true
 notifications:
