@@ -19,6 +19,7 @@ deploy:
   user_id: express42
   client_key: ".travis/express42.pem"
   cookbook_category: "Databases"
+  skip_cleanup: true
   on:
     tags: true
 notifications:
