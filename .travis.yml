@@ -3,7 +3,7 @@ cache: bundler
 sudo: false
 rvm:
 - 2.1.5
-bundler_args: --without kitchen_vagrant development
+bundler_args: --without kitchen_vagrant
 before_install:
 - openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
 - tar xf .travis/secret_keys.tar -C .travis
