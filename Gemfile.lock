@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (2.3.0)
     activesupport (4.1.9)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
@@ -16,7 +15,6 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (3.6.4)
     berkshelf (3.2.3)
       addressable (~> 2.3.4)
       berkshelf-api-client (~> 1.2)
@@ -43,7 +41,6 @@ GEM
     buff-ruby_engine (0.1.0)
     buff-shell_out (0.2.0)
       buff-ruby_engine (~> 0.1.0)
-    builder (3.2.2)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     celluloid-io (0.16.2)
@@ -95,13 +92,8 @@ GEM
       virtus (~> 1.0.3)
     equalizer (0.0.9)
     erubis (2.7.0)
-    ethon (0.7.3)
-      ffi (>= 1.3.0)
-    excon (0.44.3)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
-    faraday_middleware (0.9.1)
-      faraday (>= 0.7.4, < 0.10)
     fauxhai (2.3.0)
       net-ssh
       ohai
@@ -109,88 +101,6 @@ GEM
     ffi-yajl (1.4.0)
       ffi (~> 1.5)
       libyajl2 (~> 1.2)
-    fission (0.5.0)
-      CFPropertyList (~> 2.2)
-    fog (1.28.0)
-      fog-atmos
-      fog-aws (~> 0.0)
-      fog-brightbox (~> 0.4)
-      fog-core (~> 1.27, >= 1.27.3)
-      fog-ecloud
-      fog-json
-      fog-profitbricks
-      fog-radosgw (>= 0.0.2)
-      fog-riakcs
-      fog-sakuracloud (>= 0.0.4)
-      fog-serverlove
-      fog-softlayer
-      fog-storm_on_demand
-      fog-terremark
-      fog-vmfusion
-      fog-voxel
-      fog-xml (~> 0.1.1)
-      ipaddress (~> 0.5)
-      nokogiri (~> 1.5, >= 1.5.11)
-    fog-atmos (0.1.0)
-      fog-core
-      fog-xml
-    fog-aws (0.1.1)
-      fog-core (~> 1.27)
-      fog-json (~> 1.0)
-      fog-xml (~> 0.1)
-      ipaddress (~> 0.8)
-    fog-brightbox (0.7.1)
-      fog-core (~> 1.22)
-      fog-json
-      inflecto (~> 0.0.2)
-    fog-core (1.29.0)
-      builder
-      excon (~> 0.38)
-      formatador (~> 0.2)
-      mime-types
-      net-scp (~> 1.1)
-      net-ssh (>= 2.1.3)
-    fog-ecloud (0.0.2)
-      fog-core
-      fog-xml
-    fog-json (1.0.0)
-      multi_json (~> 1.0)
-    fog-profitbricks (0.0.1)
-      fog-core
-      fog-xml
-      nokogiri
-    fog-radosgw (0.0.3)
-      fog-core (>= 1.21.0)
-      fog-json
-      fog-xml (>= 0.0.1)
-    fog-riakcs (0.1.0)
-      fog-core
-      fog-json
-      fog-xml
-    fog-sakuracloud (1.0.0)
-      fog-core
-      fog-json
-    fog-serverlove (0.1.1)
-      fog-core
-      fog-json
-    fog-softlayer (0.4.1)
-      fog-core
-      fog-json
-    fog-storm_on_demand (0.1.0)
-      fog-core
-      fog-json
-    fog-terremark (0.0.4)
-      fog-core
-      fog-xml
-    fog-vmfusion (0.0.1)
-      fission
-      fog-core
-    fog-voxel (0.0.2)
-      fog-core
-      fog-xml
-    fog-xml (0.1.1)
-      fog-core
-      nokogiri (~> 1.5, >= 1.5.11)
     foodcritic (4.0.0)
       erubis
       gherkin (~> 2.11)
@@ -199,14 +109,6 @@ GEM
       rufus-lru (~> 1.0)
       treetop (~> 1.4)
       yajl-ruby (~> 1.1)
-    formatador (0.2.5)
-    gh (0.14.0)
-      addressable
-      backports
-      faraday (~> 0.8)
-      multi_json (~> 1.0)
-      net-http-persistent (>= 2.7)
-      net-http-pipeline
     gherkin (2.12.2)
       multi_json (~> 1.3)
     hashie (2.1.2)
@@ -214,7 +116,6 @@ GEM
     hitimes (1.2.2)
     i18n (0.7.0)
     ice_nine (0.11.1)
-    inflecto (0.0.2)
     ipaddress (0.8.0)
     json (1.8.2)
     kartograph (0.2.0)
@@ -223,8 +124,6 @@ GEM
       test-kitchen (~> 1.2)
     kitchen-vagrant (0.15.0)
       test-kitchen (~> 1.0)
-    launchy (2.4.3)
-      addressable (~> 2.3)
     libyajl2 (1.2.0)
     method_source (0.8.2)
     mime-types (1.25.1)
@@ -240,7 +139,6 @@ GEM
     multi_json (1.10.1)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
-    net-http-pipeline (1.0.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
@@ -274,9 +172,6 @@ GEM
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
-    pusher-client (0.6.0)
-      json
-      websocket (~> 1.0)
     rack (1.6.0)
     rainbow (2.0.0)
     rake (10.4.2)
@@ -343,21 +238,8 @@ GEM
     thread_safe (0.3.4)
     timers (4.0.1)
       hitimes
-    travis (1.7.5)
-      addressable (~> 2.3)
-      backports
-      faraday (~> 0.9)
-      faraday_middleware (~> 0.9, >= 0.9.1)
-      gh (~> 0.13)
-      highline (~> 1.6)
-      launchy (~> 2.1)
-      pry (~> 0.9, < 0.10)
-      pusher-client (~> 0.4)
-      typhoeus (~> 0.6, >= 0.6.8)
     treetop (1.5.3)
       polyglot (~> 0.3)
-    typhoeus (0.7.1)
-      ethon (>= 0.7.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     varia_model (0.4.0)
@@ -368,7 +250,6 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    websocket (1.2.1)
     wmi-lite (1.0.0)
     yajl-ruby (1.2.1)
 
@@ -377,14 +258,9 @@ PLATFORMS
 
 DEPENDENCIES
   berkshelf
-  chef (~> 11.18.6)
   chefspec
-  fog
   foodcritic
   kitchen-digitalocean
   kitchen-vagrant
-  pry
   rubocop
   test-kitchen
-  thor
-  travis (~> 1.7)
