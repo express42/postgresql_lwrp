@@ -5,9 +5,10 @@ license          'MIT'
 description      'Installs and configures postgresql for clients or servers'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '1.1.8'
-recipe           'postgresql::default', 'Installs postgresql client packages'
-recipe           'postgresql::apt_official_repository', 'Setup official apt repository'
-recipe           'postgresql::cloud_backup', 'Setup cloud backup via wal-e utility'
+
+recipe           'postgresql_lwrp::default', 'Installs postgresql client packages'
+recipe           'postgresql_lwrp::apt_official_repository', 'Setup official apt repository'
+recipe           'postgresql_lwrp::cloud_backup', 'Setup cloud backup via wal-e utility'
 
 depends          'apt'
 depends          'python'
