@@ -1,3 +1,6 @@
+## 1.1.9 (Mar 5, 2015)
+* (Fix) [metadata] Fix recipes name
+
 ## 1.1.8 (Mar 3, 2015)
 * (New) [Replication] Add primary_slot_name param support in recovery.conf
 * (New) [cloud_backup] Add add prefix to crontab command
