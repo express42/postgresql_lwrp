@@ -45,6 +45,10 @@ class Chef
       def full_backup_time(arg = nil)
         set_or_return(:full_backup_time, arg, kind_of: Hash, default: { minute: '0', hour: '3', day: '*', month: '*', weekday: '*' })
       end
+
+      def retain(arg = nil)
+        set_or_return(:retain, arg, kind_of: Integer, required: false)
+      end
     end
   end
 end

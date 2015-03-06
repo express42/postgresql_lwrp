@@ -93,4 +93,21 @@ action :schedule do
     month full_backup_time[:month]
     weekday full_backup_time[:weekday]
   end
+
+  if new_resource.retain
+    num_to_retain = new_resource.retain
+    cron_d "remove_old_backups_postgresql_cluster_#{postgresql_name_version.sub('.', '-')}" do
+      command "#{command_prefix} envdir /etc/wal-e.d/#{postgresql_name_version}/env #{wal_e_bin} delete retain #{num_to_retain}"
+      user 'postgres'
+      minute full_backup_time[:minute]
+      hour full_backup_time[:hour]
+      day full_backup_time[:day]
+      month full_backup_time[:month]
+      weekday full_backup_time[:weekday]
+    end
+  else
+    cron_d "remove_old_backups_postgresql_cluster_#{postgresql_name_version.sub('.', '-')}" do
+      action :delete
+    end
+  end
 end
