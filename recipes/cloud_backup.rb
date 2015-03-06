@@ -47,3 +47,12 @@ when 'pypi'
     virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 end
+
+template 'postgresql cloud backup' do
+  path "#{node['postgresql']['cloud_backup']['wal_e_path']}/bin/postgresql_cloud_backup_helper.sh"
+  source 'postgresql_cloud_backup_helper.sh.erb'
+  mode '0755'
+  variables(
+    wal_e_bin: node['postgresql']['cloud_backup']['wal_e_bin']
+  )
+end

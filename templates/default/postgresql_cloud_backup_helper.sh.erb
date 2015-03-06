@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+cluster_name=${1:?ERROR, missing cluster name}
+cluster_version=${2:?ERROR, missing cluster version}
+
+if [ ! -x "<%= @wal_e_bin %>" ]; then
+  echo "ERROR, WAL-E not deployed, no wal-e in /opt/wal-e/bin"
+  exit 1
+fi
+
+if [ ! -d "/etc/wal-e.d/${cluster_name}-${cluster_version}/env" ]; then
+  echo "ERROR, WAL-E not deployed for postgresql ${cluster_name}-${cluster_version}"
+  exit 1
+fi
+
+case "$3" in
+  "last"):
+    last_backup_date=(`envdir /etc/wal-e.d/${cluster_name}-${cluster_version}/env <%= @wal_e_bin %> backup-list LATEST 2>/dev/null | awk 'NR>1 {print $2}'`)
+    if [ -z $last_backup_date ]; then
+      echo "ERROR, can't get last backup time"
+      exit 1
+    fi
+    last_backup_date_unixtime=`date -d $last_backup_date +%s`
+    echo $last_backup_date_unixtime
+    ;;
+  "count"):
+    backup_count=`envdir /etc/wal-e.d/${cluster_name}-${cluster_version}/env <%= @wal_e_bin %> backup-list 2>/dev/null | awk 'NR>1' | wc -l`
+    echo $backup_count
+    ;;
+  *)
+    echo "ERROR, wrong command. Valid commands: last, count"
+    ;;
+esac
