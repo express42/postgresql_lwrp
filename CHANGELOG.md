@@ -1,3 +1,7 @@
+## 1.1.10 (unreleased)
+* (New) [cloud_backup] Add backup retention
+* (New) [cloud_backup] Add postgresql_cloud_backup_helper.sh (See README)
+
 ## 1.1.9 (Mar 5, 2015)
 * (Fix) [metadata] Fix recipes name
 
