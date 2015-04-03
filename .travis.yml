@@ -3,9 +3,10 @@ cache: bundler
 sudo: false
 rvm:
 - 2.1.5
-bundler_args: --without kitchen_vagrant
+bundler_args: "--without kitchen_vagrant"
 before_install:
-- openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
+- openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv
+  -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
 - tar xf .travis/secret_keys.tar -C .travis
 - mv .travis/travis ~/.ssh/id_rsa
 script:
@@ -18,12 +19,13 @@ deploy:
   provider: chef-supermarket
   user_id: express42
   client_key: ".travis/express42.pem"
-  cookbook_category: "Databases"
+  cookbook_category: Databases
   skip_cleanup: true
   on:
     tags: true
 notifications:
-  flowdock: d4fbb65de6c9c868a2dfc4b38fbd34c1
+  slack:
+    secure: M7REbNB5Wf6eMBxQijnquWw4KlBbrw5zLM6fWqB1CjA3IF7DbYFUgvBTeUAxTFE9P2KEahYydPRkhzDtQ49PpE31g93yfy1yqQ/1rBHuzmZztR1hpwzYAhzGg4cak/47LQPaHx6Y9Pa83N8BPwpE4t9936wB3gXBlQERQdGdmoE=
 env:
   global:
   - KITCHEN_YAML=.kitchen.cloud.yml
