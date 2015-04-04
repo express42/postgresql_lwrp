@@ -57,7 +57,7 @@ postgresql 'main' do
   cluster_create_options( locale: 'ru_RU.UTF-8' )
   configuration(
       listen_addresses:           '192.168.0.2',
-      max_connections             300,
+      max_connections:            300,
       ssl_renegotiation_limit:    0,
       shared_buffers:             '512MB',
       maintenance_work_mem:       '64MB',
@@ -81,7 +81,7 @@ postgresql 'main' do
   cluster_create_options( locale: 'ru_RU.UTF-8' )
   configuration(
       listen_addresses:           '192.168.0.3',
-      max_connections             300,
+      max_connections:            300,
       ssl_renegotiation_limit:    0,
       shared_buffers:             '512MB',
       maintenance_work_mem:       '64MB',
