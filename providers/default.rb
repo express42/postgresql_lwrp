@@ -119,6 +119,7 @@ action :create do
   # Define postgresql service
   postgresql_service = service service_name do
     action :nothing
+    provider Chef::Provider::Service::Simple
     start_command "pg_ctlcluster #{cluster_version} #{cluster_name} start"
     stop_command "pg_ctlcluster #{cluster_version} #{cluster_name} stop"
     reload_command "pg_ctlcluster #{cluster_version} #{cluster_name} reload"
