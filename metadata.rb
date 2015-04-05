@@ -16,3 +16,5 @@ depends          'cron'
 
 supports         'debian'
 supports         'ubuntu'
+
+conflicts        'database'
