@@ -46,6 +46,22 @@ Resources/Providers
 - replication_start_slave: Boolean. If `true` slave cluster will be started after creation. Should be used with replication_initial_copy option. Default `false`.
 - allow_restart_cluster: Can be `first`, `always` or `none`. Specifies when cluster must restart instead of reload. `first` – only first time after installation. `always` – always restart, even if changes doesn't require restart. `none` - never, use reload every time. Default is `none`.
 
+
+Other
+=====
+### Cloud backup helper:
+
+`postgresql_cloud_backup_helper.sh` helper can be found at `/opt/wal-e/bin/`.
+
+#### Usage:
+
+`postgresql_cloud_backup_helper.sh <cluster_name> <cluster_version> last|count`
+
+- `cluster_name` – postgresql cluster name (ex. *main*)
+- `cluser_version` – postgresql cluser version (ex. 9.3)
+- `last` – shows last backup time
+- `count` – shows total number of backups.
+
 Examples
 ========
 Example master database setup:
@@ -153,6 +169,15 @@ postgresql_cloud_backup 'main' do
   command_prefix 'trickle -s -u 1024'
   # It will be prepended to resulting wal-e execution in cron task
 end
+```
+
+Example usage of cloud backup helper usage
+
+```bash
+$ /opt/wal-e/bin/postgresql_cloud_backup_helper.sh main 9.3 last
+1428192159
+$ /opt/wal-e/bin/postgresql_cloud_backup_helper.sh main 9.3 count
+31
 ```
 
 License and Author
