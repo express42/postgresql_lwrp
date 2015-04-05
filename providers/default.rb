@@ -35,7 +35,7 @@ action :create do
   ident_configuration      = node['postgresql']['defaults']['server']['ident_configuration'] | new_resource.ident_configuration
 
   cluster_name             = new_resource.name
-  cluster_version          = (!new_resource.cluster_version.empty? && new_resource.cluster_version) ||  node['postgresql']['defaults']['server']['version']
+  cluster_version          = (!new_resource.cluster_version.empty? && new_resource.cluster_version) || node['postgresql']['defaults']['server']['version']
   service_name             = "postgresql_#{cluster_version}_#{cluster_name}"
 
   allow_restart_cluster    = new_resource.allow_restart_cluster
