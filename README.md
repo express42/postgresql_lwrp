@@ -4,6 +4,8 @@
 
 Description
 ===========
+
+[![Join the chat at https://gitter.im/express42-cookbooks/postgresql_lwrp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/express42-cookbooks/postgresql_lwrp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.0, 9.1, 9.2, 9.3. Version 9.0 is supported with limitations: creating users and databases are not working.
 Supported platforms: Debian Squeeze/Wheezy and Ubuntu 12.04/14.04.
 
