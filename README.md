@@ -21,7 +21,6 @@ This cookbook have server and client attribute files.
 
 With client attributes(["postgresql"]["client"]) you can set only postgresql client and library version.
 
-TODO
 Server attributes are starting from ["postgresql"]["defaults"] and used as default attributes for postgresql provider. You should not override this defaults, you can pass your settings to provider instead.
 
 Resources/Providers
@@ -36,7 +35,7 @@ Resources/Providers
 #### Resource parameters
 
 - cluster_name: name attribute. Cluster name (e.g. main).
-- cluster_version: TODO
+- cluster_version: set cluster version
 - cookbook: cookbook for templates. Skip this for default templates.
 - cluster_create_options: options for pg_createcluster (only locale related options)
 - configuration: Hash with configuration options for postgresql, see examples.
@@ -161,7 +160,7 @@ License and Author
 
 Author:: Nikita Borzykh (<nikita@express42.com>)
 
-Copyright (C) 2012-2014 LLC Express 42
+Copyright (C) 2012-2015 LLC Express 42
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
