@@ -47,7 +47,7 @@ def master_tests(pg_version)
 
   describe 'master service postgresql' do
     it 'should be running' do
-      postgresql_cluster(pg_version, 'main').should eq RUNNING
+      expect(postgresql_cluster(pg_version, 'main')).to eq(RUNNING)
     end
   end
 
@@ -59,13 +59,13 @@ end
 def create_database_tests(pg_version)
   describe 'database test01' do
     it 'should be created and have owner test01' do
-      postgresql_check_owner(pg_version, 'main', 'test01', 'test01').should eq true
+      expect(postgresql_check_owner(pg_version, 'main', 'test01', 'test01')).to eq(true)
     end
   end
 
   describe 'database test-02' do
     it 'should be created and have owner test-02' do
-      postgresql_check_owner(pg_version, 'main', 'test-02', 'test-02').should eq true
+      expect(postgresql_check_owner(pg_version, 'main', 'test-02', 'test-02')).to eq(true)
     end
   end
 end
@@ -73,22 +73,22 @@ end
 def create_users_tests(pg_version)
   describe 'user test01' do
     it 'should be able to login with password' do
-      postgresql_check_login(pg_version, 'main', 'test01', 'test01').should eq true
+      expect(postgresql_check_login(pg_version, 'main', 'test01', 'test01')).to eq(true)
     end
     it 'should have replication privileges' do
-      postgresql_check_priv(pg_version, 'main', 'test01', 'rolreplication').should eq true
+      expect(postgresql_check_priv(pg_version, 'main', 'test01', 'rolreplication')).to eq(true)
     end
     it 'should not have replication privileges' do
-      postgresql_check_priv(pg_version, 'main', 'test01', 'rolsuper').should eq false
+      expect(postgresql_check_priv(pg_version, 'main', 'test01', 'rolsuper')).to eq(false)
     end
   end
 
   describe 'user test-02' do
     it 'should be able to login with password' do
-      postgresql_check_login(pg_version, 'main', 'test-02', 'test-02').should eq true
+      expect(postgresql_check_login(pg_version, 'main', 'test-02', 'test-02')).to eq(true)
     end
     it 'should have replication privileges' do
-      postgresql_check_priv(pg_version, 'main', 'test-02', 'rolsuper').should eq true
+      expect(postgresql_check_priv(pg_version, 'main', 'test-02', 'rolsuper')).to eq(true)
     end
   end
 end
@@ -104,13 +104,13 @@ def slave_tests(pg_version)
 
   describe 'slave service postgresql' do
     it 'should be running' do
-      postgresql_cluster(pg_version, 'slave').should eq RUNNING
+      expect(postgresql_cluster(pg_version, 'slave')).to eq(RUNNING)
     end
   end
 
   describe 'another slave service postgresql' do
     it 'should be not running' do
-      postgresql_cluster(pg_version, 'slave2').should eq STOPPED
+      expect(postgresql_cluster(pg_version, 'slave2')).to eq(STOPPED)
     end
   end
 
