@@ -11,11 +11,14 @@ provisioner:
   require_chef_omnibus: 12.1.2
 
 platforms:
-  - name: ubuntu-12-04-x64
   - name: ubuntu-14-04-x64
 
 suites:
-  - name: pg-93
+  - name: pg-91
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_3]
+      - recipe[pgtest::test_9_1]
+  - name: pg-94
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test_9_4]
