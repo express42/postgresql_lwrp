@@ -31,3 +31,7 @@ suites:
     run_list:
       - recipe[apt]
       - recipe[pgtest::test_9_3]
+  - name: pg-94
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test_9_4]
