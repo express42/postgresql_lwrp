@@ -1,3 +1,6 @@
+## 1.1.11 (Apr 7, 2015)
+* (New) [common] Return to LR for all resources
+
 ## 1.1.10 (Apr 5, 2015)
 * (New) [cloud_backup] Add backup retention
 * (New) [cloud_backup] Add postgresql_cloud_backup_helper.sh (See README)
