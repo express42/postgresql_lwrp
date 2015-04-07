@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: postgresql_lwrp
-# Provider:: database
+# Resource:: default
 #
-# Author:: LLC Express 42 (info@express42.com)
+# Author:: Kirill Kouznetsov (agon.smith@gmail.com)
 #
 # Copyright (C) 2014 LLC Express 42
 #
@@ -24,20 +24,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#
 
-include Chef::Postgresql::Helpers
+provides :postgresql
+resource_name :postgresql
 
-action :create do
-  options = {}
+actions :create
+default_action :create
 
-  options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner
-  options.merge!('TABLESPACE' => "'#{new_resource.tablespace}'") if new_resource.tablespace
-  options.merge!('TEMPLATE' => "'#{new_resource.template}'") if new_resource.template
-  options.merge!('ENCODING' => "'#{new_resource.encoding}'") if new_resource.encoding
-  options.merge!('CONNECTION LIMIT' => new_resource.connection_limit) if new_resource.connection_limit
-
-  if create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
-    new_resource.updated_by_last_action(true)
+attribute :cluster_name, kind_of: String, required: true
+attribute :cluster_version, kind_of: String, regex: [/\A(|\d.\d)\Z\z/], default: ''
+attribute :cookbook, kind_of: String, default: 'postgresql_lwrp'
+attribute :cluster_create_options, kind_of: Hash, default: {}
+attribute :configuration, kind_of: Hash, default: {}
+attribute :hba_configuration, kind_of: Array, default: []
+attribute :ident_configuration, kind_of: Array, default: []
+attribute :replication, kind_of: Hash, default: {}
+attribute :replication_initial_copy, kind_of: [TrueClass, FalseClass], default: false
+attribute :replication_start_slave, kind_of: [TrueClass, FalseClass], default: false
+attribute :allow_restart_cluster, default: :none, callbacks: {
+  'is not allowed! Allowed params for allow_restart_cluster: first, always or none' => proc do |value|
+    !value.to_sym.match(/^(first|always|none)$/).nil?
   end
-end
+}

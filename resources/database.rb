@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: postgresql_lwrp
-# Provider:: database
+# Resource:: database
 #
-# Author:: LLC Express 42 (info@express42.com)
+# Author:: Kirill Kouznetsov (agon.smith@gmail.com)
 #
 # Copyright (C) 2014 LLC Express 42
 #
@@ -24,20 +24,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#
 
-include Chef::Postgresql::Helpers
+provides :postgresql_database
+resource_name :postgresql_database
 
-action :create do
-  options = {}
+actions :create
+default_action :create
 
-  options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner
-  options.merge!('TABLESPACE' => "'#{new_resource.tablespace}'") if new_resource.tablespace
-  options.merge!('TEMPLATE' => "'#{new_resource.template}'") if new_resource.template
-  options.merge!('ENCODING' => "'#{new_resource.encoding}'") if new_resource.encoding
-  options.merge!('CONNECTION LIMIT' => new_resource.connection_limit) if new_resource.connection_limit
-
-  if create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
-    new_resource.updated_by_last_action(true)
-  end
-end
+attribute :name, kind_of: String, required: true
+attribute :in_version, kind_of: String, required: true
+attribute :in_cluster, kind_of: String, required: true
+attribute :owner, kind_of: String
+attribute :tablespace, kind_of: String
+attribute :template, kind_of: String
+attribute :encoding, kind_of: String
+attribute :connection_limit, kind_of: Integer

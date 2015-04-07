@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: postgresql_lwrp
-# Provider:: database
+# Resource:: cloud_backup
 #
-# Author:: LLC Express 42 (info@express42.com)
+# Author:: Kirill Kouznetsov (agon.smith@gmail.com)
 #
 # Copyright (C) 2014 LLC Express 42
 #
@@ -24,20 +24,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#
 
-include Chef::Postgresql::Helpers
+provides :postgresql_cloud_backup
+resource_name :postgresql_cloud_backup
 
-action :create do
-  options = {}
+actions :schedule
+default_action :schedule
 
-  options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner
-  options.merge!('TABLESPACE' => "'#{new_resource.tablespace}'") if new_resource.tablespace
-  options.merge!('TEMPLATE' => "'#{new_resource.template}'") if new_resource.template
-  options.merge!('ENCODING' => "'#{new_resource.encoding}'") if new_resource.encoding
-  options.merge!('CONNECTION LIMIT' => new_resource.connection_limit) if new_resource.connection_limit
+attribute :name, kind_of: String, required: true
+attribute :in_version, kind_of: String, required: true
+attribute :in_cluster, kind_of: String, required: true
+attribute :protocol, kind_of: String,
+                     required: true,
+                     callbacks: {
+                       'is not allowed! Allowed providers: s3, swift or  azure' => proc do |value|
+                         !value.to_sym.match(/^(s3|swift|azure)$/).nil?
+                       end
+                     }
+attribute :params, kind_of: Hash, required: true
 
-  if create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
-    new_resource.updated_by_last_action(true)
-  end
-end
+# Crontab command prefix to use with wal-e
+# e.g. for speed limit by trickle like `trickle -s -u 1024 envdir /etc/wal-e.d/...`
+attribute :command_prefix, kind_of: String, required: false
+attribute :full_backup_time, kind_of: Hash, default: { minute: '0', hour: '3', day: '*', month: '*', weekday: '*' }
+attribute :retain, kind_of: Integer, required: false
