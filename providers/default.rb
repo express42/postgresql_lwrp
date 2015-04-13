@@ -202,6 +202,7 @@ action :create do
         command "#{pg_basebackup_path} -D #{pg_data_directory} -F p -x -c fast #{basebackup_conninfo_hash.join(' ')}"
         user 'postgres'
         not_if { ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/base") }
+        timeout 604800
       end
     end
 
