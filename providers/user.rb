@@ -27,6 +27,7 @@
 #
 
 use_inline_resources
+provides :postgresql_user
 
 include Chef::Postgresql::Helpers
 
