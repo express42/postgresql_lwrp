@@ -26,6 +26,8 @@
 #
 #
 
+use_inline_resources
+
 include Chef::Postgresql::Helpers
 
 action :create do
