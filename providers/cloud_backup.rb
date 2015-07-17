@@ -30,6 +30,8 @@ use_inline_resources
 
 include Chef::Postgresql::Helpers
 
+provides :postgresql_cloud_backup if defined? provides
+
 action :schedule do
   postgresql_version       = new_resource.in_version
   postgresql_instance_name = new_resource.in_cluster

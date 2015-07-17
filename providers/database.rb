@@ -27,7 +27,8 @@
 #
 
 include Chef::Postgresql::Helpers
-provides :postgresql_database
+
+provides :postgresql_database if defined? provides
 
 action :create do
   options = {}

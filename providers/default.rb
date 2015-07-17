@@ -26,9 +26,10 @@
 #
 
 use_inline_resources
-provides :postgresql
 
 include Chef::Postgresql::Helpers
+
+provides :postgresql if defined? provides
 
 action :create do
   configuration            = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server']['configuration'].to_hash, new_resource.configuration)
