@@ -1,3 +1,6 @@
+## 1.1.13 (Jul 17, 2015)
+* (Fix) [common] Fix run under Chef 11
+
 ## 1.1.12 (Jun 27, 2015)
 * (Fix) [common] Fix compatibility with Chef 12.4.0
 * (New) [postgresql_user] Use inline resources in user provider
