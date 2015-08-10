@@ -1,3 +1,6 @@
+## 1.1.14 (Aug 11, 2015)
+* (Fix) [postgresql_database] Fix database existence
+
 ## 1.1.13 (Jul 17, 2015)
 * (Fix) [common] Fix run under Chef 11
 
