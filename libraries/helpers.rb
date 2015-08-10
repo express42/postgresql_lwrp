@@ -93,7 +93,7 @@ class Chef
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT datname FROM pg_database')
         fail "postgresql create_database: can't get database list" unless stderr.empty?
 
-        if stdout.include? cluster_database
+        if stdout.gsub(/\s+/,' ').split(' ').include? cluster_database
           log("postgresql create_database: database '#{cluster_database}' already exists, skiping")
           return nil
 
