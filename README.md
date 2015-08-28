@@ -13,7 +13,11 @@ See CHANGELOG.md
 
 Requirements
 ============
-Postgresql cookbook depends on apt cookbook
+Minimal chef-client version is 11.14.2.
+
+Dependencies
+============
+Postgresql cookbook depends on apt cookbook.
 
 Attributes
 ==========
