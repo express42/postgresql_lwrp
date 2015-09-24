@@ -4,7 +4,7 @@ maintainer_email 'cookbooks@express42.com'
 license          'MIT'
 description      'Installs and configures postgresql for clients or servers'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '1.1.14'
+version          '1.1.15'
 
 recipe           'postgresql_lwrp::default', 'Installs postgresql client packages'
 recipe           'postgresql_lwrp::apt_official_repository', 'Setup official apt repository'

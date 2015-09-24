@@ -146,12 +146,17 @@ action :create do
   end
 
   # Configuration templates
+
+  main_configuration = configuration.dup
+  main_configuration.delete('ssl_cert_file') if cluster_version.to_f < 9.2
+  main_configuration.delete('ssl_key_file') if cluster_version.to_f < 9.2
+
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf" do
     source 'postgresql.conf.erb'
     owner 'postgres'
     group 'postgres'
     mode 0644
-    variables configuration: configuration, cluster_name: cluster_name, cluster_version: cluster_version
+    variables configuration: main_configuration, cluster_name: cluster_name, cluster_version: cluster_version
     cookbook new_resource.cookbook
     notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
   end

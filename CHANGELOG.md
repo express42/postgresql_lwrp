@@ -1,3 +1,6 @@
+## 1.1.15 (Sep 24, 2015)
+* (Fix) [postgresql] Fix initial slave creation on 9.1
+
 ## 1.1.14 (Aug 11, 2015)
 * (Fix) [postgresql_database] Fix database existence
 
