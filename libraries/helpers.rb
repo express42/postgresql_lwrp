@@ -105,8 +105,8 @@ class Chef
       end
 
       def configuration_hacks(configuration, cluster_version)
-        configuration['unix_socket_directory'] = '/var/run/postgresql' if cluster_version.to_f < 9.3
-        configuration['unix_socket_directories'] = '/var/run/postgresql' if cluster_version.to_f >= 9.3
+        configuration['unix_socket_directory'] ||= '/var/run/postgresql' if cluster_version.to_f < 9.3
+        configuration['unix_socket_directories'] ||= '/var/run/postgresql' if cluster_version.to_f >= 9.3
         configuration.delete('wal_receiver_status_interval') if cluster_version.to_f < 9.1
         configuration.delete('hot_standby_feedback') if cluster_version.to_f < 9.1
       end
