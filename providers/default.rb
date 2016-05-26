@@ -90,8 +90,13 @@ action :create do
     ENV['LANG'] = system_lang
   end
 
-  # Create postgresql cluster directories
+  # Systemd not working with cluster names with dashes
+  # see http://comments.gmane.org/gmane.comp.db.postgresql.debian/346
+  if systemd_used? and cluster_name.include?('-')
+   raise "Sorry, systemd not support cluster names with dashes ('-'), use underscore ('_') instead"
+  end
 
+  # Create postgresql cluster directories
   %W(/etc/postgresql /etc/postgresql/#{cluster_version} /etc/postgresql/#{cluster_version}/#{cluster_name}).each do |dir|
     directory dir do
       owner 'postgres'

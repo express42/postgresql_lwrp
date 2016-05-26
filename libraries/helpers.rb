@@ -40,6 +40,16 @@ class Chef
         end
       end
 
+      def systemd_used?
+        systemd_checker = Mixlib::ShellOut.new('file /sbin/init')
+        systemd_checker.run_command
+        if systemd_checker.stdout =~ /systemd/
+          return true
+        else
+          return false
+        end 
+      end
+
       def exec_in_pg_cluster(cluster_version, cluster_name, sql)
         return [nil, nil] unless pg_running?(cluster_version, cluster_name)
         pg_port = get_pg_port(cluster_version, cluster_name)
