@@ -40,8 +40,18 @@ class Chef
         end
       end
 
+      def systemd_used?
+        systemd_checker = Mixlib::ShellOut.new('file /sbin/init')
+        systemd_checker.run_command
+        if systemd_checker.stdout =~ /systemd/
+          return true
+        else
+          return false
+        end
+      end
+
       def exec_in_pg_cluster(cluster_version, cluster_name, sql)
-        return [nil, nil] unless pg_running?(cluster_version, cluster_name)
+        return [nil, "PostgreSQL cluster #{cluster_name} not running!"] unless pg_running?(cluster_version, cluster_name)
         pg_port = get_pg_port(cluster_version, cluster_name)
         psql_status = Mixlib::ShellOut.new("echo -n \"#{sql};\" | su -c 'psql -t -p #{pg_port}' postgres")
         psql_status.run_command
@@ -76,7 +86,7 @@ class Chef
 
       def create_user(cluster_version, cluster_name, cluster_user, options)
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT usename FROM pg_user')
-        fail "postgresql create_user: can't get users list" unless stderr.empty?
+        fail "postgresql create_user: can't get users list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
 
         if stdout.include? cluster_user
           log("postgresql create_user: user '#{cluster_user}' already exists, skiping")
@@ -91,7 +101,7 @@ class Chef
 
       def create_database(cluster_version, cluster_name, cluster_database, options)
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT datname FROM pg_database')
-        fail "postgresql create_database: can't get database list" unless stderr.empty?
+        fail "postgresql create_database: can't get database list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
 
         if stdout.gsub(/\s+/, ' ').split(' ').include? cluster_database
           log("postgresql create_database: database '#{cluster_database}' already exists, skiping")
