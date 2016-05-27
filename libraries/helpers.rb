@@ -47,7 +47,7 @@ class Chef
           return true
         else
           return false
-        end 
+        end
       end
 
       def exec_in_pg_cluster(cluster_version, cluster_name, sql)
