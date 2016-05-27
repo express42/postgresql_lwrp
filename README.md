@@ -4,8 +4,8 @@
 
 Description
 ===========
-This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.0, 9.1, 9.2, 9.3. Version 9.0 is supported with limitations: creating users and databases are not working.
-Supported platforms: Debian Squeeze/Wheezy and Ubuntu 12.04/14.04.
+This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.0, 9.1, 9.2, 9.3. Version 9.0 is supported with limitations: creating users and databases are not working, also 9.0 not supported in Ubuntu 16.04 and Debian Jessie.
+Supported platforms: Debian Squeeze/Wheezy/Jessie and Ubuntu 12.04/14.04/16.04.
 
 Changelog
 =========
@@ -38,7 +38,7 @@ Resources/Providers
 
 #### Resource parameters
 
-- cluster_name: name attribute. Cluster name (e.g. main).
+- cluster_name: name attribute. Cluster name (e.g. main). Be aware, systemd (in Ubuntu 16.04 and Debian Jessie) not working with cluster names that containing dashes ('-').
 - cluster_version: set cluster version
 - cookbook: cookbook for templates. Skip this for default templates.
 - cluster_create_options: options for pg_createcluster (only locale related options)
@@ -189,7 +189,7 @@ License and Author
 
 Author:: Nikita Borzykh (<nikita@express42.com>)
 
-Copyright (C) 2012-2015 LLC Express 42
+Copyright (C) 2012-2016 LLC Express 42
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
