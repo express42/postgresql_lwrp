@@ -23,6 +23,9 @@ suites:
     run_list:
       - recipe[apt]
       - recipe[pgtest::test_9_0]
+    excludes:
+      - ubuntu-16.04
+      - debian-8.4
   - name: pg-91
     run_list:
       - recipe[apt]
