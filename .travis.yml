@@ -5,7 +5,7 @@ rvm:
 - 2.1.5
 bundler_args: "--without kitchen_vagrant"
 before_install:
-- openssl aes-256-cbc -K $encrypted_f6f670865f61_key -iv $encrypted_f6f670865f61_iv
+- openssl aes-256-cbc -K $encrypted_b45d6f20bf91_key -iv $encrypted_b45d6f20bf91_iv
   -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
 - tar xf .travis/secret_keys.tar -C .travis
 - mv .travis/travis ~/.ssh/id_rsa
@@ -29,3 +29,5 @@ notifications:
 env:
   global:
   - KITCHEN_YAML=.kitchen.cloud.yml
+  - secure: Ag8Zn5lQxHrj+Xi79FAKiyq1mJxos+eQe6rL3xrk0aDL10YuAbbYz32jOce1MlIvTsEl4uaVQXQXIJmHjbCqzf5m61FYqRMqVhQ8B+Sh3AYiGe1MYpl9KJSYleyJPqJBDBZ/xfLpDKX7PoUCgXpHm2ZION2YFBHdRx3tN/lejoU=
+  - secure: FAO//JQqC+rY3ce19GjA/KWpNskY2nT+8i83WyueHZ20zIc6FMdkWOs+WcEcnfcXDG8GBCqiIG+wF1GajUWirWo+aEIjIguADJhZwuLqD4g6KDmRW9p1MB2b3XDvAbvzze7yy6uG9GcuhiKo+J3S33YugFD59UHGa7hCGeEukAo=
