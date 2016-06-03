@@ -9,4 +9,5 @@ end
 
 group :compat do
   cookbook 'build-essential', '<4.0'
+  cookbook 'apt', '<4.0'
 end
