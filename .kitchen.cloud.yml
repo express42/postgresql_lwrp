@@ -3,26 +3,28 @@ driver:
   name: ec2
   access_key_id: "<%= ENV['AWS_ACCESS_KEY_ID'] %>"
   secret_access_key: "<%= ENV['AWS_SECRET_ACCESS_KEY'] %>"
-  aws_ssh_key_id: travis-ci-aws
-  security_group_ids: ["sg-66b16711"]
-  region: eu-west-1
+  aws_ssh_key_id: travis-ci-aws-frank
+  security_group_ids: ["sg-2dc50845"]
+  region: eu-central-1
   require_chef_omnibus: 12
-  instance_type: t1.micro
+  instance_type: t2.micro
   tags:
     Name: travis-ci
 
 transport:
-  ssh_key: '.travis/travis-ci-aws.pem'
+  ssh_key: '.travis/travis-ci-aws-frank.pem'
   connection_timeout: 10
   connection_retries: 5
 
 platforms:
   - name: ubuntu-14.04
     driver:
-      image_id: ami-5a60c229
+     image_id: ami-6bee0004
     transport:
       username: ubuntu
   - name: ubuntu-16.04
+    driver:
+      image_id: ami-f9e30f96
     transport:
       username: ubuntu
 
