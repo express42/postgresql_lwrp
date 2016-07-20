@@ -36,6 +36,16 @@ def postgresql_check_login(version, name, user, password)
   psql_out == 0
 end
 
+def postgresql_extension_installed?(version, name, database, extension)
+  pg_port = get_port(version, name)
+  psql_out = command ("echo -n \"SELECT extname FROM pg_extension\"| sudo -u postgres psql -t -p \"#{pg_port}\" \"#{database}\" 2>/dev/null")
+  if psql_out.stdout.include? extension
+    return true
+  else
+    return false
+  end
+end
+
 def master_tests(pg_version)
   describe package("postgresql-#{pg_version}") do
     it { should be_installed }
@@ -89,6 +99,14 @@ def create_users_tests(pg_version)
     end
     it 'should have replication privileges' do
       expect(postgresql_check_priv(pg_version, 'main', 'test-02', 'rolsuper')).to eq(true)
+    end
+  end
+end
+
+def install_extension_tests(pg_version)
+  describe 'extension should be installed for test01 database' do
+    it 'extension from postgresql-contrib should be installed' do
+      expect(postgresql_extension_installed?(pg_version, 'main', 'test01', 'cube')).to eq(true)
     end
   end
 end

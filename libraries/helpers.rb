@@ -50,10 +50,10 @@ class Chef
         end
       end
 
-      def exec_in_pg_cluster(cluster_version, cluster_name, sql)
+      def exec_in_pg_cluster(cluster_version, cluster_name, *cluster_database, sql)
         return [nil, "PostgreSQL cluster #{cluster_name} not running!"] unless pg_running?(cluster_version, cluster_name)
         pg_port = get_pg_port(cluster_version, cluster_name)
-        psql_status = Mixlib::ShellOut.new("echo -n \"#{sql};\" | su -c 'psql -t -p #{pg_port}' postgres")
+        psql_status = Mixlib::ShellOut.new("echo -n \"#{sql};\" | su -c 'psql -t -p #{pg_port} #{cluster_database.first}' postgres")
         psql_status.run_command
         [psql_status.stdout, psql_status.stderr]
       end
@@ -111,6 +111,31 @@ class Chef
           stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE DATABASE \\\"#{cluster_database}\\\" #{options.map { |t| t.join(' ') }.join(' ')}")
           fail "postgresql create_database: can't create database #{cluster_database}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE DATABASE\n")
           log("postgresql create_database: database '#{cluster_database}' created")
+        end
+      end
+
+      def extension_available?(cluster_version, cluster_name, extension)
+      stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT name FROM pg_available_extensions')
+        if stdout.include? extension
+          return true
+        else
+          return false
+        end
+      end
+
+      def install_extension(cluster_version, cluster_name, cluster_database, extension, options)
+        fail "extension '#{extension}' is not available, please use \'pgxn_extension\' resource to install the extention" unless extension_available?(cluster_version, cluster_name, extension)
+
+        stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, cluster_database, "SELECT extname FROM pg_extension")
+        fail "postgresql install_extension: can't get extensions list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
+
+        if stdout.include? extension
+          log("postgresql install: extension '#{extension}' already installed, skiping")
+          return nil
+        else
+          stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, cluster_database, "CREATE EXTENSION \\\"#{extension}\\\" #{options.map { |t| t.join(' ') }.join(' ')}")
+          fail "postgresql install_extension: can't install extension #{extension}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE EXTENSION\n")
+          log("postgresql install_extension: extension '#{extension}' installed")
         end
       end
 
