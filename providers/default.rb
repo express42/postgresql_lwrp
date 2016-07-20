@@ -85,6 +85,11 @@ action :create do
     package pkg
   end
 
+  # Install pgxn client to download custom extensions
+  %W(pgxnclient build-essential).each do |pkg|
+    package pkg
+  end
+
   # Return locale
   if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
     ENV['LANG'] = system_lang
