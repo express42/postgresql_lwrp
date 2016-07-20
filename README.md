@@ -184,6 +184,33 @@ $ /opt/wal-e/bin/postgresql_cloud_backup_helper.sh main 9.3 count
 31
 ```
 
+Example of how to install extensions from postgresql-contrib 
+NOTE: schema and version are optional parameters, but others are required
+
+```ruby
+postgresql_extension 'cube' do
+  in_version '9.4'
+  in_cluster 'main'
+  db 'test01'
+  schema 'public'
+end
+```
+Example of how to install extensions from http://pgxn.org/ 
+NOTE: schema is an optional parameter, but others are required
+
+```ruby
+pgxn_extension 'pg_lambda' do
+  in_version '9.4'
+  in_cluster 'main'
+  db 'test01'
+  version '1.0.2'
+  stage 'stable'
+end
+```
+
+
+
+
 License and Author
 ==================
 
