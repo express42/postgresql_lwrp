@@ -81,7 +81,12 @@ action :create do
   end
 
   # Install postgresql server packages
-  %W(postgresql-#{cluster_version} postgresql-server-dev-#{cluster_version}).each do |pkg|
+  %W(postgresql-#{cluster_version} postgresql-contrib-#{cluster_version} postgresql-server-dev-#{cluster_version}).each do |pkg|
+    package pkg
+  end
+
+  # Install pgxn client to download custom extensions
+  %W(pgxnclient build-essential).each do |pkg|
     package pkg
   end
 
