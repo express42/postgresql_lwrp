@@ -87,6 +87,7 @@ action :create do
 
   # Install pgxn client to download custom extensions
   package 'pgxnclient'
+  package 'build-essential'
 
   # Return locale
   if new_resource.cluster_create_options.key?('locale') && !new_resource.cluster_create_options['locale'].empty?
