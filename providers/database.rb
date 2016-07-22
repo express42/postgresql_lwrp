@@ -33,11 +33,11 @@ provides :postgresql_database if defined? provides
 action :create do
   options = {}
 
-  options.merge!('OWNER' => "\\\"#{new_resource.owner}\\\"") if new_resource.owner
-  options.merge!('TABLESPACE' => "'#{new_resource.tablespace}'") if new_resource.tablespace
-  options.merge!('TEMPLATE' => "'#{new_resource.template}'") if new_resource.template
-  options.merge!('ENCODING' => "'#{new_resource.encoding}'") if new_resource.encoding
-  options.merge!('CONNECTION LIMIT' => new_resource.connection_limit) if new_resource.connection_limit
+  options['OWNER'] = "\\\"#{new_resource.owner}\\\"" if new_resource.owner
+  options['TABLESPACE'] = "'#{new_resource.tablespace}'" if new_resource.tablespace
+  options['TEMPLATE'] = "'#{new_resource.template}'" if new_resource.template
+  options['ENCODING'] = "'#{new_resource.encoding}'" if new_resource.encoding
+  options['CONNECTION LIMIT'] = new_resource.connection_limit if new_resource.connection_limit
 
   if create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
     new_resource.updated_by_last_action(true)

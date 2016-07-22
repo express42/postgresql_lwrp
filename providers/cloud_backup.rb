@@ -42,7 +42,7 @@ action :schedule do
   envdir_params            = new_resource.params
   full_backup_time         = new_resource.full_backup_time
 
-  unsetted_required_params  = params_validation(new_resource.protocol, envdir_params)
+  unsetted_required_params = params_validation(new_resource.protocol, envdir_params)
   fail "Key(s) '#{unsetted_required_params.join(', ')}' missing for protocol '#{new_resource.protocol}'" unless unsetted_required_params.empty?
 
   # Add libpq PGPORT variable to envdir_params
