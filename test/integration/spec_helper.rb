@@ -109,7 +109,7 @@ def install_extension_tests(pg_version)
       expect(postgresql_extension_installed?(pg_version, 'main', 'test01', 'cube')).to eq(true)
     end
     it 'extension from pgxn should be installed' do
-      expect(postgresql_extension_installed?(pg_version, 'main', 'test01', 'lambda')).to eq(true)
+      expect(postgresql_extension_installed?(pg_version, 'main', 'test01', 'count_distinct')).to eq(true)
     end
   end
 end
