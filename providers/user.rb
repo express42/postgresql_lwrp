@@ -36,20 +36,20 @@ action :create do
   options = new_resource.advanced_options.clone
 
   if new_resource.replication == true
-    options.merge!('REPLICATION' => nil)
+    options['REPLICATION'] = nil
   elsif new_resource.replication == false
-    options.merge!('NOREPLICATION' => nil)
+    options['NOREPLICATION'] = nil
   end
 
   if new_resource.superuser == true
-    options.merge!('SUPERUSER' => nil)
+    options['SUPERUSER'] = nil
   elsif new_resource.superuser == false
-    options.merge!('NOSUPERUSER' => nil)
+    options['NOSUPERUSER'] = nil
   end
 
-  options.merge!('ENCRYPTED PASSWORD' => "'#{new_resource.encrypted_password}'") if new_resource.encrypted_password
+  options['ENCRYPTED PASSWORD'] = "'#{new_resource.encrypted_password}'" if new_resource.encrypted_password
 
-  options.merge!('UNENCRYPTED PASSWORD' => "'#{new_resource.unencrypted_password}'") if new_resource.unencrypted_password
+  options['UNENCRYPTED PASSWORD'] = "'#{new_resource.unencrypted_password}'" if new_resource.unencrypted_password
 
   if create_user(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
     new_resource.updated_by_last_action(true)

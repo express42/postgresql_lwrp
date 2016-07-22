@@ -32,14 +32,12 @@ include Chef::Postgresql::Helpers
 
 provides :postgresql_extension if defined? provides
 
-
 action :install do
   options = {}
+  options['SCHEMA'] = new_resource.schema.to_s if new_resource.schema
+  options['VERSION'] = "'#{new_resource.version}'" if new_resource.version
 
-  options.merge!('SCHEMA' => "#{new_resource.schema}") if new_resource.schema
-  options.merge!('VERSION' => "'#{new_resource.version}'") if new_resource.version
-
-  if install_extension(new_resource.in_version, new_resource.in_cluster,new_resource.db, new_resource.name, options)
+  if install_extension(new_resource.in_version, new_resource.in_cluster, new_resource.db, new_resource.name, options)
     new_resource.updated_by_last_action(true)
   end
 end

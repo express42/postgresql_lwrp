@@ -6,6 +6,7 @@ SingleSpaceBeforeFirstArg:
 MethodLength:
   Exclude:
     - 'test/**/spec_helper.rb'
+    - 'libraries/helpers.rb'
 AbcSize:
   Exclude:
     - 'libraries/helpers.rb'

@@ -34,9 +34,14 @@ provides :pgxn_extension if defined? provides
 
 action :install do
   options = {}
-  options.merge!('--schema' => "#{new_resource.schema}") if new_resource.schema
+  options['--schema'] = new_resource.schema.to_s if new_resource.schema
+  params = {}
+  params[:name] = new_resource.name.to_s if new_resource.name
+  params[:stage] = new_resource.stage.to_s if new_resource.stage
+  params[:version] = new_resource.version.to_s if new_resource.version
+  params[:db] = new_resource.db.to_s if new_resource.db
 
-  if pgxn_install_extension(new_resource.in_version, new_resource.in_cluster,new_resource.db, new_resource.name, new_resource.version, new_resource.stage, options)
+  if pgxn_install_extension(new_resource.in_version, new_resource.in_cluster, params, options)
     new_resource.updated_by_last_action(true)
   end
 end
