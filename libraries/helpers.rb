@@ -140,7 +140,7 @@ class Chef
       end
 
       def pgxn_install_extension(cluster_version, cluster_name, params, options)
-        pgxn_status = Mixlib::ShellOut.new("pgxn install --yes '#{params[:name]}'='#{params[:version]}' --sudo --#{params[:stage]}")
+        pgxn_status = Mixlib::ShellOut.new("pgxn install '#{params[:name]}'='#{params[:version]}' --sudo --#{params[:stage]}")
         pgxn_status.run_command
 
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, params[:db], 'SELECT extname FROM pg_extension')
@@ -150,7 +150,7 @@ class Chef
           log("postgresql install: extension '#{params[:name]}' already installed, skipping")
           return nil
         else
-          pgxn_status = Mixlib::ShellOut.new("sudo -u postgres pgxn load --yes '#{params[:name]}'='#{params[:version]}' -d #{params[:db]} --#{params[:stage]}  #{options.map { |t| t.join(' ') }.join(' ')}")
+          pgxn_status = Mixlib::ShellOut.new("sudo -u postgres pgxn load '#{params[:name]}'='#{params[:version]}' -d #{params[:db]} --#{params[:stage]}  #{options.map { |t| t.join(' ') }.join(' ')}")
           pgxn_status.run_command
           fail "postgresql install_extension: can't install extension #{params[:name]}\nSTDOUT: #{pgxn_status.stdout}\nSTDERR: #{pgxn_status.stderr}" unless pgxn_status.stdout.include?('CREATE EXTENSION')
           log("postgresql install_extension: extension '#{params[:name]}' installed")
