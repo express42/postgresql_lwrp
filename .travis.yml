@@ -2,7 +2,7 @@ language: ruby
 cache: bundler
 sudo: false
 rvm:
-- 2.1.5
+- 2.2.2
 bundler_args: "--without kitchen_vagrant"
 before_install:
 - openssl aes-256-cbc -K $encrypted_b45d6f20bf91_key -iv $encrypted_b45d6f20bf91_iv
