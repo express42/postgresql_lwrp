@@ -15,7 +15,7 @@ script:
 - bundle exec rspec
 - bundle exec kitchen test -c 10 -d always
 before_deploy:
-  - gem install rack -v 2.0.1
+  - gem install rack -v 1.6.4
 deploy:
   edge: true
   provider: chef-supermarket
