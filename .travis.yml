@@ -14,6 +14,8 @@ script:
 - bundle exec foodcritic -f any .
 - bundle exec rspec
 - bundle exec kitchen test -c 10 -d always
+before_deploy:
+  - gem install rack -v 2.0.1
 deploy:
   edge: true
   provider: chef-supermarket
@@ -21,7 +23,6 @@ deploy:
   client_key: ".travis/express42.pem"
   cookbook_category: Databases
   skip_cleanup: true
-  script: rvm 2.2.2 do chef_supermarket.rb
   on:
     tags: true
 notifications:
