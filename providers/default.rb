@@ -159,6 +159,7 @@ action :create do
   main_configuration = configuration.dup
   main_configuration.delete('ssl_cert_file') if cluster_version.to_f < 9.2
   main_configuration.delete('ssl_key_file') if cluster_version.to_f < 9.2
+  main_configuration.delete("checkpoint_segments") if cluster_version.to_f > 9.4
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf" do
     source 'postgresql.conf.erb'
