@@ -29,7 +29,7 @@ platforms:
       username: ubuntu
 
 provisioner:
-  name: chef_solo
+  name: chef_zero
 
 suites:
   - name: pg-91
@@ -40,10 +40,7 @@ suites:
     run_list:
       - recipe[apt]
       - recipe[pgtest::test_9_4]
-  - name: pg-94-chef11
+  - name: pg-95
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_4]
-    provisioner:
-      name: chef_zero
-      require_chef_omnibus: 11.14.2
+      - recipe[pgtest::test_9_5]
