@@ -1,3 +1,6 @@
+## 1.2.1 (Dec 15, 2016)
+* (New) Autoremove checkpoint_segments from configuration if pg > 9.4
+
 ## 1.2.0 (Jul 22, 2016)
 * (New) Add extension lwrp to install extensions from postgresql-contrib subpackage, which comes installed
 * (New) Add pgxn extension lwrp to install extensions from pgxn.org website, using pgxn client
