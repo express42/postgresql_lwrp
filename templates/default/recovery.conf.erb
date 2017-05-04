@@ -3,3 +3,4 @@
 <%= "trigger_file = '#{@replication[:trigger_file]}'" if @replication[:trigger_file] %>
 <%= "restore_command = '#{@replication[:restore_command]}'" if @replication[:restore_command] %>
 <%= "primary_slot_name = '#{@replication[:primary_slot_name]}'" if @replication[:primary_slot_name] %>
+<%= "recovery_target_timeline = '#{@replication[:recovery_target_timeline]}'" if @replication[:recovery_target_timeline] %>
