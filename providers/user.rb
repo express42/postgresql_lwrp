@@ -50,8 +50,7 @@ action :create do
   options['ENCRYPTED PASSWORD'] = "'#{new_resource.encrypted_password}'" if new_resource.encrypted_password
 
   options['UNENCRYPTED PASSWORD'] = "'#{new_resource.unencrypted_password}'" if new_resource.unencrypted_password
-
-  if create_user(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
-    new_resource.updated_by_last_action(true)
+  converge_by "create user #{new_resource.name}" do
+  create_user(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
   end
 end

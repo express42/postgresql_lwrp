@@ -22,7 +22,7 @@ postgresql 'main' do
   hba_configuration(
     [
       { type: 'host', database: 'all', user: 'all', address: '0.0.0.0/0', method: 'md5' },
-      { type: 'host', database: 'replication', user: 'postgres', address: '127.0.0.1/32', method: 'trust' }
+      { type: 'host', database: 'replication', user: 'postgres', address: '127.0.0.1/32', method: 'trust' },
     ]
   )
 end

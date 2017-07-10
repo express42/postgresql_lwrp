@@ -33,21 +33,15 @@ class Chef
       def pg_installed?(pkg_name)
         dpkg_status = Mixlib::ShellOut.new("dpkg-query -W -f='${Status}\n' #{pkg_name} 2>/dev/null | grep -c -q 'ok installed'")
         dpkg_status.run_command
-        if dpkg_status.exitstatus == 0
-          false
-        else
-          true
-        end
+        return false if dpkg_status.exitstatus == 0
+        true
       end
 
       def systemd_used?
         systemd_checker = Mixlib::ShellOut.new('file /sbin/init')
         systemd_checker.run_command
-        if systemd_checker.stdout =~ /systemd/
-          return true
-        else
-          return false
-        end
+        return true if systemd_checker.stdout =~ /systemd/
+        false
       end
 
       def exec_in_pg_cluster(cluster_version, cluster_name, *cluster_database, sql)
@@ -65,11 +59,8 @@ class Chef
       end
 
       def need_to_restart?(allow_restart_cluster, first_time)
-        if allow_restart_cluster == :first
-          return first_time
-        elsif allow_restart_cluster == :always
-          return true
-        end
+        return first_time if allow_restart_cluster == :first
+        return true if allow_restart_cluster == :always
         false
       end
 
@@ -77,16 +68,13 @@ class Chef
         pg_status = Mixlib::ShellOut.new("su -c '/usr/lib/postgresql/#{cluster_version}/bin/pg_ctl \
           -D /var/lib/postgresql/#{cluster_version}/#{cluster_name} status' postgres")
         pg_status.run_command
-        if pg_status.stdout =~ /server\ is\ running/
-          return true
-        else
-          return false
-        end
+        return true if pg_status.stdout =~ /server\ is\ running/
+        false
       end
 
       def create_user(cluster_version, cluster_name, cluster_user, options)
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT usename FROM pg_user')
-        fail "postgresql create_user: can't get users list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
+        raise "postgresql create_user: can't get users list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
 
         if stdout.include? cluster_user
           log("postgresql create_user: user '#{cluster_user}' already exists, skiping")
@@ -94,14 +82,14 @@ class Chef
 
         else
           stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE USER \\\"#{cluster_user}\\\" #{options.map { |t| t.join(' ') }.join(' ')}")
-          fail "postgresql create_user: can't create user #{cluster_user}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE ROLE\n")
+          raise "postgresql create_user: can't create user #{cluster_user}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE ROLE\n")
           log("postgresql create_user: user '#{cluster_user}' created")
         end
       end
 
       def create_database(cluster_version, cluster_name, cluster_database, options)
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT datname FROM pg_database')
-        fail "postgresql create_database: can't get database list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
+        raise "postgresql create_database: can't get database list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
 
         if stdout.gsub(/\s+/, ' ').split(' ').include? cluster_database
           log("postgresql create_database: database '#{cluster_database}' already exists, skiping")
@@ -109,32 +97,29 @@ class Chef
 
         else
           stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, "CREATE DATABASE \\\"#{cluster_database}\\\" #{options.map { |t| t.join(' ') }.join(' ')}")
-          fail "postgresql create_database: can't create database #{cluster_database}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE DATABASE\n")
+          raise "postgresql create_database: can't create database #{cluster_database}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE DATABASE\n")
           log("postgresql create_database: database '#{cluster_database}' created")
         end
       end
 
       def extension_available?(cluster_version, cluster_name, extension)
         stdout, _stderr = exec_in_pg_cluster(cluster_version, cluster_name, 'SELECT name FROM pg_available_extensions')
-        if stdout.include? extension
-          return true
-        else
-          return false
-        end
+        return true if stdout.include? extension
+        false
       end
 
       def install_extension(cluster_version, cluster_name, cluster_database, extension, options)
-        fail "extension '#{extension}' is not available, please use \'pgxn_extension\' resource to install the extention" unless extension_available?(cluster_version, cluster_name, extension)
+        raise "extension '#{extension}' is not available, please use \'pgxn_extension\' resource to install the extention" unless extension_available?(cluster_version, cluster_name, extension)
 
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, cluster_database, 'SELECT extname FROM pg_extension')
-        fail "postgresql install_extension: can't get extensions list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
+        raise "postgresql install_extension: can't get extensions list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
 
         if stdout.include? extension
           log("postgresql install: extension '#{extension}' already installed, skiping")
           return nil
         else
           stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, cluster_database, "CREATE EXTENSION \\\"#{extension}\\\" #{options.map { |t| t.join(' ') }.join(' ')}")
-          fail "postgresql install_extension: can't install extension #{extension}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE EXTENSION\n")
+          raise "postgresql install_extension: can't install extension #{extension}\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stdout.include?("CREATE EXTENSION\n")
           log("postgresql install_extension: extension '#{extension}' installed")
         end
       end
@@ -144,7 +129,7 @@ class Chef
         pgxn_status.run_command
 
         stdout, stderr = exec_in_pg_cluster(cluster_version, cluster_name, params[:db], 'SELECT extname FROM pg_extension')
-        fail "postgresql install_extension: can't get extensions list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
+        raise "postgresql install_extension: can't get extensions list\nSTDOUT: #{stdout}\nSTDERR: #{stderr}" unless stderr.empty?
 
         if stdout.include? params[:name].downcase
           log("postgresql install: extension '#{params[:name]}' already installed, skipping")
@@ -152,7 +137,7 @@ class Chef
         else
           pgxn_status = Mixlib::ShellOut.new("sudo -u postgres pgxn load '#{params[:name]}'='#{params[:version]}' -d #{params[:db]} --#{params[:stage]}  #{options.map { |t| t.join(' ') }.join(' ')}")
           pgxn_status.run_command
-          fail "postgresql install_extension: can't install extension #{params[:name]}\nSTDOUT: #{pgxn_status.stdout}\nSTDERR: #{pgxn_status.stderr}" unless pgxn_status.stdout.include?('CREATE EXTENSION')
+          raise "postgresql install_extension: can't install extension #{params[:name]}\nSTDOUT: #{pgxn_status.stdout}\nSTDERR: #{pgxn_status.stderr}" unless pgxn_status.stdout.include?('CREATE EXTENSION')
           log("postgresql install_extension: extension '#{params[:name]}' installed")
         end
       end

@@ -12,7 +12,7 @@ default['postgresql']['defaults']['server']['configuration']['max_stack_depth'] 
 default['postgresql']['defaults']['server']['configuration']['max_files_per_process'] = '1000'
 default['postgresql']['defaults']['server']['configuration']['vacuum_cost_delay'] = 0
 default['postgresql']['defaults']['server']['configuration']['wal_level'] = 'hot_standby'
-default['postgresql']['defaults']['server']['configuration']['fsync'] =  'on'
+default['postgresql']['defaults']['server']['configuration']['fsync'] = 'on'
 default['postgresql']['defaults']['server']['configuration']['synchronous_commit'] = 'on'
 default['postgresql']['defaults']['server']['configuration']['checkpoint_segments'] = '64'
 default['postgresql']['defaults']['server']['configuration']['wal_sync_method'] = 'fsync'
@@ -55,5 +55,5 @@ default['postgresql']['defaults']['server']['hba_configuration'] = [
   { type: 'local', database: 'all', user: 'postgres', address: '',        method: 'peer' },
   { type: 'local', database: 'all', user: 'all', address: '',             method: 'peer' },
   { type: 'host',  database: 'all', user: 'all', address: '127.0.0.1/32', method: 'md5'  },
-  { type: 'host',  database: 'all', user: 'all', address: '::1/128',      method: 'md5'  }
+  { type: 'host',  database: 'all', user: 'all', address: '::1/128',      method: 'md5'  },
 ]

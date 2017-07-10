@@ -1,0 +1,46 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  privileged: true
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: 12
+
+platforms:
+  - name: ubuntu-14.04
+    driver_config:
+      image: ubuntu-upstart:14.04
+      disable_upstart: false
+      run_command: '/sbin/init'
+      provision_command:
+#       Netstat for Serverspec
+        - apt-get install -y net-tools
+
+
+  - name: ubuntu-16.04
+    driver_config:
+      image: ubuntu:16.04
+      run_command: '/sbin/init'
+      provision_command:
+#       For systemd
+        - systemctl set-default multi-user.target
+#       For postgreqsl
+        - apt-get install -y locales && locale-gen en_US.UTF-8
+#       Netstat for Serverspec
+        - apt-get install -y net-tools
+
+suites:
+  - name: pg-91
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test_9_1]
+  - name: pg-94
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test_9_4]
+  - name: pg-95
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test_9_5]

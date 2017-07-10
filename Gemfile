@@ -7,7 +7,10 @@ group :unit do
 end
 group :lint do
   gem 'foodcritic'
-  gem 'rubocop'
+  gem 'cookstyle'
+end
+group :kitchen_docker do
+  gem 'kitchen-docker'
 end
 group :kitchen_common do
   gem 'test-kitchen'

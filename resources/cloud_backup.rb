@@ -39,7 +39,7 @@ attribute :protocol, kind_of: String,
                      callbacks: {
                        'is not allowed! Allowed providers: s3, swift or  azure' => proc do |value|
                          !value.to_sym.match(/^(s3|swift|azure)$/).nil?
-                       end
+                       end,
                      }
 attribute :params, kind_of: Hash, required: true
 

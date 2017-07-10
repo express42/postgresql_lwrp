@@ -39,11 +39,8 @@ end
 def postgresql_extension_installed?(version, name, database, extension)
   pg_port = get_port(version, name)
   psql_out = command("echo -n \"SELECT extname FROM pg_extension\"| sudo -u postgres psql -t -p \"#{pg_port}\" \"#{database}\" 2>/dev/null")
-  if psql_out.stdout.include? extension
-    return true
-  else
-    return false
-  end
+  return true if psql_out.stdout.include? extension
+  false
 end
 
 def master_tests(pg_version)

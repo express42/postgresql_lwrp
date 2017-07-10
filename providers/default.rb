@@ -47,7 +47,7 @@ action :create do
   replication_start_slave  = new_resource.replication_start_slave
   replication_initial_copy = new_resource.replication_initial_copy
 
-  wal_e_bin               = node['postgresql']['cloud_backup']['wal_e_bin']
+  wal_e_bin = node['postgresql']['cloud_backup']['wal_e_bin']
 
   cluster_options          = Mash.new(new_resource.cluster_create_options)
   parsed_cluster_options   = []
@@ -97,7 +97,7 @@ action :create do
   # Systemd not working with cluster names with dashes
   # see http://comments.gmane.org/gmane.comp.db.postgresql.debian/346
   if systemd_used? && cluster_name.include?('-')
-    fail "Sorry, systemd not support cluster names with dashes ('-'), use underscore ('_') instead"
+    raise "Sorry, systemd not support cluster names with dashes ('-'), use underscore ('_') instead"
   end
 
   # Create postgresql cluster directories
@@ -206,8 +206,8 @@ action :create do
         'host'     => '-h',
         'port'     => '-p',
         'user'     => '-U',
-        'password' => '-W'
-      }
+        'password' => '-W',
+      }.freeze
 
       conninfo_hash = Hash[*replication[:primary_conninfo].scan(/\w+=[^\s]+/).map { |x| x.split('=', 2) }.flatten]
 

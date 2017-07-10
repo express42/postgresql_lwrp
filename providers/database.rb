@@ -25,6 +25,7 @@
 # SOFTWARE.
 #
 #
+use_inline_resources
 
 include Chef::Postgresql::Helpers
 
@@ -38,8 +39,7 @@ action :create do
   options['TEMPLATE'] = "'#{new_resource.template}'" if new_resource.template
   options['ENCODING'] = "'#{new_resource.encoding}'" if new_resource.encoding
   options['CONNECTION LIMIT'] = new_resource.connection_limit if new_resource.connection_limit
-
-  if create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
-    new_resource.updated_by_last_action(true)
+  converge_by "create database #{new_resource.name}" do
+      create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
   end
 end

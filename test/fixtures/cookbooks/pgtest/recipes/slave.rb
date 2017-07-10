@@ -20,7 +20,7 @@ postgresql 'slave' do
   )
   hba_configuration(
     [
-      { type: 'host', database: 'all', user: 'all', address: '0.0.0.0/0', method: 'md5' }
+      { type: 'host', database: 'all', user: 'all', address: '0.0.0.0/0', method: 'md5' },
     ]
   )
   replication(

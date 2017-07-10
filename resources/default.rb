@@ -44,5 +44,5 @@ attribute :replication_start_slave, kind_of: [TrueClass, FalseClass], default: f
 attribute :allow_restart_cluster, default: :none, callbacks: {
   'is not allowed! Allowed params for allow_restart_cluster: first, always or none' => proc do |value|
     !value.to_sym.match(/^(first|always|none)$/).nil?
-  end
+  end,
 }
