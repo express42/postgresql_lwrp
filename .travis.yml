@@ -27,8 +27,10 @@ env:
   - INSTANCE=pg-95-ubuntu-1404
   - INSTANCE=pg-95-ubuntu-1604
 
+before_script:
+- bundle exec cookstyle --version
+- bundle exec foodcritic --version
 script:
-- bundle exec cookstyle -v
 - bundle exec cookstyle
 - bundle exec foodcritic -f any .
 - bundle exec kitchen test ${INSTANCE} -d always
