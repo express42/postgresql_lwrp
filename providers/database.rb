@@ -40,6 +40,6 @@ action :create do
   options['ENCODING'] = "'#{new_resource.encoding}'" if new_resource.encoding
   options['CONNECTION LIMIT'] = new_resource.connection_limit if new_resource.connection_limit
   converge_by "create database #{new_resource.name}" do
-      create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
+    create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
   end
 end

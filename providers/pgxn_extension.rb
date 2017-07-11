@@ -40,7 +40,7 @@ action :install do
   params[:stage] = new_resource.stage.to_s if new_resource.stage
   params[:version] = new_resource.version.to_s if new_resource.version
   params[:db] = new_resource.db.to_s if new_resource.db
-  converge_by "install pgxn extension" do
-  pgxn_install_extension(new_resource.in_version, new_resource.in_cluster, params, options)
+  converge_by 'install pgxn extension' do
+    pgxn_install_extension(new_resource.in_version, new_resource.in_cluster, params, options)
   end
 end

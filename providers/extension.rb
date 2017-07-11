@@ -37,7 +37,7 @@ action :install do
   options['SCHEMA'] = new_resource.schema.to_s if new_resource.schema
   options['VERSION'] = "'#{new_resource.version}'" if new_resource.version
 
-  converge_by "install extension new_resource.name" do
+  converge_by 'install extension new_resource.name' do
     install_extension(new_resource.in_version, new_resource.in_cluster, new_resource.db, new_resource.name, options)
   end
 end
