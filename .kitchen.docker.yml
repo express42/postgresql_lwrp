@@ -9,6 +9,30 @@ provisioner:
   require_chef_omnibus: 12
 
 platforms:
+  - name: debian-7.9
+    driver_config:
+      image: debian:7.9
+      disable_upstart: false
+      run_command: '/sbin/init'
+      provision_command:
+#       For postgreqsl
+        - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+        - apt-get install -y locales && locale-gen en_US.UTF-8
+#       Netstat for Serverspec
+        - apt-get install -y net-tools
+
+  - name: debian-8.4
+    driver_config:
+      image: debian:8.4
+      disable_upstart: false
+      run_command: '/sbin/init'
+      provision_command:
+#       For postgreqsl
+        - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+        - apt-get install -y locales && locale-gen en_US.UTF-8
+#       Netstat for Serverspec
+        - apt-get install -y net-tools
+
   - name: ubuntu-14.04
     driver_config:
       image: ubuntu-upstart:14.04
