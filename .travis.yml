@@ -14,14 +14,24 @@ env:
   - secure: Ag8Zn5lQxHrj+Xi79FAKiyq1mJxos+eQe6rL3xrk0aDL10YuAbbYz32jOce1MlIvTsEl4uaVQXQXIJmHjbCqzf5m61FYqRMqVhQ8B+Sh3AYiGe1MYpl9KJSYleyJPqJBDBZ/xfLpDKX7PoUCgXpHm2ZION2YFBHdRx3tN/lejoU=
   - secure: FAO//JQqC+rY3ce19GjA/KWpNskY2nT+8i83WyueHZ20zIc6FMdkWOs+WcEcnfcXDG8GBCqiIG+wF1GajUWirWo+aEIjIguADJhZwuLqD4g6KDmRW9p1MB2b3XDvAbvzze7yy6uG9GcuhiKo+J3S33YugFD59UHGa7hCGeEukAo=
   matrix:
-  - OPERATING_SYSTEM=debian-79
-  - OPERATING_SYSTEM=debian-84
-  - OPERATING_SYSTEM=ubuntu-1404
-  - OPERATING_SYSTEM=ubuntu-1604
+  - INSTANCE=pg-91-debian-79
+  - INSTANCE=pg-91-debian-84
+  - INSTANCE=pg-91-ubuntu-1404
+  - INSTANCE=pg-91-ubuntu-1604
+  - INSTANCE=pg-94-debian-79
+  - INSTANCE=pg-94-debian-84
+  - INSTANCE=pg-94-ubuntu-1404
+  - INSTANCE=pg-94-ubuntu-1604
+  - INSTANCE=pg-95-debian-79
+  - INSTANCE=pg-95-debian-84
+  - INSTANCE=pg-95-ubuntu-1404
+  - INSTANCE=pg-95-ubuntu-1604
 
 script:
+- bundle exec cookstyle -v
+- bundle exec cookstyle
 - bundle exec foodcritic -f any .
-- bundle exec kitchen test ${OPERATING_SYSTEM} -d always
+- bundle exec kitchen test ${INSTANCE} -d always
 
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_b45d6f20bf91_key -iv $encrypted_b45d6f20bf91_iv
