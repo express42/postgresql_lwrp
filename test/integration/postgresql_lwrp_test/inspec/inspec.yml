@@ -1,0 +1,5 @@
+name: inspec-test-fixtures
+title: InSpec Profile
+maintainer: LLC Express 42
+license: MIT
+version: 0.1.0

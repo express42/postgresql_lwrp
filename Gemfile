@@ -5,6 +5,10 @@ end
 group :unit do
   gem 'chefspec'
 end
+group :inspec do
+  gem 'inspec'
+  gem 'kitchen-inspec'
+end
 group :lint do
   gem 'foodcritic'
   gem 'cookstyle'

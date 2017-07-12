@@ -2,6 +2,10 @@ include_recipe 'postgresql_lwrp::apt_official_repository'
 include_recipe 'postgresql_lwrp::default'
 include_recipe 'sysctl::default'
 
+service 'postgresql' do
+  action :restart
+end
+
 sysctl_param 'kernel.shmmax' do
   value 68_719_476_736
 end
