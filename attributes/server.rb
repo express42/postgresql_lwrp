@@ -18,7 +18,7 @@ default['postgresql']['defaults']['server']['configuration'] = {
   checkpoint_segments: '64',
   wal_sync_method: 'fsync',
   checkpoint_completion_target: '0.9',
-  effective_cache_size: node['memory']['total'].to_i / 2,
+  effective_cache_size: "#{(node['memory']['total'].to_i / (2 * 1024))}MB",
   log_destination: 'stderr',
   syslog_ident: 'postgres',
   log_min_duration_statement: 200,
