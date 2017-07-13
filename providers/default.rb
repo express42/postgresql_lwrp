@@ -42,7 +42,7 @@ action :create do
 
   allow_restart_cluster    = new_resource.allow_restart_cluster
 
-  replication              = new_resource.replication
+  replication              = Chef::Mixin::DeepMerge.merge(node['postgresql']['defaults']['server']['replication'].to_hash, new_resource.replication)
   replication_file         = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}/recovery.conf"
   replication_start_slave  = new_resource.replication_start_slave
   replication_initial_copy = new_resource.replication_initial_copy
