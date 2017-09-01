@@ -35,8 +35,8 @@ action :create do
   options = {}
 
   options['OWNER'] = "\\\"#{new_resource.owner}\\\"" if new_resource.owner
-  options['TABLESPACE'] = "'#{new_resource.tablespace}'" if new_resource.tablespace
-  options['TEMPLATE'] = "'#{new_resource.template}'" if new_resource.template
+  options['TABLESPACE'] = "#{new_resource.tablespace}" if new_resource.tablespace
+  options['TEMPLATE'] = "#{new_resource.template}" if new_resource.template
   options['ENCODING'] = "'#{new_resource.encoding}'" if new_resource.encoding
   options['CONNECTION LIMIT'] = new_resource.connection_limit if new_resource.connection_limit
   converge_by "create database #{new_resource.name}" do
