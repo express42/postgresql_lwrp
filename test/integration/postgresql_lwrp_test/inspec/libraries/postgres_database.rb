@@ -1,34 +1,41 @@
 # encoding: utf-8
-# author: Dmitry Mischenko
+# author: Kirill Kuznetsov
 
-class PostgresExtension < Inspec.resource(1)
-  name 'postgres_extension'
-  desc 'Use the postgres_extension InSpec audit resource to test installation of PostgreSQL database extensions'
+class PostgresDatabase < Inspec.resource(1)
+  name 'postgres_database'
+  desc 'Use the postgres_database InSpec audit resource to test PostgreSQL cluster databases.'
   example "
-    describe postgres_extension('9.6', 'main', 'cube', 'test01') do
-      it { should be_installed }
+    describe postgres_database('9.6', 'main', 'test01') do
+      it { should be_created }
+      it { should have_owner('test01')}
     end
   "
 
-  def initialize(version, cluster, name, db = 'postgres')
+  def initialize(version, cluster, name)
     @name = name
-    @db = db
+    @version = version
+    @cluster = cluster
     @port = get_port(version, cluster)
   end
 
-  def installed?
-    return true if query('SELECT extname FROM pg_extension').include? @name
+  def created?
+    return true if query("SELECT datname FROM pg_database where datname='#{@name}'") == @name
+    false
+  end
+
+  def has_owner?(owner)
+    return true if query("SELECT pg_get_userbyid(datdba) FROM pg_database where datname='#{@name}'") == owner
     false
   end
 
   def to_s
-    "Extension #{@name}"
+    "Database #{@name}"
   end
 
   private
 
   def query(query)
-    psql_cmd = create_psql_cmd(query, @db)
+    psql_cmd = create_psql_cmd(query, 'postgres')
     cmd = inspec.command(psql_cmd)
     out = cmd.stdout + "\n" + cmd.stderr
     if cmd.exit_status != 0 || out =~ /could not connect to .*/ || out.downcase =~ /^error:.*/
@@ -42,7 +49,6 @@ class PostgresExtension < Inspec.resource(1)
     Shellwords.escape(query)
   end
 
-  # TODO: You cannot specify multiple DBs
   def create_psql_cmd(query, db)
     "su postgres -c \"psql -d #{db} -p #{@port} -q -t -c #{escaped_query(query)}\""
   end

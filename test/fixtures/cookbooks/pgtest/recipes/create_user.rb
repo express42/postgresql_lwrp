@@ -3,13 +3,13 @@ include_recipe 'postgresql_lwrp::default'
 postgresql_user 'test01' do
   in_version node['postgresql']['defaults']['server']['version']
   in_cluster 'main'
-  unencrypted_password 'test01'
+  encrypted_password 'test01'
   replication true
 end
 
 postgresql_user 'test-02' do
   in_version node['postgresql']['defaults']['server']['version']
   in_cluster 'main'
-  unencrypted_password 'test-02'
+  encrypted_password 'test-02'
   superuser true
 end

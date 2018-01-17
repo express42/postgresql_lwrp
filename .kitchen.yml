@@ -5,47 +5,85 @@ provisioner:
   name: chef_zero
   require_chef_omnibus: 12
 
+verifier:
+  name: inspec
+  inspec_tests:
+    - path: test/integration/postgresql_lwrp_test
+
 platforms:
-  - name: ubuntu-12.04
-    driver:
-      box: express42/ubuntu12.04-chef11
   - name: ubuntu-14.04
     driver:
-      box: express42/ubuntu-14.04
+      box: bento/ubuntu-14.04
   - name: ubuntu-16.04
     driver:
-      box: express42/ubuntu-16.04
-  - name: debian-7.9
-  - name: debian-8.4
+      box: bento/ubuntu-16.04
+  - name: debian-8
+    driver:
+      box: bento/debian-8
+  - name: debian-9
+    driver:
+      box: bento/debian-9
 
 suites:
-  - name: pg-90
-    run_list:
-      - recipe[apt]
-      - recipe[pgtest::test_9_0]
-    excludes:
-      - ubuntu-16.04
-      - debian-8.4
   - name: pg-91
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_1]
+      - recipe[pgtest::test]
+    excludes:
+      - debian-9
+    attributes:
+      pgtest:
+        version: '9.1'
+    verifier:
+      attributes:
+        pg_version: 9.1
   - name: pg-92
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_2]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.2'
+    verifier:
+      attributes:
+        pg_version: 9.2
   - name: pg-93
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_3]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.3'
+    verifier:
+      attributes:
+        pg_version: 9.3
   - name: pg-94
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_4]
-  - name: pg-94-chef11
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.4'
+    verifier:
+      attributes:
+        pg_version: 9.4
+  - name: pg-96
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_4]
-    provisioner:
-      name: chef_zero
-      require_chef_omnibus: 11.14.2
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.6'
+    verifier:
+      attributes:
+        pg_version: 9.6
+  - name: pg-10
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '10'
+    verifier:
+      attributes:
+        pg_version: 10

@@ -168,7 +168,7 @@ action :create do
     mode 0644
     variables configuration: main_configuration, cluster_name: cluster_name, cluster_version: cluster_version
     cookbook new_resource.cookbook
-    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+    notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_hba.conf" do
@@ -178,7 +178,7 @@ action :create do
     mode 0644
     variables configuration: hba_configuration
     cookbook new_resource.cookbook
-    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+    notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/pg_ident.conf" do
@@ -188,7 +188,7 @@ action :create do
     mode 0644
     variables configuration: ident_configuration
     cookbook new_resource.cookbook
-    notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+    notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
   end
 
   file "/etc/postgresql/#{cluster_version}/#{cluster_name}/start.conf" do
@@ -215,8 +215,14 @@ action :create do
         "#{BASEBACKUP_PARAMS[key.to_s]} #{val}" if BASEBACKUP_PARAMS[key.to_s]
       end.compact
 
+      fetch_wal_logs = if cluster_version.to_i >= 10
+                         '-X fetch'
+                       else
+                         '-x'
+                       end
+
       execute 'Make basebackup' do
-        command "#{pg_basebackup_path} -D #{pg_data_directory} -F p -x -c fast #{basebackup_conninfo_hash.join(' ')}"
+        command "#{pg_basebackup_path} -D #{pg_data_directory} -F p #{fetch_wal_logs} -c fast #{basebackup_conninfo_hash.join(' ')}"
         user 'postgres'
         not_if { ::File.exist?("/var/lib/postgresql/#{cluster_version}/#{cluster_name}/base") }
         timeout 604_800
@@ -240,14 +246,14 @@ action :create do
       mode 0644
       variables replication: replication
       cookbook new_resource.cookbook
-      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+      notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
     end
 
   else
 
     file replication_file do
       action :delete
-      notifies :create, "ruby_block[restart_service_#{service_name}]", :delayed
+      notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
     end
   end
 

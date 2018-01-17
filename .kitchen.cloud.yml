@@ -16,6 +16,11 @@ transport:
   connection_timeout: 10
   connection_retries: 5
 
+verifier:
+  name: inspec
+  inspec_tests:
+    - path: test/integration/postgresql_lwrp_test
+
 platforms:
   - name: ubuntu-14.04
     driver:
@@ -35,12 +40,30 @@ suites:
   - name: pg-91
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_1]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.1'
+    verifier:
+      attributes:
+        pg_version: 9.1
   - name: pg-94
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_4]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.4'
+    verifier:
+      attributes:
+        pg_version: 9.4
   - name: pg-95
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_5]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.5'
+    verifier:
+      attributes:
+        pg_version: 9.5
