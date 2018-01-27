@@ -5,20 +5,20 @@ class PostgresCluster < Inspec.resource(1)
   name 'postgres_cluster'
   desc 'Use the postgres_cluster InSpec audit resource to test PostgreSQL database cluster status'
   example "
-    describe postgres_cluster('slave') do
+    describe postgres_cluster('9.6', 'slave') do
       it { should be_running }
     end
 
-    describe postgres_cluster('slave2') do
+    describe postgres_cluster('9.6', 'slave2') do
       it { should be_stopped }
     end
   "
 
-  def initialize(name)
+  def initialize(version, name = 'main')
     @name = name
-    @version = version_from_psql
+    @version = version
     @running = 0
-    @stopping = case @version
+    @stopping = case @version.to_s
                 when '9.1'
                   1
                 else
@@ -40,12 +40,5 @@ class PostgresCluster < Inspec.resource(1)
 
   def to_s
     "Cluster #{@name}"
-  end
-
-  private
-
-  def version_from_psql
-    return unless inspec.command('psql').exist?
-    inspec.command("psql --version | head -n 1 | awk '{ print $NF }' | awk -F. '{ print $1\".\"$2 }'").stdout.strip
   end
 end

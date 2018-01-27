@@ -4,8 +4,8 @@
 
 Description
 ===========
-This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.0, 9.1, 9.2, 9.3. Version 9.0 is supported with limitations: creating users and databases are not working, also 9.0 not supported in Ubuntu 16.04 and Debian Jessie.
-Supported platforms: Debian Squeeze/Wheezy/Jessie and Ubuntu 12.04/14.04/16.04.
+This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.1, 9.2, 9.3, 9.4, 9.5, 9.6 & 10. 
+Supported platforms: Debian Jessie/Stretch and Ubuntu 14.04/16.04.
 
 Changelog
 =========
@@ -13,7 +13,7 @@ See CHANGELOG.md
 
 Requirements
 ============
-Minimal chef-client version is 11.14.2.
+Minimal chef-client version is 12.5.1.
 
 Dependencies
 ============

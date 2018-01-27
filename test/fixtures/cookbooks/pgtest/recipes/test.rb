@@ -1,5 +1,6 @@
-node.default['postgresql']['defaults']['server']['version'] = '9.3'
-node.default['postgresql']['client']['version'] = '9.3'
+node.default['postgresql']['defaults']['server']['version'] = node['pgtest']['version']
+node.default['postgresql']['client']['version'] = node['pgtest']['version']
+
 include_recipe 'pgtest::master'
 include_recipe 'pgtest::create_user'
 include_recipe 'pgtest::create_database'

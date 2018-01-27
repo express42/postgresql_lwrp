@@ -1,3 +1,15 @@
+## 1.2.2 (Jan 16, 2018)
+* (New) PostgreSQL 10 support.
+* (New) Integration tests were migrated to InSpec.
+* (New) InSpec resources: postgres_database
+* (Fix) InSpec resources: `postgres_cluster`, `postgres_extension` & `postgres_user` were refactored.
+* (Fix) Test Kitchen: use one test recipe instead of one-recipe-per-pg-version.
+* (Fix) Test Kitchen: use only official images.
+* (Fix) Test Kitchen: tests for Chef 11 support were removed, as outdated.
+* (Fix) Test Kitchen: Test for Postgresql 9.0 were removed; there is PostgreSQL 9.0 package on modern systems.
+* (Fix) [postgresql] fix ruby_block notifications.
+* (Fix) [pgtest] user creation should be invoked using `encrypted_password` attribute for better compatibility.
+
 ## 1.2.1 (Dec 15, 2016)
 * (New) Autoremove checkpoint_segments from configuration if pg > 9.4
 
@@ -5,7 +17,6 @@
 * (New) Add extension lwrp to install extensions from postgresql-contrib subpackage, which comes installed
 * (New) Add pgxn extension lwrp to install extensions from pgxn.org website, using pgxn client
 * (New) Add test recipes for installing extensions with newly introduced resources
-
 
 ## 1.1.15 (Sep 24, 2015)
 * (Fix) [postgresql] Fix initial slave creation on 9.1

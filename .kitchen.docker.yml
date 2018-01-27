@@ -14,9 +14,9 @@ verifier:
     - path: test/integration/postgresql_lwrp_test
 
 platforms:
-  - name: debian-7.9
+  - name: debian-8-docker
     driver_config:
-      image: debian:7.9
+      image: debian:8
       disable_upstart: false
       run_command: '/sbin/init'
       provision_command:
@@ -26,19 +26,21 @@ platforms:
 #       Netstat for Serverspec
         - apt-get install -y net-tools
 
-  - name: debian-8.4
+  - name: debian-9-docker
     driver_config:
-      image: debian:8.4
+      image: debian:9
       disable_upstart: false
-      run_command: '/sbin/init'
+      run_command: '/lib/systemd/systemd'
       provision_command:
 #       For postgreqsl
         - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
         - apt-get install -y locales && locale-gen en_US.UTF-8
 #       Netstat for Serverspec
         - apt-get install -y net-tools
+#       gnupg for Chef
+        - apt-get install -y gnupg
 
-  - name: ubuntu-14.04
+  - name: ubuntu-14.04-docker
     driver_config:
       image: ubuntu-upstart:14.04
       disable_upstart: false
@@ -48,7 +50,7 @@ platforms:
         - apt-get install -y net-tools
 
 
-  - name: ubuntu-16.04
+  - name: ubuntu-16.04-docker
     driver_config:
       image: ubuntu:16.04
       run_command: '/sbin/init'
@@ -64,24 +66,45 @@ suites:
   - name: pg-91
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_1]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.1'
     verifier:
       attributes:
         pg_version: 9.1
-        suites:
+    excludes:
+      - debian-9-docker
 
   - name: pg-94
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_4]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.4'
     verifier:
       attributes:
         pg_version: 9.4
 
-  - name: pg-95
+  - name: pg-96
     run_list:
       - recipe[apt]
-      - recipe[pgtest::test_9_5]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.6'
     verifier:
       attributes:
-        pg_version: 9.5
+        pg_version: 9.6
+
+  - name: pg-10
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '10'
+    verifier:
+      attributes:
+        pg_version: 10
