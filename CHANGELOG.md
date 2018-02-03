@@ -1,3 +1,7 @@
+## 1.2.3 (Jan 31, 2018)
+* (Fix) Resource `postgresql` PostgreSQL version validation.
+* (Fix) Use resource attributes to set PostgreSQL version for test purposes.
+
 ## 1.2.2 (Jan 16, 2018)
 * (New) PostgreSQL 10 support.
 * (New) Integration tests were migrated to InSpec.

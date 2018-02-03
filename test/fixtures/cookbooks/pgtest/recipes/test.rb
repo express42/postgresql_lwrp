@@ -1,4 +1,3 @@
-node.default['postgresql']['defaults']['server']['version'] = node['pgtest']['version']
 node.default['postgresql']['client']['version'] = node['pgtest']['version']
 
 include_recipe 'pgtest::master'
