@@ -8,6 +8,7 @@ end
 
 postgresql 'slave2' do
   cluster_create_options('locale' => 'ru_RU.UTF-8')
+  cluster_version node['pgtest']['version']
   configuration(
     port: '5434',
     listen_addresses: '*',

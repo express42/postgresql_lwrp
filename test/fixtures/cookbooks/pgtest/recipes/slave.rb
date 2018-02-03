@@ -12,6 +12,7 @@ end
 
 postgresql 'slave' do
   cluster_create_options('locale' => 'en_US.UTF-8')
+  cluster_version node['pgtest']['version']
   configuration(
     port: '5433',
     listen_addresses: '*',

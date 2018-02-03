@@ -8,6 +8,7 @@ end
 
 postgresql 'main' do
   cluster_create_options('locale' => 'en_US.UTF-8')
+  cluster_version node['pgtest']['version']
   configuration(
     listen_addresses: '*',
     max_connections: 300,
