@@ -10,4 +10,6 @@ postgresql_database 'test-02' do
   in_version node['pgtest']['version']
   in_cluster 'main'
   owner 'test-02'
+  template 'template0'
+  tablespace 'pg_default'
 end
