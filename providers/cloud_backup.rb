@@ -39,7 +39,7 @@ action :schedule do
   postgresql_path          = "/var/lib/postgresql/#{postgresql_version}/#{postgresql_instance_name}"
   wal_e_bin                = node['postgresql']['cloud_backup']['wal_e_bin']
   command_prefix           = new_resource.command_prefix
-  envdir_params            = new_resource.params
+  envdir_params            = new_resource.parameters
   full_backup_time         = new_resource.full_backup_time
 
   unsetted_required_params = params_validation(new_resource.protocol, envdir_params)

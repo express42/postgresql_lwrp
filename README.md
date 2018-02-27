@@ -4,7 +4,7 @@
 
 Description
 ===========
-This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.1, 9.2, 9.3, 9.4, 9.5, 9.6 & 10. 
+This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.1, 9.2, 9.3, 9.4, 9.5, 9.6 & 10.
 Supported platforms: Debian Jessie/Stretch and Ubuntu 14.04/16.04.
 
 Changelog
@@ -164,9 +164,9 @@ postgresql_cloud_backup 'main' do
   full_backup_time weekday: '*', month: '*', day: '*', hour: '3', minute: '0'
   # Data bag item should contain following keys for S3 protocol:
   # aws_access_key_id, aws_secret_access_key, wale_s3_prefix
-  params Chef::EncryptedDataBagItem.load('s3', 'secrets').to_hash.select {|i| i != "id"}
+  parameters Chef::EncryptedDataBagItem.load('s3', 'secrets').to_hash.select {|i| i != "id"}
   # Or just a hash, if you don't use data bags:
-  params { aws_access_key_id: 'access_key', aws_secret_access_key: 'secret_key', wale_s3_prefix: 's3_prefix' }
+  parameters { aws_access_key_id: 'access_key', aws_secret_access_key: 'secret_key', wale_s3_prefix: 's3_prefix' }
   protocol 's3'
   # In case you need to prepend wal-e with, for example, traffic limiter
   # you can use following method:
