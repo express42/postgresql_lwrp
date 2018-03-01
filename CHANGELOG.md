@@ -1,3 +1,6 @@
+## 1.2.4 (tbd)
+* (Fix) Rename `params` method in `postgresql_cloud_backup` for compatibility with Chef 13
+
 ## 1.2.3 (Jan 31, 2018)
 * (Fix) Resource `postgresql` PostgreSQL version validation.
 * (Fix) Use resource attributes to set PostgreSQL version for test purposes.

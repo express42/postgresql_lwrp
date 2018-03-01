@@ -41,7 +41,7 @@ attribute :protocol, kind_of: String,
                          !value.to_sym.match(/^(s3|swift|azure)$/).nil?
                        end,
                      }
-attribute :params, kind_of: Hash, required: true
+attribute :parameters, kind_of: Hash, required: true
 
 # Crontab command prefix to use with wal-e
 # e.g. for speed limit by trickle like `trickle -s -u 1024 envdir /etc/wal-e.d/...`
