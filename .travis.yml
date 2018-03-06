@@ -33,7 +33,7 @@ jobs:
         - bundle exec cookstyle --version
         - bundle exec cookstyle
         - bundle exec foodcritic --version
-        - bundle exec foodcritic --contex  --epic-fail any --tags ~chef13 .
+        - bundle exec foodcritic --contex  --epic-fail any --tags ~chef13 --tags ~FC113 .
 
     - stage: deploy
       script: skip
