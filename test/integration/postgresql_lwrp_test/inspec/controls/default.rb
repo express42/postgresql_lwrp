@@ -60,7 +60,7 @@ control 'postgres databases' do
     it { should_not be_created }
   end
 end
-  
+
 control 'postgres extensions' do
   title 'Check postgres extensions'
   describe postgres_extension(pg_version, 'main', 'cube', 'test01') do
