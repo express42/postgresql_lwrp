@@ -43,7 +43,6 @@ jobs:
         - tar xf .travis/secret_keys.tar -C .travis
         - mv .travis/travis_rsa ~/.ssh/id_rsa
       deploy:
-        edge: true
         provider: chef-supermarket
         user_id: express42
         client_key: ".travis/express42.pem"
