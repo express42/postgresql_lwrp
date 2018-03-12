@@ -44,6 +44,8 @@ jobs:
         - mv .travis/travis_rsa ~/.ssh/id_rsa
       deploy:
         provider: chef-supermarket
+        edge:
+          branch: ruby-2.3
         user_id: express42
         client_key: ".travis/express42.pem"
         cookbook_category: Databases
