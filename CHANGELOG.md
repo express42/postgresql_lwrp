@@ -1,4 +1,4 @@
-## 1.2.4 (tbd)
+## 1.2.4 (Mar 12, 2018)
 * (Fix) Rename `params` method in `postgresql_cloud_backup` for compatibility with Chef 13
 
 ## 1.2.3 (Jan 31, 2018)
