@@ -25,7 +25,7 @@
 # SOFTWARE.
 #
 
-include_recipe 'python'
+include_recipe 'poise-python'
 
 # Install packages and pips
 node['postgresql']['cloud_backup']['packages'].each do |pkg|
@@ -37,12 +37,12 @@ python_virtualenv node['postgresql']['cloud_backup']['wal_e_path']
 case node['postgresql']['cloud_backup']['install_source']
 when 'github'
   archive_url = "#{node['postgresql']['cloud_backup']['github_repo']}/archive/#{node['postgresql']['cloud_backup']['version']}.zip"
-  python_pip 'wal-e' do
+  python_package 'wal-e' do
     package_name archive_url
     virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 when 'pypi'
-  python_pip 'wal-e' do
+  python_package 'wal-e' do
     version node['postgresql']['cloud_backup']['version']
     virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end

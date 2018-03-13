@@ -14,7 +14,7 @@ recipe           'postgresql_lwrp::apt_official_repository', 'Setup official apt
 recipe           'postgresql_lwrp::cloud_backup', 'Setup cloud backup via wal-e utility'
 
 depends          'apt'
-depends          'python'
+depends          'poise-python'
 depends          'cron'
 
 supports         'debian'
