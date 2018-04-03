@@ -29,3 +29,6 @@ end
 group :aws do
   gem 'aws-sdk', '2.2.34'
 end
+group :deploy do
+  gem 'stove'
+end
