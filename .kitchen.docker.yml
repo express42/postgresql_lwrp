@@ -6,7 +6,7 @@ driver:
 
 provisioner:
   name: chef_zero
-  require_chef_omnibus: 12
+  require_chef_omnibus: 13
 
 verifier:
   name: inspec
@@ -63,7 +63,9 @@ platforms:
         - apt-get install -y net-tools
 
 suites:
-  - name: pg-91
+  - name: pg-91-chef13
+    provisioner:
+      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -74,9 +76,38 @@ suites:
       attributes:
         pg_version: 9.1
     excludes:
+      # There is no official postgresql-9.1 package for Debian 9 
       - debian-9-docker
 
-  - name: pg-94
+  - name: pg-92-chef13
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.2'
+    verifier:
+      attributes:
+        pg_version: 9.2
+
+  - name: pg-93-chef13
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.3'
+    verifier:
+      attributes:
+        pg_version: 9.3
+
+  - name: pg-94-chef13
+    provisioner:
+      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -87,7 +118,22 @@ suites:
       attributes:
         pg_version: 9.4
 
-  - name: pg-96
+  - name: pg-95-chef13
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.5'
+    verifier:
+      attributes:
+        pg_version: 9.5
+
+  - name: pg-96-chef13
+    provisioner:
+      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -98,7 +144,9 @@ suites:
       attributes:
         pg_version: 9.6
 
-  - name: pg-10
+  - name: pg-10-chef13
+    provisioner:
+      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]

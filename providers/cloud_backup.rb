@@ -56,14 +56,15 @@ action :schedule do
     group 'postgres'
   end
 
-  # We may use custom temp dir
-  directory 'WAL-E temp directory' do
-    path envdir_params['tmpdir']
-    recursive true
-    mode '0750'
-    owner 'postgres'
-    group 'postgres'
-    only_if { envdir_params.key? 'tmpdir' }
+  if envdir_params.key? 'tmpdir'
+    # We may use custom temp dir
+    directory 'WAL-E temp directory' do
+      path envdir_params['tmpdir']
+      recursive true
+      mode '0750'
+      owner 'postgres'
+      group 'postgres'
+    end
   end
 
   # Create all param files in wal-e.d/env directory

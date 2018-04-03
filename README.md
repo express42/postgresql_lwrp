@@ -13,11 +13,15 @@ See CHANGELOG.md
 
 Requirements
 ============
-Minimal chef-client version is 12.5.1.
+
+The minimal recommended version of chef-client is `13.0.113`. It may still work on version `12.5.1` and older, but no tests are made starting from version `1.3.0` of this cookbook as Chef 12 is reaching its EOL in the April, 2018
 
 Dependencies
 ============
-Postgresql cookbook depends on apt cookbook.
+
+* apt
+* cron
+* poise-python
 
 Attributes
 ==========

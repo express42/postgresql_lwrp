@@ -25,25 +25,32 @@
 # SOFTWARE.
 #
 
-include_recipe 'python'
+# Install packages
+package node['postgresql']['cloud_backup']['packages']
 
-# Install packages and pips
-node['postgresql']['cloud_backup']['packages'].each do |pkg|
-  package pkg
+python_runtime '3' do
+  provider :system
+  options package_name: 'python3'
 end
 
-python_virtualenv node['postgresql']['cloud_backup']['wal_e_path']
+python_virtualenv node['postgresql']['cloud_backup']['wal_e_path'] do
+  python '3'
+end
+
+python_package node['postgresql']['cloud_backup']['pypi_packages'] do
+  virtualenv node['postgresql']['cloud_backup']['wal_e_path']
+end
 
 case node['postgresql']['cloud_backup']['install_source']
 when 'github'
   archive_url = "#{node['postgresql']['cloud_backup']['github_repo']}/archive/#{node['postgresql']['cloud_backup']['version']}.zip"
-  python_pip 'wal-e' do
+  python_package 'wal-e' do
     package_name archive_url
     virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 when 'pypi'
-  python_pip 'wal-e' do
-    version node['postgresql']['cloud_backup']['version']
+  python_package 'wal-e' do
+    version node['postgresql']['cloud_backup']['wal_e_version']
     virtualenv node['postgresql']['cloud_backup']['wal_e_path']
   end
 end

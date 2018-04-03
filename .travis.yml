@@ -5,7 +5,7 @@ language: ruby
 cache: bundler
 sudo: false
 rvm:
-- 2.3.1
+- 2.3.7
 bundler_args: "--without kitchen_vagrant kitchen_cloud aws"
 
 script: "bundle exec kitchen test ${INSTANCE} --destroy=always"
@@ -16,15 +16,22 @@ env:
   - secure: Ag8Zn5lQxHrj+Xi79FAKiyq1mJxos+eQe6rL3xrk0aDL10YuAbbYz32jOce1MlIvTsEl4uaVQXQXIJmHjbCqzf5m61FYqRMqVhQ8B+Sh3AYiGe1MYpl9KJSYleyJPqJBDBZ/xfLpDKX7PoUCgXpHm2ZION2YFBHdRx3tN/lejoU=
   - secure: FAO//JQqC+rY3ce19GjA/KWpNskY2nT+8i83WyueHZ20zIc6FMdkWOs+WcEcnfcXDG8GBCqiIG+wF1GajUWirWo+aEIjIguADJhZwuLqD4g6KDmRW9p1MB2b3XDvAbvzze7yy6uG9GcuhiKo+J3S33YugFD59UHGa7hCGeEukAo=
   matrix:
-  - INSTANCE=pg-10-debian-9-docker
-  - INSTANCE=pg-10-ubuntu-1604-docker
-  - INSTANCE=pg-91-debian-8-docker
-  - INSTANCE=pg-91-ubuntu-1404-docker
-  - INSTANCE=pg-91-ubuntu-1604-docker
-  - INSTANCE=pg-94-ubuntu-1404-docker
-  - INSTANCE=pg-94-ubuntu-1604-docker
-  - INSTANCE=pg-96-ubuntu-1404-docker
-  - INSTANCE=pg-96-ubuntu-1604-docker
+  - INSTANCE=pg-10-chef13-ubuntu-1604-docker
+  - INSTANCE=pg-10-chef13-ubuntu-1404-docker
+  - INSTANCE=pg-10-chef13-debian-9-docker
+  - INSTANCE=pg-10-chef13-debian-8-docker
+  - INSTANCE=pg-96-chef13-ubuntu-1604-docker
+  - INSTANCE=pg-96-chef13-ubuntu-1404-docker
+  - INSTANCE=pg-96-chef13-debian-9-docker
+  - INSTANCE=pg-96-chef13-debian-8-docker
+  - INSTANCE=pg-94-chef13-ubuntu-1604-docker
+  - INSTANCE=pg-94-chef13-ubuntu-1404-docker
+  - INSTANCE=pg-94-chef13-debian-9-docker
+  - INSTANCE=pg-94-chef13-debian-8-docker
+  - INSTANCE=pg-91-chef13-ubuntu-1604-docker
+  - INSTANCE=pg-91-chef13-ubuntu-1404-docker
+  - INSTANCE=pg-91-chef13-debian-8-docker
+
 
 jobs:
   include:
@@ -33,19 +40,22 @@ jobs:
         - bundle exec cookstyle --version
         - bundle exec cookstyle
         - bundle exec foodcritic --version
-        - bundle exec foodcritic --contex  --epic-fail any --tags ~chef13 --tags ~FC113 .
+        - bundle exec foodcritic --contex --epic-fail any --tags '~FC113' .
 
     - stage: deploy
+      if: tag =~ ^[0-9]\.[0-9]\.[0-9]$
       script: skip
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_b45d6f20bf91_key -iv $encrypted_b45d6f20bf91_iv
           -in .travis/secret_keys.tar.enc -out .travis/secret_keys.tar -d
         - tar xf .travis/secret_keys.tar -C .travis
         - mv .travis/travis_rsa ~/.ssh/id_rsa
+        - echo $(travis_internal_ruby)
+        - rvm list
+        - rvm --default use 2.3.7
       deploy:
+        edge: true
         provider: chef-supermarket
-        edge:
-          branch: ruby-2.3
         user_id: express42
         client_key: ".travis/express42.pem"
         cookbook_category: Databases

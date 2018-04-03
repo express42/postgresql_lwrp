@@ -1,3 +1,11 @@
+## 1.3.0 (Apr 03, 2018)
+* (New) Chef 12 test were dropped. (Chef 12 reaches EOL at the and of April 2018)
+* (New) Chef 13 full support;
+* (New) WAL-E version 1.1.0;
+* (New) `poise-python` cookbook is used instead of outdated `python`;
+* (Fix) TravisCI configuration was updated to test against more OSes and to use Chef 13;
+* (Fix) Berksfile version pins were removed;
+ 
 ## 1.2.4 (Mar 12, 2018)
 * (Fix) Rename `params` method in `postgresql_cloud_backup` for compatibility with Chef 13
 

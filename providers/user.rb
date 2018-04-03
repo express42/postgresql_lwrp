@@ -33,7 +33,7 @@ include Chef::Postgresql::Helpers
 provides :postgresql_user if defined? provides
 
 action :create do
-  options = new_resource.advanced_options.clone
+  options = new_resource.advanced_options.dup
 
   if new_resource.replication == true
     options['REPLICATION'] = nil

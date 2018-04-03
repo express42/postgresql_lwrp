@@ -98,17 +98,24 @@ end
 control 'cloud_backup_tests' do
   title 'Check cloud backup installation'
 
-  %w(daemontools lzop mbuffer pv python-dev).each do |pkg|
+  %w(
+    daemontools
+    lzop
+    mbuffer
+    pv
+    python3-dev
+  ).each do |pkg|
     describe package(pkg) do
       it { should be_installed }
     end
   end
 
-  describe pip('virtualenv') do
-    it { should be_installed }
-  end
-
-  describe command('/opt/wal-e/bin/pip show wal-e') do
-    its(:exit_status) { should eq 0 }
+  %w(
+    wal-e
+    boto
+  ).each do |pip_package|
+    describe pip(pip_package, '/opt/wal-e/bin/pip') do
+      it { should be_installed }
+    end
   end
 end
