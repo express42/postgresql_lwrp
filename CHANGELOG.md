@@ -1,3 +1,7 @@
+## 1.3.2 (Apr 10, 2018)
+
+* (New) Chef 14 support & tests.
+
 ## 1.3.1 (Apr 03, 2018)
 * (Fix) TravisCI build method. Now using `sethvargo/stove` gem instead of `dpl`
 

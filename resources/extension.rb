@@ -25,15 +25,25 @@
 # SOFTWARE.
 #
 
+include Chef::Postgresql::Helpers
+
 provides :postgresql_extension
 resource_name :postgresql_extension
 
-actions :install
 default_action :install
 
-attribute :name, kind_of: String, name_attribute: true, required: true
-attribute :in_version, kind_of: String, required: true
-attribute :in_cluster, kind_of: String, required: true
-attribute :db, kind_of: String, required: true
-attribute :schema, kind_of: String
-attribute :version, kind_of: String
+property :in_version, String, required: true
+property :in_cluster, String, required: true
+property :db, String, required: true
+property :schema, String
+property :version, String
+
+action :install do
+  options = {}
+  options['SCHEMA'] = new_resource.schema.to_s if new_resource.schema
+  options['VERSION'] = "'#{new_resource.version}'" if new_resource.version
+
+  converge_by 'install extension new_resource.name' do
+    install_extension(new_resource.in_version, new_resource.in_cluster, new_resource.db, new_resource.name, options)
+  end
+end

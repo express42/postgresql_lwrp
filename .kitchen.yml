@@ -25,7 +25,39 @@ platforms:
       box: bento/debian-9
 
 suites:
-  - name: pg-91-chef13
+  - name: pg-96-chef13
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '9.6'
+    verifier:
+      attributes:
+        pg_version: 9.6
+    provisioner:
+      product_name: chef
+      product_version: 13
+
+  - name: pg-10-chef13
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '10'
+    verifier:
+      attributes:
+        pg_version: 10
+    provisioner:
+      product_name: chef
+      product_version: 13
+
+  - name: pg-91-chef14
     provisioner:
       name: chef_zero
     run_list:
@@ -40,7 +72,8 @@ suites:
     excludes:
       # There is no official postgresql-9.1 package for Debian 9 
       - debian-9
-  - name: pg-92-chef13
+
+  - name: pg-92-chef14
     provisioner:
       name: chef_zero
     run_list:
@@ -52,7 +85,8 @@ suites:
     verifier:
       attributes:
         pg_version: 9.2
-  - name: pg-93-chef13
+
+  - name: pg-93-chef14
     provisioner:
       name: chef_zero
     run_list:
@@ -64,7 +98,8 @@ suites:
     verifier:
       attributes:
         pg_version: 9.3
-  - name: pg-94-chef13
+
+  - name: pg-94-chef14
     provisioner:
       name: chef_zero
     run_list:
@@ -76,7 +111,8 @@ suites:
     verifier:
       attributes:
         pg_version: 9.4
-  - name: pg-95-chef13
+
+  - name: pg-95-chef14
     provisioner:
       name: chef_zero
     run_list:
@@ -88,7 +124,8 @@ suites:
     verifier:
       attributes:
         pg_version: 9.5
-  - name: pg-96-chef13
+
+  - name: pg-96-chef14
     provisioner:
       name: chef_zero
     run_list:
@@ -100,7 +137,8 @@ suites:
     verifier:
       attributes:
         pg_version: 9.6
-  - name: pg-10-chef13
+
+  - name: pg-10-chef14
     provisioner:
       name: chef_zero
     run_list:

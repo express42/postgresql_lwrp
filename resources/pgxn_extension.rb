@@ -25,16 +25,29 @@
 # SOFTWARE.
 #
 
+include Chef::Postgresql::Helpers
+
 provides :pgxn_extension
 resource_name :pgxn_extension
 
-actions :install
 default_action :install
 
-attribute :name, kind_of: String, name_attribute: true, required: true
-attribute :in_version, kind_of: String, required: true
-attribute :in_cluster, kind_of: String, required: true
-attribute :db, kind_of: String, required: true
-attribute :schema, kind_of: String
-attribute :version, kind_of: String, required: true
-attribute :stage, kind_of: String, required: true
+property :in_version, String, required: true
+property :in_cluster, String, required: true
+property :db, String, required: true
+property :schema, String
+property :version, String, required: true
+property :stage, String, required: true
+
+action :install do
+  options = {}
+  options['--schema'] = new_resource.schema.to_s if new_resource.schema
+  params = {}
+  params[:name] = new_resource.name.to_s if new_resource.name
+  params[:stage] = new_resource.stage.to_s if new_resource.stage
+  params[:version] = new_resource.version.to_s if new_resource.version
+  params[:db] = new_resource.db.to_s if new_resource.db
+  converge_by 'install pgxn extension' do
+    pgxn_install_extension(new_resource.in_version, new_resource.in_cluster, params, options)
+  end
+end

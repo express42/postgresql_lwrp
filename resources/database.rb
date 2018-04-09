@@ -25,17 +25,30 @@
 # SOFTWARE.
 #
 
+include Chef::Postgresql::Helpers
+
 provides :postgresql_database
 resource_name :postgresql_database
 
-actions :create
 default_action :create
 
-attribute :name, kind_of: String, required: true
-attribute :in_version, kind_of: String, required: true
-attribute :in_cluster, kind_of: String, required: true
-attribute :owner, kind_of: String
-attribute :tablespace, kind_of: String
-attribute :template, kind_of: String
-attribute :encoding, kind_of: String
-attribute :connection_limit, kind_of: Integer
+property :in_version, String, required: true
+property :in_cluster, String, required: true
+property :owner, String
+property :tablespace, String
+property :template, String
+property :encoding, String
+property :connection_limit, Integer
+
+action :create do
+  options = {}
+
+  options['OWNER'] = "\\\"#{new_resource.owner}\\\"" if new_resource.owner
+  options['TABLESPACE'] = "'#{new_resource.tablespace}'" if new_resource.tablespace
+  options['TEMPLATE'] = "'#{new_resource.template}'" if new_resource.template
+  options['ENCODING'] = "'#{new_resource.encoding}'" if new_resource.encoding
+  options['CONNECTION LIMIT'] = new_resource.connection_limit if new_resource.connection_limit
+  converge_by "create database #{new_resource.name}" do
+    create_database(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
+  end
+end
