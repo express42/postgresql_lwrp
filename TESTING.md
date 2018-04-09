@@ -6,6 +6,6 @@ To run all tests execute:
 bundle install
 
 bundle exec cookstyle && \
-  bundle exec foodcritic --contex --epic-fail any --tags '~FC113' . && \
+  bundle exec foodcritic --contex --epic-fail any . && \
   bundle exec kitchen test
 ```

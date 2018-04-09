@@ -25,17 +25,40 @@
 # SOFTWARE.
 #
 
+include Chef::Postgresql::Helpers
+
 provides :postgresql_user
 resource_name :postgresql_user
 
-actions :create
 default_action :create
 
-attribute :name, kind_of: String, required: true
-attribute :in_version, kind_of: String, required: true
-attribute :in_cluster, kind_of: String, required: true
-attribute :unencrypted_password, kind_of: String
-attribute :encrypted_password, kind_of: String
-attribute :replication, kind_of: [TrueClass, FalseClass]
-attribute :superuser, kind_of: [TrueClass, FalseClass]
-attribute :advanced_options, kind_of: Hash, default: {}
+property :in_version, String, required: true
+property :in_cluster, String, required: true
+property :unencrypted_password, String
+property :encrypted_password, String
+property :replication, [TrueClass, FalseClass]
+property :superuser, [TrueClass, FalseClass]
+property :advanced_options, Hash, default: {}
+
+action :create do
+  options = new_resource.advanced_options.dup
+
+  if new_resource.replication == true
+    options['REPLICATION'] = nil
+  elsif new_resource.replication == false
+    options['NOREPLICATION'] = nil
+  end
+
+  if new_resource.superuser == true
+    options['SUPERUSER'] = nil
+  elsif new_resource.superuser == false
+    options['NOSUPERUSER'] = nil
+  end
+
+  options['ENCRYPTED PASSWORD'] = "'#{new_resource.encrypted_password}'" if new_resource.encrypted_password
+
+  options['UNENCRYPTED PASSWORD'] = "'#{new_resource.unencrypted_password}'" if new_resource.unencrypted_password
+  converge_by "create user #{new_resource.name}" do
+    create_user(new_resource.in_version, new_resource.in_cluster, new_resource.name, options)
+  end
+end

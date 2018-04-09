@@ -29,8 +29,11 @@ control 'postgres master' do
     it { should be_installed }
   end
 
-  describe service('postgresql') do
-    it { should be_enabled }
+  # Chef 14 resource service is broken on a first run on Ubuntu 14.
+  if os.name == 'ubuntu' && os.release.to_f > 14.04
+    describe service('postgresql') do
+      it { should be_enabled }
+    end
   end
 
   describe postgres_cluster(pg_version, 'main') do
@@ -74,8 +77,11 @@ end
 
 control 'postgres slave' do
   title 'Postgres cluster'
-  describe service('postgresql') do
-    it { should be_enabled }
+  # Chef 14 resource service is broken on a first run on Ubuntu 14.
+  if os.name == 'ubuntu' && os.release.to_f > 14.04
+    describe service('postgresql') do
+      it { should be_enabled }
+    end
   end
 
   describe postgres_cluster(pg_version, 'slave') do

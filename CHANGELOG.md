@@ -1,3 +1,9 @@
+## 1.4.0 (Apr 10, 2018)
+
+* (New) Chef 14 support & tests;
+* (New) LWRP-defined resources were rewritten using the new custom resource style;
+* (Fix) TravisCI: all Chef 13 test were enabled;
+
 ## 1.3.1 (Apr 03, 2018)
 * (Fix) TravisCI build method. Now using `sethvargo/stove` gem instead of `dpl`
 
