@@ -19,10 +19,10 @@ platforms:
       disable_upstart: false
       run_command: '/sbin/init'
       provision_command:
-#       For postgreqsl
+        # For postgreqsl
         - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
         - apt-get install -y locales && locale-gen en_US.UTF-8
-#       Netstat for Serverspec
+        # Netstat for Serverspec
         - apt-get install -y net-tools
 
   - name: debian-9-docker
@@ -31,12 +31,12 @@ platforms:
       disable_upstart: false
       run_command: '/lib/systemd/systemd'
       provision_command:
-#       For postgreqsl
+        # For postgreqsl
         - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
         - apt-get install -y locales && locale-gen en_US.UTF-8
-#       Netstat for Serverspec
+        # Netstat for Serverspec
         - apt-get install -y net-tools
-#       gnupg for Chef
+        # gnupg for Chef
         - apt-get install -y gnupg
 
   - name: ubuntu-14.04-docker
@@ -45,7 +45,7 @@ platforms:
       disable_upstart: false
       run_command: '/sbin/init'
       provision_command:
-#       Netstat for Serverspec
+        # Netstat for Serverspec
         - apt-get install -y net-tools
 
 
@@ -54,12 +54,25 @@ platforms:
       image: ubuntu:16.04
       run_command: '/sbin/init'
       provision_command:
-#       For systemd
+        # For systemd
         - systemctl set-default multi-user.target
-#       For postgreqsl
+        # For postgreqsl
         - apt-get install -y locales && locale-gen en_US.UTF-8
-#       Netstat for Serverspec
+        # Netstat for Serverspec
         - apt-get install -y net-tools
+
+  - name: ubuntu-18.04-docker
+    driver_config:
+      image: ubuntu:18.04
+      run_command: '/sbin/init'
+      provision_command:
+        - apt-get install -y locales && locale-gen en_US.UTF-8
+        # For systemd
+        - systemctl set-default multi-user.target
+        # Netstat for Inspec
+        - apt-get install -y net-tools
+        # gnupg for Chef
+        - apt-get install -y gnupg
 
 suites:
   - name: pg-96-chef13
@@ -107,8 +120,9 @@ suites:
       attributes:
         pg_version: 9.1
     excludes:
-      # There is no official postgresql-9.1 package for Debian 9 
+      # There is no official postgresql-9.1 package for Debian 9 & Ubuntu 18.04
       - debian-9-docker
+      - ubuntu-18.04-docker
 
   - name: pg-92-chef14
     provisioner:
@@ -122,6 +136,9 @@ suites:
     verifier:
       attributes:
         pg_version: 9.2
+    excludes:
+      # There is no official postgresql-9.2 package for Ubuntu 18.04
+      - ubuntu-18.04-docker
 
   - name: pg-93-chef14
     provisioner:

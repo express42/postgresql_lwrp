@@ -3,7 +3,7 @@ driver_plugin: vagrant
 
 provisioner:
   name: chef_zero
-  require_chef_omnibus: 13
+  product_version: 14
 
 verifier:
   name: inspec
@@ -17,6 +17,9 @@ platforms:
   - name: ubuntu-16.04
     driver:
       box: bento/ubuntu-16.04
+  - name: ubuntu-18.04
+    driver:
+      box: bento/ubuntu-18.04
   - name: debian-8
     driver:
       box: bento/debian-8
@@ -27,7 +30,7 @@ platforms:
 suites:
   - name: pg-96-chef13
     provisioner:
-      name: chef_zero
+      product_version: 13
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -37,13 +40,11 @@ suites:
     verifier:
       attributes:
         pg_version: 9.6
-    provisioner:
-      product_name: chef
-      product_version: 13
+
 
   - name: pg-10-chef13
     provisioner:
-      name: chef_zero
+      product_version: 13
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -53,13 +54,8 @@ suites:
     verifier:
       attributes:
         pg_version: 10
-    provisioner:
-      product_name: chef
-      product_version: 13
 
   - name: pg-91-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -70,12 +66,11 @@ suites:
       attributes:
         pg_version: 9.1
     excludes:
-      # There is no official postgresql-9.1 package for Debian 9 
+      # There is no official postgresql-9.1 package for Debian 9 & Ubuntu 18.04
       - debian-9
+      - ubuntu-18.04
 
   - name: pg-92-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -85,10 +80,11 @@ suites:
     verifier:
       attributes:
         pg_version: 9.2
+    excludes:
+      # There is no official postgresql-9.2 package for  Ubuntu 18.04
+      - ubuntu-18.04
 
   - name: pg-93-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -100,8 +96,6 @@ suites:
         pg_version: 9.3
 
   - name: pg-94-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -113,8 +107,6 @@ suites:
         pg_version: 9.4
 
   - name: pg-95-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -126,8 +118,6 @@ suites:
         pg_version: 9.5
 
   - name: pg-96-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]
@@ -139,8 +129,6 @@ suites:
         pg_version: 9.6
 
   - name: pg-10-chef14
-    provisioner:
-      name: chef_zero
     run_list:
       - recipe[apt]
       - recipe[pgtest::test]

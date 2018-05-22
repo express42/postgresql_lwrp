@@ -1,8 +1,19 @@
+## 1.4.2 (May 22, 2018)
+
+* (New) Ubuntu 18.04 tests
+* (New) Test Kitchen configuration for AWS cloud was removed
+* (Fix) cookbook `poise-python` version was restricted again `>= 1.7.0`
+* (Fix) Some minor Test Kitchen configuration improvements
+
+## 1.4.1 (May 15, 2018)
+
+* (Fix) Unpin `poise-python` cookbook version
+
 ## 1.4.0 (Apr 10, 2018)
 
-* (New) Chef 14 support & tests;
-* (New) LWRP-defined resources were rewritten using the new custom resource style;
-* (Fix) TravisCI: all Chef 13 test were enabled;
+* (New) Chef 14 support & tests
+* (New) LWRP-defined resources were rewritten using the new custom resource style
+* (Fix) TravisCI: all Chef 13 test were enabled
 
 ## 1.3.1 (Apr 03, 2018)
 * (Fix) TravisCI build method. Now using `sethvargo/stove` gem instead of `dpl`
@@ -14,7 +25,7 @@
 * (New) `poise-python` cookbook is used instead of outdated `python`;
 * (Fix) TravisCI configuration was updated to test against more OSes and to use Chef 13;
 * (Fix) Berksfile version pins were removed;
- 
+
 ## 1.2.4 (Mar 12, 2018)
 * (Fix) Rename `params` method in `postgresql_cloud_backup` for compatibility with Chef 13
 
