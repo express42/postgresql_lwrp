@@ -22,13 +22,6 @@ end
 group :kitchen_vagrant do
   gem 'kitchen-vagrant'
 end
-group :kitchen_cloud do
-  gem 'kitchen-digitalocean'
-  gem 'kitchen-ec2'
-end
-group :aws do
-  gem 'aws-sdk', '2.2.34'
-end
 group :deploy do
   gem 'stove'
 end
