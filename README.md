@@ -5,11 +5,20 @@
 Description
 ===========
 This cookbook includes recipes and providers to install and configure postgresql database. This cookbook was tested with Postgresql 9.1, 9.2, 9.3, 9.4, 9.5, 9.6 & 10.
-Supported platforms: Debian Jessie/Stretch and Ubuntu 14.04/16.04.
+
+Supported platforms:
+
+* Debian 8
+* Debian 9
+* Ubuntu 14.04
+* Ubuntu 16.04
+* Ubuntu 18.04
+
+*Note: TravisCI tests for Ubuntu 18.04 are omitted now because they somehow hang. Local Vagrant & Docker-based tests are succesfull. This will be investigated further.*
 
 Changelog
 =========
-See CHANGELOG.md
+See [CHANGELOG.md](https://github.com/express42/postgresql_lwrp/blob/master/CHANGELOG.md)
 
 Requirements
 ============
