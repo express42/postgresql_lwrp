@@ -64,8 +64,6 @@ action :create do
   replication_start_slave  = new_resource.replication_start_slave
   replication_initial_copy = new_resource.replication_initial_copy
 
-  wal_e_bin = node['postgresql']['cloud_backup']['wal_e_bin']
-
   cluster_options          = Mash.new(new_resource.cluster_create_options)
   parsed_cluster_options   = []
 
@@ -83,11 +81,6 @@ action :create do
 
   # Configuration hacks
   configuration_hacks(configuration, cluster_version)
-
-  # Backups hacks
-  if configuration['archive_command'] == 'cloud_auto'.downcase.to_sym
-    cloud_backup_configuration_hacks(configuration, cluster_name, cluster_version, wal_e_bin)
-  end
 
   # Install postgresql-common package
   package 'postgresql-common'
@@ -118,14 +111,13 @@ action :create do
   end
 
   # Create postgresql cluster directories
-  %W(/etc/postgresql /etc/postgresql/#{cluster_version} /etc/postgresql/#{cluster_version}/#{cluster_name}).each do |dir|
-    directory dir do
-      owner 'postgres'
-      group 'postgres'
-    end
-  end
-
-  %W(/var/lib/postgresql /var/lib/postgresql/#{cluster_version}).each do |dir|
+  %W(
+    /etc/postgresql
+    /etc/postgresql/#{cluster_version}
+    /etc/postgresql/#{cluster_version}/#{cluster_name}
+    /var/lib/postgresql
+    /var/lib/postgresql/#{cluster_version}
+  ).each do |dir|
     directory dir do
       owner 'postgres'
       group 'postgres'
@@ -141,7 +133,10 @@ action :create do
   # Exec pg_cluster create
   execute 'Exec pg_createcluster' do
     command "pg_createcluster #{parsed_cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
-    not_if { ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") || !replication.empty? }
+    not_if do
+      ::File.exist?("/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf") ||
+        !replication.empty?
+    end
   end
 
   # Define postgresql service
@@ -178,12 +173,35 @@ action :create do
   main_configuration.delete('ssl_key_file') if cluster_version.to_f < 9.2
   main_configuration.delete('checkpoint_segments') if cluster_version.to_f > 9.4
 
+  # Backu hack:
+  # Set `archive_command` option automatically according to the tool of the
+  # choise in `postgresql_cloud_backup` resource assosiated with this PG
+  # instance if `archive command` config option is set to `:cloud_auto`
+  with_run_context :root do
+    t = run_context.resource_collection.select do |res|
+      res.resource_name == :postgresql_cloud_backup &&
+        res.in_cluster == cluster_name &&
+        res.in_version == cluster_version
+    end
+
+    if !t.empty? &&
+       main_configuration['archive_command'] == :cloud_auto
+      backup_utility = t.first.utility
+      backup_utility_bin = node['postgresql']['cloud_backup'][backup_utility.sub('-', '_')]['bin']
+      main_configuration['archive_command'] = "envdir /etc/#{backup_utility}.d/#{cluster_name}-#{cluster_version}/env/ #{backup_utility_bin} wal-push %p"
+    end
+  end
+
   template "/etc/postgresql/#{cluster_version}/#{cluster_name}/postgresql.conf" do
     source 'postgresql.conf.erb'
     owner 'postgres'
     group 'postgres'
-    mode 0644
-    variables configuration: main_configuration, cluster_name: cluster_name, cluster_version: cluster_version
+    mode '0644'
+    variables(
+      configuration: main_configuration,
+      cluster_name: cluster_name,
+      cluster_version: cluster_version
+    )
     cookbook new_resource.cookbook
     notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
   end
@@ -192,7 +210,7 @@ action :create do
     source 'pg_hba.conf.erb'
     owner 'postgres'
     group 'postgres'
-    mode 0644
+    mode '0644'
     variables configuration: hba_configuration
     cookbook new_resource.cookbook
     notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
@@ -202,7 +220,7 @@ action :create do
     source 'pg_ident.conf.erb'
     owner 'postgres'
     group 'postgres'
-    mode 0644
+    mode '0644'
     variables configuration: ident_configuration
     cookbook new_resource.cookbook
     notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed
@@ -260,7 +278,7 @@ action :create do
       source 'recovery.conf.erb'
       owner 'postgres'
       group 'postgres'
-      mode 0644
+      mode '0644'
       variables replication: replication
       cookbook new_resource.cookbook
       notifies :run, "ruby_block[restart_service_#{service_name}]", :delayed

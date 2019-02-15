@@ -49,12 +49,13 @@ class PostgresDatabase < Inspec.resource(1)
     Shellwords.escape(query)
   end
 
-  def create_psql_cmd(query, db)
-    "su postgres -c \"psql -d #{db} -p #{@port} -q -t -c #{escaped_query(query)}\""
+  def create_psql_cmd(query, database)
+    "su postgres -c \"psql -d #{database} -p #{@port} -q -t -c #{escaped_query(query)}\""
   end
 
   def get_port(version, cluster)
-    postmaster_content = inspec.command("cat /var/lib/postgresql/#{version}/#{cluster}/postmaster.pid").stdout.split
+    pid_file_name = "/var/lib/postgresql/#{version}/#{cluster}/postmaster.pid"
+    postmaster_content = inspec.command("cat #{pid_file_name}").stdout.split
     postmaster_content[3].to_i
   end
 end
