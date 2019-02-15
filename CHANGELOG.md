@@ -1,3 +1,13 @@
+## UNRELEASED (Jan 14, 2018)
+
+* (New) PostgreSQL 11 tests
+* (New) wal-g support for cloud backup
+* (New) Ruby 2.6.0 for TravisCI tests
+* (New) Inspec configuration to test running PostgreSQL configuration
+* (Fix) pip version 18.0 was pinned as the newer fails to install to sandbox
+* (Fix) Some minor ruby style fixes
+* (Fix) Other pg extension should be installed during integration tests
+
 ## 1.4.2 (May 22, 2018)
 
 * (New) Ubuntu 18.04 tests
