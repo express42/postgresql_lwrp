@@ -41,7 +41,6 @@ suites:
       attributes:
         pg_version: 9.6
 
-
   - name: pg-10-chef13
     provisioner:
       product_version: 13
@@ -54,6 +53,19 @@ suites:
     verifier:
       attributes:
         pg_version: 10
+
+  - name: pg-11-chef13
+    provisioner:
+      product_version: 13
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '11'
+    verifier:
+      attributes:
+        pg_version: 11
 
   - name: pg-91-chef14
     run_list:
@@ -138,3 +150,14 @@ suites:
     verifier:
       attributes:
         pg_version: 10
+
+  - name: pg-11-chef14
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '11'
+    verifier:
+      attributes:
+        pg_version: 11

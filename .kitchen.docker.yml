@@ -107,6 +107,22 @@ suites:
       product_name: chef
       product_version: 13
 
+  - name: pg-11-chef13
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '11'
+    verifier:
+      attributes:
+        pg_version: 11
+    provisioner:
+      product_name: chef
+      product_version: 13
+
   - name: pg-91-chef14
     provisioner:
       name: chef_zero
@@ -204,3 +220,16 @@ suites:
     verifier:
       attributes:
         pg_version: 10
+
+  - name: pg-11-chef14
+    provisioner:
+      name: chef_zero
+    run_list:
+      - recipe[apt]
+      - recipe[pgtest::test]
+    attributes:
+      pgtest:
+        version: '11'
+    verifier:
+      attributes:
+        pg_version: 11
