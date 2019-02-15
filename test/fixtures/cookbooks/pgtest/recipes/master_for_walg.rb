@@ -6,13 +6,14 @@ sysctl_param 'kernel.shmmax' do
   value 68_719_476_736
 end
 
-postgresql 'main' do
+postgresql 'walg' do
   cluster_create_options('locale' => 'en_US.UTF-8')
   cluster_version node['pgtest']['version']
   configuration(
     archive_command: :cloud_auto,
+    port: 5435,
     listen_addresses: '*',
-    max_connections: 300,
+    max_connections: 100,
     ssl_renegotiation_limit: 0,
     archive_mode: 'on',
     shared_buffers: '64MB',

@@ -70,8 +70,10 @@ control 'postgres extensions' do
     it { should be_installed }
   end
 
-  describe postgres_extension(pg_version, 'main', 'count_distinct', 'test01') do
-    it { should be_installed }
+  if pg_version.to_f > 9.1
+    describe postgres_extension(pg_version, 'main', 'semver', 'test01') do
+      it { should be_installed }
+    end
   end
 end
 
@@ -122,6 +124,23 @@ control 'cloud_backup_tests' do
   ).each do |pip_package|
     describe pip(pip_package, '/opt/wal-e/bin/pip') do
       it { should be_installed }
+    end
+  end
+
+  describe file('/usr/local/bin/wal-g') do
+    it { should exist }
+    it { should be_executable }
+  end
+
+  describe postgres_cluster(pg_version, 'main') do
+    its('archive_command') do
+      should match(%r{envdir /etc/wal-e.d/main-#{pg_version}/env/ /opt/wal-e/bin/wal-e wal-push %p}s)
+    end
+  end
+
+  describe postgres_cluster(pg_version, 'walg') do
+    its('archive_command') do
+      should match(%r{envdir /etc/wal-g.d/walg-#{pg_version}/env/ /usr/local/bin/wal-g wal-push %p}s)
     end
   end
 end

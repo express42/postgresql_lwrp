@@ -1,6 +1,7 @@
 node.default['postgresql']['client']['version'] = node['pgtest']['version']
 
 include_recipe 'pgtest::master'
+include_recipe 'pgtest::master_for_walg'
 include_recipe 'pgtest::create_user'
 include_recipe 'pgtest::create_database'
 include_recipe 'pgtest::install_ext'
