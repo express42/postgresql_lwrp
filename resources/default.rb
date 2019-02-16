@@ -238,9 +238,9 @@ action :create do
       pg_data_directory = "/var/lib/postgresql/#{cluster_version}/#{cluster_name}"
 
       BASEBACKUP_PARAMS = {
-        'host'     => '-h',
-        'port'     => '-p',
-        'user'     => '-U',
+        'host' => '-h',
+        'port' => '-p',
+        'user' => '-U',
         'password' => '-W',
       }.freeze
 
