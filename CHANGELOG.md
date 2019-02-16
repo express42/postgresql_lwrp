@@ -1,4 +1,4 @@
-## UNRELEASED (Jan 14, 2018)
+## 1.5.0 (Feb 16, 2018)
 
 * (New) PostgreSQL 11 tests
 * (New) wal-g support for cloud backup
