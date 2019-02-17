@@ -1,9 +1,9 @@
-## 1.5.1 (Feb 17, 2018)
+## 1.5.1 (Feb 17, 2019)
 
 * (Fix) envdir's files should be marked as sensitive.
 * (Fix) Set PGHOST environment variable to `/var/run/postgresql` for wal-g if unset.
 
-## 1.5.0 (Feb 16, 2018)
+## 1.5.0 (Feb 16, 2019)
 
 * (New) PostgreSQL 11 tests
 * (New) wal-g support for cloud backup
