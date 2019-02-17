@@ -156,6 +156,12 @@ action :schedule do
   # Add libpq PGPORT variable to envdir_params
   envdir_params['PGPORT'] = get_pg_port(postgresql_version, postgresql_instance_name).to_s
 
+  # wal-g needs a default PGHOST variable to connect via UNIX socket
+  if backup_utility == 'wal-g' &&
+     !envdir_params.key?('PGHOST')
+    envdir_params['PGHOST'] = '/var/run/postgresql'
+  end
+
   # Create environment directory
   directory "/etc/#{backup_utility}.d/#{postgresql_name_version}/env" do
     recursive true
@@ -182,6 +188,7 @@ action :schedule do
       owner 'root'
       group 'postgres'
       content val
+      sensitive true
       backup false
     end
   end

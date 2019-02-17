@@ -103,8 +103,8 @@ control 'postgres slave' do
   end
 end
 
-control 'cloud_backup_tests' do
-  title 'Check cloud backup installation'
+control 'WAL-E cloud backup' do
+  title 'Check WAL-E cloud backup installation'
 
   %w(
     daemontools
@@ -127,15 +127,23 @@ control 'cloud_backup_tests' do
     end
   end
 
+  describe postgres_cluster(pg_version, 'main') do
+    its('archive_command') do
+      should match(%r{envdir /etc/wal-e.d/main-#{pg_version}/env/ /opt/wal-e/bin/wal-e wal-push %p}s)
+    end
+  end
+end
+
+control 'WAL-G cloud backup' do
+  title 'Check WAL-G cloud backup installation'
   describe file('/usr/local/bin/wal-g') do
     it { should exist }
     it { should be_executable }
   end
 
-  describe postgres_cluster(pg_version, 'main') do
-    its('archive_command') do
-      should match(%r{envdir /etc/wal-e.d/main-#{pg_version}/env/ /opt/wal-e/bin/wal-e wal-push %p}s)
-    end
+  describe file("/etc/wal-g.d/walg-#{pg_version}/env/PGHOST") do
+    it { should exist }
+    its('content') { should match(%r{/var/run/postgresql}) }
   end
 
   describe postgres_cluster(pg_version, 'walg') do
