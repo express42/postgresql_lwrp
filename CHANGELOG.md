@@ -1,3 +1,8 @@
+## 1.5.2 (Feb 25, 2019)
+
+* (New) tests for PostgreSQL 9.1 & 9.2 were dropped from TravisCI configuration
+* (New) WAL-G version 0.2.6 which has new GPG support implementation
+
 ## 1.5.1 (Feb 17, 2019)
 
 * (Fix) envdir's files should be marked as sensitive.
