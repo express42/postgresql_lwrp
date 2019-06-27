@@ -1,3 +1,10 @@
+## 1.5.3 (Jun 27, 2019)
+
+* (New) WAL-G version 0.2.9
+* (New) `wal-g wal-push` fix by injecting the `PATH` variable into the envdir
+* (New) ruby 2.6.3 for TravisCI
+* (New) Test Kitchen suites for Chef 15
+
 ## 1.5.2 (Feb 25, 2019)
 
 * (New) tests for PostgreSQL 9.1 & 9.2 were dropped from TravisCI configuration

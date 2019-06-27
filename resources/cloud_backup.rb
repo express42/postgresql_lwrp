@@ -160,6 +160,7 @@ action :schedule do
   if backup_utility == 'wal-g' &&
      !envdir_params.key?('PGHOST')
     envdir_params['PGHOST'] = '/var/run/postgresql'
+    envdir_params['PATH'] = '/bin:/sbin:/usr/bin:/usr/sbin'
   end
 
   # Create environment directory

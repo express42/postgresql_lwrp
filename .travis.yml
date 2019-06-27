@@ -5,7 +5,7 @@ language: ruby
 cache: bundler
 sudo: false
 rvm:
-- 2.6.0
+- 2.6.3
 bundler_args: "--without kitchen_vagrant kitchen_cloud aws"
 
 before_install:
@@ -20,19 +20,26 @@ env:
   - secure: Ag8Zn5lQxHrj+Xi79FAKiyq1mJxos+eQe6rL3xrk0aDL10YuAbbYz32jOce1MlIvTsEl4uaVQXQXIJmHjbCqzf5m61FYqRMqVhQ8B+Sh3AYiGe1MYpl9KJSYleyJPqJBDBZ/xfLpDKX7PoUCgXpHm2ZION2YFBHdRx3tN/lejoU=
   - secure: FAO//JQqC+rY3ce19GjA/KWpNskY2nT+8i83WyueHZ20zIc6FMdkWOs+WcEcnfcXDG8GBCqiIG+wF1GajUWirWo+aEIjIguADJhZwuLqD4g6KDmRW9p1MB2b3XDvAbvzze7yy6uG9GcuhiKo+J3S33YugFD59UHGa7hCGeEukAo=
   matrix:
-  - INSTANCE=pg-11-chef14-ubuntu-1604
-  - INSTANCE=pg-11-chef14-ubuntu-1404
-  - INSTANCE=pg-11-chef14-debian-8
-  - INSTANCE=pg-11-chef14-debian-9
+  - INSTANCE=pg-11-chef15-ubuntu-1804
+  - INSTANCE=pg-11-chef15-ubuntu-1604
+  - INSTANCE=pg-11-chef15-debian-9
+  - INSTANCE=pg-11-chef15-debian-8
+  - INSTANCE=pg-10-chef15-ubuntu-1804
+  - INSTANCE=pg-10-chef15-ubuntu-1604
+  - INSTANCE=pg-10-chef15-debian-9
+  - INSTANCE=pg-10-chef15-debian-8
+  - INSTANCE=pg-96-chef15-ubuntu-1804
+  - INSTANCE=pg-96-chef15-ubuntu-1604
+  - INSTANCE=pg-96-chef15-ubuntu-1404
+  - INSTANCE=pg-96-chef15-debian-9
+  - INSTANCE=pg-96-chef15-debian-8
   - INSTANCE=pg-93-chef14-ubuntu-1404
   - INSTANCE=pg-93-chef14-ubuntu-1604
   - INSTANCE=pg-93-chef14-debian-8
   - INSTANCE=pg-93-chef14-debian-9
-  - INSTANCE=pg-94-chef14-ubuntu-1404
   - INSTANCE=pg-94-chef14-ubuntu-1604
   - INSTANCE=pg-94-chef14-debian-8
   - INSTANCE=pg-94-chef14-debian-9
-  - INSTANCE=pg-95-chef14-ubuntu-1404
   - INSTANCE=pg-95-chef14-ubuntu-1604
   - INSTANCE=pg-95-chef14-debian-8
   - INSTANCE=pg-95-chef14-debian-9
@@ -40,15 +47,17 @@ env:
   - INSTANCE=pg-96-chef14-ubuntu-1604
   - INSTANCE=pg-96-chef14-debian-8
   - INSTANCE=pg-96-chef14-debian-9
-  - INSTANCE=pg-10-chef14-ubuntu-1404
   - INSTANCE=pg-10-chef14-ubuntu-1604
   - INSTANCE=pg-10-chef14-debian-8
   - INSTANCE=pg-10-chef14-debian-9
+  - INSTANCE=pg-11-chef14-ubuntu-1404
+  - INSTANCE=pg-11-chef14-ubuntu-1604
+  - INSTANCE=pg-11-chef14-debian-8
+  - INSTANCE=pg-11-chef14-debian-9
   - INSTANCE=pg-96-chef13-ubuntu-1404
   - INSTANCE=pg-96-chef13-ubuntu-1604
   - INSTANCE=pg-96-chef13-debian-8
   - INSTANCE=pg-96-chef13-debian-9
-  - INSTANCE=pg-10-chef13-ubuntu-1404
   - INSTANCE=pg-10-chef13-ubuntu-1604
   - INSTANCE=pg-10-chef13-debian-8
   - INSTANCE=pg-10-chef13-debian-9
