@@ -1,3 +1,7 @@
+## 1.5.4 (Jun 28, 2019)
+
+* Travis config: tests for Ubuntu 18.04 were removed again. Run local ones.
+
 ## 1.5.3 (Jun 27, 2019)
 
 * (New) WAL-G version 0.2.9
