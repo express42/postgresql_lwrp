@@ -20,9 +20,6 @@ platforms:
   - name: ubuntu-18.04
     driver:
       box: bento/ubuntu-18.04
-  - name: debian-8
-    driver:
-      box: bento/debian-8
   - name: debian-9
     driver:
       box: bento/debian-9

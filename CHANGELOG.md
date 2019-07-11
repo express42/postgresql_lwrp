@@ -1,3 +1,7 @@
+## 1.6.0 (Jul 03, 2019)
+
+* (Deprecation) `postgresql_cloud_backup` attribute `protocol` was removed. It was used only for a partial env vars validation.
+
 ## 1.5.4 (Jun 28, 2019)
 
 * Travis config: tests for Ubuntu 18.04 were removed again. Run local ones.

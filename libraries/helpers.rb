@@ -147,33 +147,6 @@ class Chef
         configuration.delete('wal_receiver_status_interval') if cluster_version.to_f < 9.1
         configuration.delete('hot_standby_feedback') if cluster_version.to_f < 9.1
       end
-
-      def params_validation(provider, credentials)
-        case provider
-        when 's3'
-          required_params = %i(
-            AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY
-            WALE_S3_PREFIX
-          )
-        when 'swift'
-          required_params = %i(
-            SWIFT_AUTHURL
-            SWIFT_TENANT
-            SWIFT_USER
-            SWIFT_PASSWORD
-            WALE_SWIFT_PREFIX
-          )
-        when 'azure'
-          required_params = %i(
-            WABS_ACCOUNT_NAME
-            WABS_ACCESS_KEY
-            WALE_WABS_PREFIX
-          )
-        end
-
-        required_params - credentials.keys.map { |key| key.upcase.to_sym }
-      end
     end
   end
 end

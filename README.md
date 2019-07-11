@@ -172,6 +172,7 @@ Example full daily database backup
 
 ```ruby
 postgresql_cloud_backup 'main' do
+  utility 'wal-g'
   in_version '9.3'
   in_cluster 'main'
   full_backup_time weekday: '*', month: '*', day: '*', hour: '3', minute: '0'
@@ -179,8 +180,7 @@ postgresql_cloud_backup 'main' do
   # aws_access_key_id, aws_secret_access_key, wale_s3_prefix
   parameters Chef::EncryptedDataBagItem.load('s3', 'secrets').to_hash.select {|i| i != "id"}
   # Or just a hash, if you don't use data bags:
-  parameters { aws_access_key_id: 'access_key', aws_secret_access_key: 'secret_key', wale_s3_prefix: 's3_prefix' }
-  protocol 's3'
+  parameters { aws_access_key_id: 'access_key', aws_secret_access_key: 'secret_key', walg_s3_prefix: 's3_prefix' }
   # In case you need to prepend wal-e with, for example, traffic limiter
   # you can use following method:
   command_prefix 'trickle -s -u 1024'

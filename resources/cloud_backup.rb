@@ -35,13 +35,6 @@ property :utility, String,
          equal_to: %w(wal-e wal_e wal-g wal_g)
 property :in_version, String, required: true
 property :in_cluster, String, required: true
-property :protocol, String,
-         required: true,
-         callbacks: {
-           'is not allowed! Allowed providers: s3, swift or  azure' => proc do |value|
-             !value.to_sym.match(/^(s3|swift|azure)$/).nil?
-           end,
-         }
 property :parameters, Hash, required: true
 
 # Crontab command prefix to use with wal-e, e.g. for speed limit by trickle
@@ -149,9 +142,6 @@ action :schedule do
   command_prefix     = new_resource.command_prefix
   envdir_params      = new_resource.parameters
   full_backup_time   = new_resource.full_backup_time
-
-  unsetted_required_params = params_validation(new_resource.protocol, envdir_params)
-  raise "Key(s) '#{unsetted_required_params.join(', ')}' missing for protocol '#{new_resource.protocol}'" unless unsetted_required_params.empty?
 
   # Add libpq PGPORT variable to envdir_params
   envdir_params['PGPORT'] = get_pg_port(postgresql_version, postgresql_instance_name).to_s
