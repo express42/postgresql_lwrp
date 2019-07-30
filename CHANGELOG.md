@@ -1,3 +1,7 @@
+## 1.6.1 (Jul 30, 2019)
+
+* (Fix) typos in attributes.
+
 ## 1.6.0 (Jul 03, 2019)
 
 * (Deprecation) `postgresql_cloud_backup` attribute `protocol` was removed. It was used only for a partial env vars validation.

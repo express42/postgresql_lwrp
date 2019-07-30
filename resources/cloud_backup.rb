@@ -102,8 +102,8 @@ action_class do
       owner 'root'
       group 'root'
       mode '0644'
-      source node['postgresql']['cloud_backup']['wal_e']['url']
-      checksum node['postgresql']['cloud_backup']['wal_g']['ckecksum']
+      source node['postgresql']['cloud_backup']['wal_g']['url']
+      checksum node['postgresql']['cloud_backup']['wal_g']['checksum']
     end
 
     dirname = ::File.dirname node['postgresql']['cloud_backup']['wal_g']['bin']
