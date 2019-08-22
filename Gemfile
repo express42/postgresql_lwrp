@@ -6,7 +6,7 @@ group :unit do
   gem 'chefspec'
 end
 group :inspec do
-  gem 'inspec'
+  gem 'inspec', '~>4.7.24'
   gem 'kitchen-inspec'
 end
 group :lint do

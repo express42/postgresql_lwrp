@@ -1,3 +1,12 @@
+## 1.6.3 (Aug 19, 2019)
+
+* (New) wal-g version 0.2.11
+* (New) bundle update
+
+## 1.6.2 (Aug 05, 2019)
+
+* (Fix) more typos in attributes
+
 ## 1.6.1 (Jul 30, 2019)
 
 * (Fix) typos in attributes.
